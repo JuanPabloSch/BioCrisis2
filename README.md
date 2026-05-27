@@ -36,3 +36,5 @@ simples para validar el flujo.
 - `src/game.js`: logica de la escena y sistemas del prototipo
 - `src/rooms.js`: datos de habitaciones, puertas, items y enemigos
 - `src/constants.js`: tamanio del juego y colores base
+- `src/enemyTypes.js`: colores y tamanios por tipo de enemigo
+- `src/saveSystem.js`: estado inicial, normalizacion y guardado local

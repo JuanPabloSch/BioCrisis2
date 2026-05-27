@@ -1,20 +1,7 @@
 import { HEIGHT, ROOM_COLORS, WIDTH } from "./constants.js";
+import { getEnemyType } from "./enemyTypes.js";
 import { ROOMS } from "./rooms.js";
-
-const ENEMY_TYPES = {
-  zombie: {
-    color: 0x9b2f2f,
-    hitColor: 0xd86a5f,
-    strokeColor: 0x1b0c0c,
-    radius: 18,
-  },
-  runner: {
-    color: 0x22e6c7,
-    hitColor: 0xb4fff4,
-    strokeColor: 0x08322f,
-    radius: 17,
-  },
-};
+import { createInitialWorldState, loadGameData, normalizeWorldState, saveGameData } from "./saveSystem.js";
 
 class PrototypeScene extends Phaser.Scene {
   constructor() {
@@ -26,17 +13,7 @@ class PrototypeScene extends Phaser.Scene {
     this.nearDoor = null;
     this.nearItem = null;
     this.nearInteractable = null;
-    this.worldState = {
-      health: 100,
-      magazineAmmo: 6,
-      reserveAmmo: 0,
-      collectedItems: {},
-      enemies: {},
-      inventory: [],
-      objectives: {},
-      unlockedDoors: {},
-    };
-    this.normalizeWorldState();
+    this.worldState = createInitialWorldState();
     this.lastShotAt = 0;
     this.lastDamageAt = 0;
     this.isReloading = false;
@@ -179,7 +156,7 @@ class PrototypeScene extends Phaser.Scene {
   }
 
   loadRoom(roomId, spawnId) {
-    this.normalizeWorldState();
+    this.worldState = normalizeWorldState(this.worldState);
     this.saveCurrentRoomEnemies();
 
     const room = ROOMS[roomId];
@@ -240,7 +217,7 @@ class PrototypeScene extends Phaser.Scene {
     for (const enemy of room.enemies ?? []) {
       const enemyState = this.getEnemyState(enemy);
       if (enemyState.dead) continue;
-      const enemyType = this.getEnemyType(enemy);
+      const enemyType = getEnemyType(enemy);
 
       const marker = this.add.circle(enemyState.x, enemyState.y, enemyType.radius, enemyType.color);
       marker.setData("enemy", enemy);
@@ -360,7 +337,7 @@ class PrototypeScene extends Phaser.Scene {
   }
 
   getEnemyState(enemy) {
-    this.normalizeWorldState();
+    this.worldState = normalizeWorldState(this.worldState);
 
     if (!this.worldState.enemies[enemy.id]) {
       this.worldState.enemies[enemy.id] = {
@@ -372,10 +349,6 @@ class PrototypeScene extends Phaser.Scene {
     }
 
     return this.worldState.enemies[enemy.id];
-  }
-
-  getEnemyType(enemy) {
-    return ENEMY_TYPES[enemy.type] ?? ENEMY_TYPES.zombie;
   }
 
   updateNearestItem() {
@@ -634,21 +607,19 @@ class PrototypeScene extends Phaser.Scene {
       worldState: this.worldState,
     };
 
-    localStorage.setItem("secuela-save", JSON.stringify(saveData));
+    saveGameData(saveData);
     this.flashPrompt("Partida guardada");
   }
 
   loadGame() {
-    const rawSave = localStorage.getItem("secuela-save");
+    const saveData = loadGameData();
 
-    if (!rawSave) {
+    if (!saveData) {
       this.flashPrompt("No hay partida guardada");
       return;
     }
 
-    const saveData = JSON.parse(rawSave);
     this.worldState = saveData.worldState;
-    this.normalizeWorldState();
     this.isReloading = false;
     this.loadRoom(saveData.currentRoomId);
     this.player.setPosition(saveData.player.x, saveData.player.y);
@@ -658,17 +629,6 @@ class PrototypeScene extends Phaser.Scene {
     this.updateHealthText();
     this.updateAmmoText();
     this.flashPrompt("Partida cargada");
-  }
-
-  normalizeWorldState() {
-    this.worldState.collectedItems ??= {};
-    this.worldState.enemies ??= {};
-    this.worldState.inventory ??= [];
-    this.worldState.objectives ??= {};
-    this.worldState.unlockedDoors ??= {};
-    this.worldState.health ??= 100;
-    this.worldState.magazineAmmo ??= 6;
-    this.worldState.reserveAmmo ??= 0;
   }
 
   cleanupBullets() {
