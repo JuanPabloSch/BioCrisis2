@@ -71,7 +71,7 @@ export const ROOMS = {
       { x: 555, y: 175, text: "CONSOLA" },
     ],
     items: [
-      { id: "lab_key", type: "key", name: "Llave lab", x: 400, y: 430, color: 0xe6c84f },
+      { id: "lab_key", type: "key", name: "Llave lab", x: 400, y: 430, color: 0xe6c84f, description: "Abre la puerta del pasillo bloqueado desde el hall." },
     ],
   },
   building_entry: {
@@ -213,7 +213,17 @@ export const ROOMS = {
     ],
     items: [
       { id: "ammo_storage_01", type: "ammo", name: "Balas x6", x: 610, y: 455, color: 0xd6d6d6, amount: 6 },
-      { id: "fuse_01", type: "key", name: "Fusible", x: 205, y: 455, color: 0x8ce6ff },
+      { id: "fuse_01", type: "key", name: "Fusible", x: 205, y: 455, color: 0x8ce6ff, description: "Pieza electrica para activar el generador." },
+      {
+        id: "note_power_01",
+        type: "note",
+        name: "Nota arrugada",
+        x: 400,
+        y: 235,
+        color: 0xf0e6cf,
+        description: "Una nota de mantenimiento.",
+        text: "El generador no arranca sin fusible. Si vuelve la energia, la puerta de mantenimiento deberia destrabarse.",
+      },
     ],
   },
   generator_room: {
