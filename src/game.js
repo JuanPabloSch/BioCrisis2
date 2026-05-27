@@ -1,5 +1,6 @@
 import { HEIGHT, ROOM_COLORS, WIDTH } from "./constants.js";
 import { getEnemyType } from "./enemyTypes.js";
+import * as inventoryOverlay from "./inventory.js";
 import { ROOMS } from "./rooms.js";
 import { createInitialWorldState, loadGameData, normalizeWorldState, saveGameData } from "./saveSystem.js";
 
@@ -14,6 +15,8 @@ const MAP_NODES = {
   laboratory_storage: { label: "Deposito", x: 612, y: 130 },
   generator_room: { label: "Generador", x: 612, y: 340 },
   maintenance_access: { label: "Mant.", x: 720, y: 340 },
+  switch_room: { label: "Paneles", x: 720, y: 235 },
+  sealed_room: { label: "Sellada", x: 720, y: 130 },
 };
 
 const MAP_LINKS = [
@@ -26,6 +29,8 @@ const MAP_LINKS = [
   ["locked_corridor", "laboratory_storage"],
   ["locked_corridor", "generator_room"],
   ["generator_room", "maintenance_access"],
+  ["maintenance_access", "switch_room"],
+  ["switch_room", "sealed_room"],
 ];
 
 class PrototypeScene extends Phaser.Scene {
@@ -98,22 +103,17 @@ class PrototypeScene extends Phaser.Scene {
     });
     this.promptText.setOrigin(0.5);
     this.promptText.setVisible(false);
-    this.inventoryText = this.add.text(20, 52, "", {
+    this.healthText = this.add.text(20, 52, "", {
       fontFamily: "Arial",
       fontSize: "15px",
       color: "#d6ccb8",
     });
-    this.healthText = this.add.text(20, 74, "", {
+    this.ammoText = this.add.text(20, 74, "", {
       fontFamily: "Arial",
       fontSize: "15px",
       color: "#d6ccb8",
     });
-    this.ammoText = this.add.text(20, 96, "", {
-      fontFamily: "Arial",
-      fontSize: "15px",
-      color: "#d6ccb8",
-    });
-    this.uiLayer.add([this.titleText, this.inventoryText, this.healthText, this.ammoText, this.promptText]);
+    this.uiLayer.add([this.titleText, this.healthText, this.ammoText, this.promptText]);
 
     this.loadRoom(this.currentRoomId);
     this.createMapOverlay();
@@ -394,136 +394,6 @@ class PrototypeScene extends Phaser.Scene {
     }
   }
 
-  createInventoryOverlay() {
-    this.inventoryLayer = this.add.container(0, 0);
-    this.inventoryLayer.setDepth(1001);
-    this.inventoryLayer.setVisible(false);
-
-    const backdrop = this.add.rectangle(WIDTH / 2, HEIGHT / 2, WIDTH, HEIGHT, 0x050505, 0.88);
-    const panel = this.add.rectangle(WIDTH / 2, HEIGHT / 2, 720, 500, 0x171614, 0.97);
-    panel.setStrokeStyle(2, 0x716957);
-
-    this.inventoryTitle = this.add.text(60, 64, "INVENTARIO", {
-      fontFamily: "Arial",
-      fontSize: "24px",
-      color: "#f0e6cf",
-    });
-
-    this.inventoryHelpText = this.add.text(60, 506, "I: cerrar | W/S o flechas: seleccionar", {
-      fontFamily: "Arial",
-      fontSize: "14px",
-      color: "#9f9888",
-    });
-
-    this.inventoryLayer.add([backdrop, panel, this.inventoryTitle, this.inventoryHelpText]);
-  }
-
-  toggleInventory() {
-    if (!this.inventoryLayer) return;
-
-    const isVisible = !this.inventoryLayer.visible;
-    if (isVisible && this.mapLayer?.visible) this.toggleMap();
-    this.inventoryLayer.setVisible(isVisible);
-
-    if (isVisible) {
-      this.drawInventoryOverlay();
-    } else {
-      this.clearInventoryDrawing();
-    }
-  }
-
-  clearInventoryDrawing() {
-    for (const child of [...this.inventoryLayer.getAll()]) {
-      if (child.getData?.("inventoryDynamic")) child.destroy();
-    }
-  }
-
-  drawInventoryOverlay() {
-    this.clearInventoryDrawing();
-    const entries = this.getInventoryEntries();
-    this.inventorySelectedIndex = Phaser.Math.Clamp(this.inventorySelectedIndex, 0, Math.max(0, entries.length - 1));
-
-    for (const [index, entry] of entries.entries()) {
-      const y = 118 + index * 42;
-      const selected = index === this.inventorySelectedIndex;
-      const row = this.add.rectangle(65, y - 6, 300, 34, selected ? 0x3a3529 : 0x23211d, selected ? 0.95 : 0.7);
-      row.setOrigin(0, 0);
-      row.setStrokeStyle(1, selected ? 0xd8b24a : 0x4f493d);
-      row.setData("inventoryDynamic", true);
-
-      const name = this.add.text(82, y, entry.name, {
-        fontFamily: "Arial",
-        fontSize: "16px",
-        color: selected ? "#fff0b8" : "#e0d6c3",
-      });
-      name.setData("inventoryDynamic", true);
-      this.inventoryLayer.add([row, name]);
-    }
-
-    const selectedEntry = entries[this.inventorySelectedIndex];
-    const detailPanel = this.add.rectangle(400, 112, 330, 330, 0x22201c, 0.82);
-    detailPanel.setOrigin(0, 0);
-    detailPanel.setStrokeStyle(1, 0x5f5849);
-    detailPanel.setData("inventoryDynamic", true);
-
-    const detailTitle = this.add.text(425, 136, selectedEntry.name, {
-      fontFamily: "Arial",
-      fontSize: "20px",
-      color: "#f0e6cf",
-    });
-    detailTitle.setData("inventoryDynamic", true);
-
-    const detailText = this.add.text(425, 178, selectedEntry.description, {
-      fontFamily: "Arial",
-      fontSize: "16px",
-      color: "#d6ccb8",
-      wordWrap: { width: 280 },
-      lineSpacing: 5,
-    });
-    detailText.setData("inventoryDynamic", true);
-
-    this.inventoryLayer.add([detailPanel, detailTitle, detailText]);
-  }
-
-  getInventoryEntries() {
-    const ammo = {
-      id: "ammo_status",
-      name: "Municion de pistola",
-      description: `Para la pistola. Cargador: ${this.worldState.magazineAmmo}/6. Reserva: ${this.worldState.reserveAmmo}.`,
-    };
-
-    const items = this.worldState.inventory.map((item) => ({
-      id: item.id,
-      name: item.name,
-      description: this.getItemDescription(item),
-    }));
-
-    return [ammo, ...items];
-  }
-
-  getItemDescription(item) {
-    if (item.text) return item.text;
-    if (item.description) return item.description;
-    if (item.type === "medikit") return `Cura ${item.heal ?? 35} puntos de vida. Se usa rapido con Q.`;
-    if (item.id === "fuse_01") return "Pieza electrica para activar el generador.";
-    if (item.type === "key") return "Sirve para abrir una puerta o mecanismo especifico.";
-    return "Objeto guardado en el inventario.";
-  }
-
-  updateInventorySelection() {
-    const entries = this.getInventoryEntries();
-    if (entries.length <= 1) return;
-
-    const up = Phaser.Input.Keyboard.JustDown(this.cursors.up) || Phaser.Input.Keyboard.JustDown(this.wasd.up);
-    const down = Phaser.Input.Keyboard.JustDown(this.cursors.down) || Phaser.Input.Keyboard.JustDown(this.wasd.down);
-
-    if (!up && !down) return;
-
-    const offset = up ? -1 : 1;
-    this.inventorySelectedIndex = Phaser.Math.Wrap(this.inventorySelectedIndex + offset, 0, entries.length);
-    this.drawInventoryOverlay();
-  }
-
   updateNearestInteraction() {
     this.updateNearestItem();
     if (this.nearItem) return;
@@ -708,12 +578,18 @@ class PrototypeScene extends Phaser.Scene {
 
   isDoorLocked(door) {
     if (door.powerLocked && !this.worldState.objectives.generatorOn) return true;
+    if (door.objectiveLocked && !this.worldState.objectives[door.objectiveLocked]) return true;
     return door.lockedBy && !this.worldState.unlockedDoors[door.id];
   }
 
   tryUnlockDoor(door) {
     if (door.powerLocked && !this.worldState.objectives.generatorOn) {
       this.flashPrompt("Sin energia");
+      return;
+    }
+
+    if (door.objectiveLocked && !this.worldState.objectives[door.objectiveLocked]) {
+      this.flashPrompt("Bloqueada por el panel");
       return;
     }
 
@@ -728,6 +604,11 @@ class PrototypeScene extends Phaser.Scene {
   }
 
   useInteractable(interactable) {
+    if (interactable.type === "puzzle_switch") {
+      this.togglePuzzleSwitch(interactable);
+      return;
+    }
+
     if (interactable.type !== "generator") return;
 
     if (this.worldState.objectives.generatorOn) {
@@ -747,6 +628,32 @@ class PrototypeScene extends Phaser.Scene {
     this.flashPrompt("Generador encendido");
   }
 
+  getPuzzleSwitches() {
+    this.worldState.objectives.switchPuzzle ??= { a: false, b: false, c: false };
+    return this.worldState.objectives.switchPuzzle;
+  }
+
+  togglePuzzleSwitch(interactable) {
+    if (this.worldState.objectives.switchPuzzleSolved) {
+      this.flashPrompt("Panel resuelto");
+      return;
+    }
+
+    const switches = this.getPuzzleSwitches();
+    switches[interactable.switchId] = !switches[interactable.switchId];
+
+    const solved = switches.a && !switches.b && switches.c;
+    if (solved) {
+      this.worldState.objectives.switchPuzzleSolved = true;
+      this.reloadCurrentRoomAtPlayerPosition();
+      this.flashPrompt("Puerta sellada desbloqueada");
+      return;
+    }
+
+    this.reloadCurrentRoomAtPlayerPosition();
+    this.flashPrompt(`Panel ${interactable.switchId.toUpperCase()}: ${switches[interactable.switchId] ? "ON" : "OFF"}`);
+  }
+
   consumeItem(itemId) {
     const index = this.worldState.inventory.findIndex((item) => item.id === itemId);
     if (index !== -1) this.worldState.inventory.splice(index, 1);
@@ -758,6 +665,17 @@ class PrototypeScene extends Phaser.Scene {
   }
 
   getInteractableVisual(interactable) {
+    if (interactable.type === "puzzle_switch") {
+      const isOn = Boolean(this.getPuzzleSwitches()[interactable.switchId]);
+      const visual = isOn ? interactable.onVisual : interactable.offVisual;
+
+      return {
+        color: visual?.color ?? (isOn ? 0x7fe28a : 0x8c3d38),
+        alpha: visual?.alpha ?? 0.82,
+        strokeColor: visual?.strokeColor ?? 0x151515,
+      };
+    }
+
     const isOn = interactable.type === "generator" && this.worldState.objectives.generatorOn;
     const visual = isOn ? interactable.onVisual : interactable.offVisual;
 
@@ -770,11 +688,6 @@ class PrototypeScene extends Phaser.Scene {
 
   isPowerOffRoom(room) {
     return room.requiresPower && !this.worldState.objectives.generatorOn;
-  }
-
-  updateInventoryText() {
-    const names = this.worldState.inventory.map((item) => item.name);
-    this.inventoryText.setText(`Inventario: ${names.length ? names.join(", ") : "vacio"} | I`);
   }
 
   useMedikit() {
@@ -965,6 +878,8 @@ class PrototypeScene extends Phaser.Scene {
     this.time.delayedCall(650, () => this.updateNearestInteraction());
   }
 }
+
+Object.assign(PrototypeScene.prototype, inventoryOverlay);
 
 const config = {
   type: Phaser.AUTO,

@@ -36,6 +36,7 @@ simples para validar el flujo.
 ## Archivos principales
 
 - `src/game.js`: logica de la escena y sistemas del prototipo
+- `src/inventory.js`: menu de inventario y descripciones de items
 - `src/rooms.js`: datos de habitaciones, puertas, items y enemigos
 - `src/constants.js`: tamanio del juego y colores base
 - `src/enemyTypes.js`: colores y tamanios por tipo de enemigo

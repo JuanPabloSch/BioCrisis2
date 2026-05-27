@@ -289,9 +289,11 @@ export const ROOMS = {
     ],
     doors: [
       { id: "maintenance_to_generator", x: 18, y: 260, w: 42, h: 88, to: "generator_room", spawn: "from_maintenance", label: "Generador" },
+      { id: "maintenance_to_switch", x: 740, y: 260, w: 42, h: 88, to: "switch_room", spawn: "from_maintenance", label: "Paneles" },
     ],
     spawns: {
       from_generator: { x: 92, y: 302, angle: 0 },
+      from_switch: { x: 700, y: 302, angle: 180 },
     },
     props: [
       { x: 210, y: 165, text: "REPUESTOS" },
@@ -303,6 +305,98 @@ export const ROOMS = {
     ],
     enemies: [
       { id: "maintenance_runner_01", type: "runner", x: 590, y: 310, speed: 118, aggroRange: 340, damage: 8, health: 35 },
+    ],
+  },
+  switch_room: {
+    name: "Sala de paneles",
+    zone: "service",
+    requiresPower: true,
+    walls: [
+      { x: 0, y: 0, w: 800, h: 42 },
+      { x: 0, y: 558, w: 800, h: 42 },
+      { x: 0, y: 0, w: 42, h: 600 },
+      { x: 758, y: 0, w: 42, h: 600 },
+      { x: 130, y: 110, w: 540, h: 80 },
+      { x: 130, y: 420, w: 540, h: 72 },
+    ],
+    doors: [
+      { id: "switch_to_maintenance", x: 18, y: 260, w: 42, h: 88, to: "maintenance_access", spawn: "from_switch", label: "Mantenimiento" },
+      { id: "switch_to_sealed", x: 360, y: 18, w: 80, h: 42, to: "sealed_room", spawn: "from_switch", label: "Sala sellada", objectiveLocked: "switchPuzzleSolved" },
+    ],
+    spawns: {
+      from_maintenance: { x: 92, y: 302, angle: 0 },
+      from_sealed: { x: 400, y: 92, angle: 90 },
+    },
+    props: [
+      { x: 400, y: 150, text: "CODIGO: VERDE ROJO VERDE" },
+      { x: 400, y: 456, text: "PANELES DE SEGURIDAD" },
+    ],
+    interactables: [
+      {
+        id: "switch_a",
+        type: "puzzle_switch",
+        switchId: "a",
+        label: "alternar panel A",
+        x: 245,
+        y: 300,
+        w: 68,
+        h: 68,
+        offVisual: { color: 0x8c3d38, alpha: 0.84, strokeColor: 0x35110f },
+        onVisual: { color: 0x65d17a, alpha: 0.9, strokeColor: 0x12381a },
+      },
+      {
+        id: "switch_b",
+        type: "puzzle_switch",
+        switchId: "b",
+        label: "alternar panel B",
+        x: 400,
+        y: 300,
+        w: 68,
+        h: 68,
+        offVisual: { color: 0x8c3d38, alpha: 0.84, strokeColor: 0x35110f },
+        onVisual: { color: 0x65d17a, alpha: 0.9, strokeColor: 0x12381a },
+      },
+      {
+        id: "switch_c",
+        type: "puzzle_switch",
+        switchId: "c",
+        label: "alternar panel C",
+        x: 555,
+        y: 300,
+        w: 68,
+        h: 68,
+        offVisual: { color: 0x8c3d38, alpha: 0.84, strokeColor: 0x35110f },
+        onVisual: { color: 0x65d17a, alpha: 0.9, strokeColor: 0x12381a },
+      },
+    ],
+  },
+  sealed_room: {
+    name: "Sala sellada",
+    zone: "lab",
+    requiresPower: true,
+    walls: [
+      { x: 0, y: 0, w: 800, h: 42 },
+      { x: 0, y: 558, w: 800, h: 42 },
+      { x: 0, y: 0, w: 42, h: 600 },
+      { x: 758, y: 0, w: 42, h: 600 },
+      { x: 120, y: 135, w: 220, h: 86 },
+      { x: 460, y: 135, w: 220, h: 86 },
+      { x: 230, y: 405, w: 340, h: 72 },
+    ],
+    doors: [
+      { id: "sealed_to_switch", x: 360, y: 540, w: 80, h: 42, to: "switch_room", spawn: "from_sealed", label: "Paneles" },
+    ],
+    spawns: {
+      from_switch: { x: 400, y: 500, angle: 270 },
+    },
+    props: [
+      { x: 230, y: 178, text: "ARCHIVO" },
+      { x: 570, y: 178, text: "MEDICINA" },
+      { x: 400, y: 442, text: "PUERTA SELLADA" },
+    ],
+    items: [
+      { id: "sealed_note_01", type: "note", name: "Informe viejo", x: 230, y: 278, color: 0xf0e6cf, text: "No todos los cierres dependen de llaves. Algunos paneles cambian el estado de puertas completas." },
+      { id: "sealed_medikit_01", type: "medikit", name: "Medikit", x: 570, y: 278, color: 0x5fd178, heal: 35 },
     ],
   },
 };
