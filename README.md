@@ -24,6 +24,7 @@ Tambien se puede abrir desde un servidor local en `http://127.0.0.1:5173`.
 - R / click derecho: recargar
 - G: guardar partida
 - C: cargar partida
+- M: abrir/cerrar mapa
 
 ## Idea del prototipo
 

@@ -3,6 +3,31 @@ import { getEnemyType } from "./enemyTypes.js";
 import { ROOMS } from "./rooms.js";
 import { createInitialWorldState, loadGameData, normalizeWorldState, saveGameData } from "./saveSystem.js";
 
+const MAP_NODES = {
+  shore: { label: "Orilla", x: 82, y: 235 },
+  forest_path: { label: "Bosque", x: 185, y: 235 },
+  control_room: { label: "Control", x: 288, y: 235 },
+  building_entry: { label: "Entrada", x: 392, y: 235 },
+  safe_room: { label: "Sala segura", x: 392, y: 340 },
+  main_hall: { label: "Hall", x: 502, y: 235 },
+  locked_corridor: { label: "Pasillo", x: 612, y: 235 },
+  laboratory_storage: { label: "Deposito", x: 612, y: 130 },
+  generator_room: { label: "Generador", x: 612, y: 340 },
+  maintenance_access: { label: "Mant.", x: 720, y: 340 },
+};
+
+const MAP_LINKS = [
+  ["shore", "forest_path"],
+  ["forest_path", "control_room"],
+  ["control_room", "building_entry"],
+  ["building_entry", "safe_room"],
+  ["building_entry", "main_hall"],
+  ["main_hall", "locked_corridor"],
+  ["locked_corridor", "laboratory_storage"],
+  ["locked_corridor", "generator_room"],
+  ["generator_room", "maintenance_access"],
+];
+
 class PrototypeScene extends Phaser.Scene {
   constructor() {
     super("PrototypeScene");
@@ -54,6 +79,7 @@ class PrototypeScene extends Phaser.Scene {
     this.reloadKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
     this.saveKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.G);
     this.loadKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.C);
+    this.mapKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.M);
     this.input.on("pointerdown", this.onPointerDown, this);
 
     this.titleText = this.add.text(20, 18, "", {
@@ -88,6 +114,7 @@ class PrototypeScene extends Phaser.Scene {
     this.uiLayer.add([this.titleText, this.inventoryText, this.healthText, this.ammoText, this.promptText]);
 
     this.loadRoom(this.currentRoomId);
+    this.createMapOverlay();
     this.updateInventoryText();
     this.updateHealthText();
     this.updateAmmoText();
@@ -116,6 +143,16 @@ class PrototypeScene extends Phaser.Scene {
     this.cleanupBullets();
     this.updateEnemies();
     this.updateNearestInteraction();
+
+    if (Phaser.Input.Keyboard.JustDown(this.mapKey)) {
+      this.toggleMap();
+      return;
+    }
+
+    if (this.mapLayer?.visible) {
+      body.setVelocity(0, 0);
+      return;
+    }
 
     if (Phaser.Input.Keyboard.JustDown(this.actionKey)) {
       if (this.nearItem) {
@@ -153,6 +190,7 @@ class PrototypeScene extends Phaser.Scene {
     if (Phaser.Input.Keyboard.JustDown(this.loadKey)) {
       this.loadGame();
     }
+
   }
 
   loadRoom(roomId, spawnId) {
@@ -255,6 +293,90 @@ class PrototypeScene extends Phaser.Scene {
     this.player.setPosition(spawn.x, spawn.y);
     this.player.rotation = Phaser.Math.DegToRad(spawn.angle) + Math.PI / 2;
     this.player.body.setVelocity(0, 0);
+  }
+
+  createMapOverlay() {
+    this.mapLayer = this.add.container(0, 0);
+    this.mapLayer.setDepth(1000);
+    this.mapLayer.setVisible(false);
+
+    const backdrop = this.add.rectangle(WIDTH / 2, HEIGHT / 2, WIDTH, HEIGHT, 0x050505, 0.86);
+    const panel = this.add.rectangle(WIDTH / 2, HEIGHT / 2, 730, 500, 0x151714, 0.96);
+    panel.setStrokeStyle(2, 0x6b6655);
+
+    this.mapTitle = this.add.text(60, 66, "MAPA DEL COMPLEJO", {
+      fontFamily: "Arial",
+      fontSize: "24px",
+      color: "#f0e6cf",
+    });
+
+    this.mapStatusText = this.add.text(60, 102, "", {
+      fontFamily: "Arial",
+      fontSize: "15px",
+      color: "#d6ccb8",
+    });
+
+    this.mapHelpText = this.add.text(60, 505, "M: cerrar mapa", {
+      fontFamily: "Arial",
+      fontSize: "14px",
+      color: "#9f9888",
+    });
+
+    this.mapLayer.add([backdrop, panel, this.mapTitle, this.mapStatusText, this.mapHelpText]);
+  }
+
+  toggleMap() {
+    if (!this.mapLayer) return;
+
+    const isVisible = !this.mapLayer.visible;
+    this.mapLayer.setVisible(isVisible);
+
+    if (isVisible) {
+      this.drawMapOverlay();
+    } else {
+      this.clearMapDrawing();
+    }
+  }
+
+  clearMapDrawing() {
+    for (const child of this.mapLayer.getAll()) {
+      if (child.getData?.("mapDynamic")) child.destroy();
+    }
+  }
+
+  drawMapOverlay() {
+    this.clearMapDrawing();
+    this.mapStatusText.setText(`Energia: ${this.worldState.objectives.generatorOn ? "ON" : "OFF"} | Habitacion: ${ROOMS[this.currentRoomId].name}`);
+
+    for (const [from, to] of MAP_LINKS) {
+      const start = MAP_NODES[from];
+      const end = MAP_NODES[to];
+      const line = this.add.line(0, 0, start.x, start.y, end.x, end.y, 0x7f7868, 0.78);
+      line.setOrigin(0, 0);
+      line.setLineWidth(3);
+      line.setData("mapDynamic", true);
+      this.mapLayer.add(line);
+    }
+
+    for (const [roomId, node] of Object.entries(MAP_NODES)) {
+      const isCurrent = roomId === this.currentRoomId;
+      const fill = isCurrent ? 0xd8b24a : 0x28302d;
+      const stroke = isCurrent ? 0xffefaa : 0x8c8778;
+      const marker = this.add.rectangle(node.x, node.y, 86, 42, fill, 0.96);
+      marker.setStrokeStyle(2, stroke);
+      marker.setData("mapDynamic", true);
+
+      const label = this.add.text(node.x, node.y, node.label, {
+        fontFamily: "Arial",
+        fontSize: "13px",
+        color: isCurrent ? "#17140a" : "#e6ddc9",
+        align: "center",
+      });
+      label.setOrigin(0.5);
+      label.setData("mapDynamic", true);
+
+      this.mapLayer.add([marker, label]);
+    }
   }
 
   updateNearestInteraction() {
@@ -418,8 +540,21 @@ class PrototypeScene extends Phaser.Scene {
       this.worldState.inventory.push(item);
     }
     this.updateInventoryText();
-    this.loadRoom(this.currentRoomId);
+    this.reloadCurrentRoomAtPlayerPosition();
     this.flashPrompt(`Agarraste: ${item.name}`);
+  }
+
+  reloadCurrentRoomAtPlayerPosition() {
+    const position = {
+      x: this.player.x,
+      y: this.player.y,
+      rotation: this.player.rotation,
+    };
+
+    this.loadRoom(this.currentRoomId);
+    this.player.setPosition(position.x, position.y);
+    this.player.rotation = position.rotation;
+    this.player.body.setVelocity(0, 0);
   }
 
   hasItem(itemId) {
@@ -443,7 +578,7 @@ class PrototypeScene extends Phaser.Scene {
     }
 
     this.worldState.unlockedDoors[door.id] = true;
-    this.loadRoom(this.currentRoomId);
+    this.reloadCurrentRoomAtPlayerPosition();
     this.flashPrompt("Puerta desbloqueada");
   }
 
@@ -463,7 +598,7 @@ class PrototypeScene extends Phaser.Scene {
     this.consumeItem(interactable.requiresItem);
     this.worldState.objectives.generatorOn = true;
     this.updateInventoryText();
-    this.loadRoom(this.currentRoomId);
+    this.reloadCurrentRoomAtPlayerPosition();
     this.flashPrompt("Generador encendido");
   }
 
@@ -529,6 +664,8 @@ class PrototypeScene extends Phaser.Scene {
   }
 
   onPointerDown(pointer) {
+    if (this.mapLayer?.visible) return;
+
     if (pointer.leftButtonDown()) {
       this.shoot(pointer);
       return;

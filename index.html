@@ -27,12 +27,19 @@
           <dd>G</dd>
           <dt>Cargar</dt>
           <dd>C</dd>
+          <dt>Mapa</dt>
+          <dd>M</dd>
         </dl>
         <p class="hint">Acercate a una puerta y usa accion para pasar.</p>
       </aside>
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.90.0/dist/phaser.min.js"></script>
+    <script>
+      document.getElementById("game").addEventListener("contextmenu", (event) => {
+        event.preventDefault();
+      });
+    </script>
     <script type="module" src="src/game.js"></script>
   </body>
 </html>
