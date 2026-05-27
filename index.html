@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Secuela - Prototipo de habitaciones</title>
+    <link rel="stylesheet" href="src/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <div id="game"></div>
+      <aside class="panel">
+        <h1>Secuela</h1>
+        <p>Prototipo rustico de habitaciones.</p>
+        <dl>
+          <dt>Mover</dt>
+          <dd>WASD / flechas</dd>
+          <dt>Accion</dt>
+          <dd>Barra espaciadora</dd>
+          <dt>Curarse</dt>
+          <dd>Q</dd>
+          <dt>Disparar</dt>
+          <dd>Click izquierdo</dd>
+          <dt>Recargar</dt>
+          <dd>R / click derecho</dd>
+          <dt>Guardar</dt>
+          <dd>G</dd>
+          <dt>Cargar</dt>
+          <dd>C</dd>
+        </dl>
+        <p class="hint">Acercate a una puerta y usa accion para pasar.</p>
+      </aside>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.90.0/dist/phaser.min.js"></script>
+    <script type="module" src="src/game.js"></script>
+  </body>
+</html>
