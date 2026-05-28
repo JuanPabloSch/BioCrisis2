@@ -651,26 +651,37 @@ class PrototypeScene extends Phaser.Scene {
       return;
     }
 
-    if (interactable.type !== "generator") return;
+    if (interactable.type === "generator") {
+      if (this.worldState.objectives.generatorOn) {
+        this.flashPrompt("El generador ya esta encendido");
+        return;
+      }
 
-    if (this.worldState.objectives.generatorOn) {
-      this.flashPrompt("El generador ya esta encendido");
+      if (!this.hasItem(interactable.requiresItem)) {
+        this.flashPrompt("Falta un fusible");
+        return;
+      }
+
+      this.consumeItem(interactable.requiresItem);
+      this.worldState.objectives.generatorOn = true;
+      this.updateInventoryText();
+      this.reloadCurrentRoomAtPlayerPosition();
+      this.flashPrompt("Generador encendido");
       return;
     }
 
-    if (!this.hasItem(interactable.requiresItem)) {
-      this.flashPrompt("Falta un fusible");
+    if (interactable.type === "pump") {
+      if (this.worldState.objectives.pumpSolved) {
+        this.flashPrompt("Las bombas ya estan funcionando");
+        return;
+      }
+
+      this.worldState.objectives.pumpSolved = true;
+      this.reloadCurrentRoomAtPlayerPosition();
+      this.flashPrompt("Bomba activada. Zona drenada.");
       return;
     }
-
-    this.consumeItem(interactable.requiresItem);
-    this.worldState.objectives.generatorOn = true;
-    this.updateInventoryText();
-    this.reloadCurrentRoomAtPlayerPosition();
-    this.flashPrompt("Generador encendido");
   }
-
-  
 
   getPuzzleSwitches() {
     this.worldState.objectives.switchPuzzle ??= { a: false, b: false, c: false };

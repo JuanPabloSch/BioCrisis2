@@ -17,11 +17,17 @@ export function normalizeWorldState(worldState = {}) {
   worldState.collectedItems ??= {};
   worldState.enemies ??= {};
   worldState.inventory ??= [];
-  worldState.objectives ??= {};
   worldState.unlockedDoors ??= {};
   worldState.health ??= 100;
   worldState.magazineAmmo ??= 6;
   worldState.reserveAmmo ??= 0;
+  
+  // --- 🔴 REFUERZO DE OBJETIVOS POR DEFECTO ---
+  worldState.objectives ??= {};
+  worldState.objectives.generatorOn ??= false;
+  worldState.objectives.switchPuzzleSolved ??= false;
+  worldState.objectives.pumpSolved ??= false; // 💡 Evita el undefined en la puerta inundada
+
   return worldState;
 }
 
