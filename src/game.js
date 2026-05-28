@@ -38,6 +38,14 @@ class PrototypeScene extends Phaser.Scene {
     super("PrototypeScene");
   }
 
+  preload() {
+    for (const room of Object.values(ROOMS)) {
+      if (room.backgroundImage) {
+        this.load.image(room.backgroundImage.key, room.backgroundImage.path);
+      }
+    }
+  }
+
   create() {
     this.currentRoomId = "shore";
     this.nearDoor = null;
@@ -226,13 +234,19 @@ class PrototypeScene extends Phaser.Scene {
     this.bulletGroup.clear(true, true);
     this.roomLayer.removeAll(true);
 
-    const bg = this.add.rectangle(WIDTH / 2, HEIGHT / 2, WIDTH, HEIGHT, ROOM_COLORS[room.zone]);
-    bg.setStrokeStyle(4, 0x0b0b0b);
+    const bg = room.backgroundImage
+      ? this.add.image(WIDTH / 2, HEIGHT / 2, room.backgroundImage.key).setDisplaySize(WIDTH, HEIGHT)
+      : this.add.rectangle(WIDTH / 2, HEIGHT / 2, WIDTH, HEIGHT, ROOM_COLORS[room.zone]);
+    if (bg.setStrokeStyle) bg.setStrokeStyle(4, 0x0b0b0b);
     this.roomLayer.add(bg);
 
     for (const wall of room.walls) {
       const rect = this.add.rectangle(wall.x + wall.w / 2, wall.y + wall.h / 2, wall.w, wall.h, 0x171717);
-      rect.setStrokeStyle(2, 0x4b4b43);
+      if (room.showWallVisuals === false) {
+        rect.setVisible(false);
+      } else {
+        rect.setStrokeStyle(2, 0x4b4b43);
+      }
       this.roomLayer.add(rect);
       this.wallGroup.add(rect);
     }
