@@ -78,20 +78,20 @@ export const ROOMS = {
     name: "Entrada del edificio",
     zone: "building",
     backgroundImage: { key: "bg_entry", path: "src/background/recepcion.png" },
-    // showWallVisuals: false,
+    showWallVisuals: false,
     walls: [
-      { x: 0, y: 0, w: 800, h: 42 },
+      { x: 0, y: 0, w: 800, h: 120 },
       { x: 0, y: 558, w: 800, h: 42 },
       { x: 0, y: 0, w: 42, h: 600 },
       { x: 758, y: 0, w: 42, h: 600 },
-      { x: 155, y: 98, w: 490, h: 56 },
-      { x: 155, y: 448, w: 490, h: 56 },
-      { x: 370, y: 154, w: 60, h: 125 },
+      { x: 260, y: 100, w: 270, h: 100 },
+      { x: 55, y: 400, w: 180, h: 156 },
+      { x: 600, y: 448, w: 80, h: 56 },
     ],
     doors: [
-      { id: "entry_to_control", x: 18, y: 260, w: 42, h: 88, to: "control_room", spawn: "from_entry", label: "Control" },
-      { id: "entry_to_hall", x: 740, y: 260, w: 42, h: 88, to: "main_hall", spawn: "from_entry", label: "Hall" },
-      { id: "entry_to_safe", x: 360, y: 520, w: 80, h: 42, to: "safe_room", spawn: "from_entry", label: "Sala segura" },
+      { id: "entry_to_control", x: 18, y: 175, w: 42, h: 150, to: "control_room", spawn: "from_entry", label: "Control" },
+      { id: "entry_to_hall", x: 700, y: 180, w: 42, h: 140, to: "main_hall", spawn: "from_entry", label: "Hall" },
+      { id: "entry_to_safe", x: 330, y: 520, w: 140, h: 42, to: "safe_room", spawn: "from_entry", label: "Sala segura" },
     ],
     spawns: {
       from_control: { x: 92, y: 302, angle: 0 },
@@ -100,7 +100,7 @@ export const ROOMS = {
     },
     props: [],
     items: [
-      { id: "ammo_entry_01", type: "ammo", name: "Balas x6", x: 400, y: 390, color: 0xd6d6d6, amount: 6 },
+      { id: "ammo_entry_01", type: "ammo", name: "Balas x6", x: 400, y: 210, color: 0xd6d6d6, amount: 6 },
     ],
   },
   safe_room: {
