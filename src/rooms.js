@@ -166,6 +166,8 @@ export const ROOMS = {
   locked_corridor: {
     name: "Pasillo bloqueado",
     zone: "locked",
+    backgroundImage: { key: "bg_pasillo", path: "src/background/pasillo.png" },
+    // showWallVisuals: false,
     requiresPower: true,
     walls: [
       { x: 0, y: 0, w: 800, h: 42 },
@@ -183,9 +185,7 @@ export const ROOMS = {
       from_storage: { x: 400, y: 92, angle: 90 },
       from_generator: { x: 400, y: 500, angle: 270 },
     },
-    props: [
-      { x: 400, y: 300, text: "MAS ADELANTE" },
-    ],
+    props: [],
     enemies: [
       { id: "locked_runner_01", type: "runner", x: 430, y: 300, speed: 125, aggroRange: 360, damage: 8, health: 35 },
     ],
@@ -193,7 +193,9 @@ export const ROOMS = {
   laboratory_storage: {
     name: "Deposito de laboratorio",
     zone: "lab",
-    requiresPower: true,
+    backgroundImage: { key: "bg_deposito", path: "src/background/deposito.png" },
+    // showWallVisuals: false,
+    requiresPower: false,
     walls: [
       { x: 0, y: 0, w: 800, h: 42 },
       { x: 0, y: 558, w: 800, h: 42 },
@@ -211,11 +213,7 @@ export const ROOMS = {
     spawns: {
       from_corridor: { x: 400, y: 500, angle: 270 },
     },
-    props: [
-      { x: 205, y: 165, text: "ESTANTES" },
-      { x: 595, y: 165, text: "MUESTRAS" },
-      { x: 400, y: 340, text: "MESA CENTRAL" },
-    ],
+    props: [],
     items: [
       { id: "ammo_storage_01", type: "ammo", name: "Balas x6", x: 610, y: 455, color: 0xd6d6d6, amount: 6 },
       { id: "fuse_01", type: "key", name: "Fusible", x: 205, y: 455, color: 0x8ce6ff, description: "Pieza electrica para activar el generador." },
@@ -234,6 +232,8 @@ export const ROOMS = {
   generator_room: {
     name: "Sala del generador",
     zone: "service",
+    backgroundImage: { key: "bg_generador", path: "src/background/generador.png" },
+    // showWallVisuals: false,
     requiresPower: true,
     walls: [
       { x: 0, y: 0, w: 800, h: 42 },
@@ -254,11 +254,7 @@ export const ROOMS = {
       from_corridor: { x: 400, y: 92, angle: 90 },
       from_maintenance: { x: 700, y: 302, angle: 180 },
     },
-    props: [
-      { x: 400, y: 300, text: "GENERADOR APAGADO", powerText: { on: "GENERADOR ENCENDIDO" } },
-      { x: 207, y: 465, text: "CAJAS" },
-      { x: 595, y: 465, text: "TABLERO" },
-    ],
+    props: [],
     interactables: [
       {
         id: "generator_switch",
@@ -283,6 +279,8 @@ export const ROOMS = {
   maintenance_access: {
     name: "Acceso de mantenimiento",
     zone: "service",
+    backgroundImage: { key: "mantenimiento", path: "src/background/mantenimiento.png" },
+    // showWallVisuals: false,
     walls: [
       { x: 0, y: 0, w: 800, h: 42 },
       { x: 0, y: 558, w: 800, h: 42 },
@@ -300,11 +298,7 @@ export const ROOMS = {
       from_generator: { x: 92, y: 302, angle: 0 },
       from_switch: { x: 700, y: 302, angle: 180 },
     },
-    props: [
-      { x: 210, y: 165, text: "REPUESTOS" },
-      { x: 580, y: 165, text: "CONDUCTOS" },
-      { x: 400, y: 394, text: "PUERTA FUTURA" },
-    ],
+    props: [],
     items: [
       { id: "ammo_maintenance_01", type: "ammo", name: "Balas x6", x: 580, y: 450, color: 0xd6d6d6, amount: 6 },
     ],
@@ -315,6 +309,8 @@ export const ROOMS = {
   switch_room: {
     name: "Sala de paneles",
     zone: "service",
+    backgroundImage: { key: "bg_paneles", path: "src/background/paneles.png" },
+    // showWallVisuals: false,
     requiresPower: true,
     walls: [
       { x: 0, y: 0, w: 800, h: 42 },
@@ -332,10 +328,7 @@ export const ROOMS = {
       from_maintenance: { x: 92, y: 302, angle: 0 },
       from_sealed: { x: 400, y: 92, angle: 90 },
     },
-    props: [
-      { x: 400, y: 150, text: "CODIGO: VERDE ROJO VERDE" },
-      { x: 400, y: 456, text: "PANELES DE SEGURIDAD" },
-    ],
+    props: [],
     interactables: [
       {
         id: "switch_a",
@@ -379,6 +372,8 @@ export const ROOMS = {
     name: "Sala sellada",
     zone: "lab",
     requiresPower: true,
+    backgroundImage: { key: "bg_sellada", path: "src/background/sellada.png" },
+    // showWallVisuals: false,
     walls: [
       { x: 0, y: 0, w: 800, h: 42 },
       { x: 0, y: 558, w: 800, h: 42 },
@@ -394,11 +389,7 @@ export const ROOMS = {
     spawns: {
       from_switch: { x: 400, y: 500, angle: 270 },
     },
-    props: [
-      { x: 230, y: 178, text: "ARCHIVO" },
-      { x: 570, y: 178, text: "MEDICINA" },
-      { x: 400, y: 442, text: "PUERTA SELLADA" },
-    ],
+    props: [],
     items: [
       { id: "sealed_note_01", type: "note", name: "Informe viejo", x: 230, y: 278, color: 0xf0e6cf, text: "No todos los cierres dependen de llaves. Algunos paneles cambian el estado de puertas completas." },
       { id: "sealed_medikit_01", type: "medikit", name: "Medikit", x: 570, y: 278, color: 0x5fd178, heal: 35 },
