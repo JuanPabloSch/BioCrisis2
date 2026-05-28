@@ -402,6 +402,7 @@ export const ROOMS = {
     doors: [
       { id: "underground_to_generator", x: 320, y: 118, w: 120, h: 42, to: "generator_room", spawn: "from_underground", label: "Generador" },
       { id: "underground_to_pumps", x: 710, y: 240, w: 42, h: 128, to: "underground_pumps", spawn: "from_entry", label: "Bombas" },
+      { id: "locked_to_pump", x: 320, y: 340, w: 120, h: 42, to: "underground_pumps", spawn: "from_corridor", label: "Bombas" },
     ],
     spawns: {
       from_generator: { x: 400, y: 92, angle: 90 },
@@ -443,6 +444,19 @@ export const ROOMS = {
     ],
     enemies: [
       { id: "pumps_tank_01", type: "tank", x: 410, y: 275, speed: 42, aggroRange: 250, damage: 22, health: 150 },
+    ],
+    interactables: [
+      {
+        id: "pump_switch",
+        type: "pump",
+        label: "activar bomba",
+        x: 400,
+        y: 300,
+        w: 140,
+        h: 90,
+        offVisual: { color: 0xc9a633, alpha: 0.72, strokeColor: 0x332500 },
+        onVisual: { color: 0x7fe28a, alpha: 0.72, strokeColor: 0x17361b },
+      },
     ],
   },
   sealed_room: {
