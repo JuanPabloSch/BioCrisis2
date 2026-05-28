@@ -204,21 +204,18 @@ export const ROOMS = {
     name: "Deposito de laboratorio",
     zone: "lab",
     backgroundImage: { key: "bg_deposito", path: "src/background/deposito.png" },
-    // showWallVisuals: false,
+    showWallVisuals: false,
     requiresPower: false,
     walls: [
-      { x: 0, y: 0, w: 800, h: 42 },
+      { x: 0, y: 0, w: 800, h: 142 },
       { x: 0, y: 558, w: 800, h: 42 },
-      { x: 0, y: 0, w: 42, h: 600 },
-      { x: 758, y: 0, w: 42, h: 600 },
-      { x: 120, y: 120, w: 170, h: 90 },
-      { x: 510, y: 120, w: 170, h: 90 },
-      { x: 310, y: 300, w: 180, h: 78 },
-      { x: 95, y: 420, w: 210, h: 66 },
-      { x: 545, y: 420, w: 160, h: 66 },
+      { x: 0, y: 0, w: 102, h: 600 },
+      { x: 708, y: 0, w: 142, h: 600 },
+      { x: 620, y: 420, w: 170, h: 90 },
+      
     ],
     doors: [
-      { id: "storage_to_locked", x: 360, y: 540, w: 80, h: 42, to: "locked_corridor", spawn: "from_storage", label: "Pasillo" },
+      { id: "storage_to_locked", x: 350, y: 500, w: 120, h: 42, to: "locked_corridor", spawn: "from_storage", label: "Pasillo" },
     ],
     spawns: {
       from_corridor: { x: 400, y: 500, angle: 270 },
@@ -226,7 +223,7 @@ export const ROOMS = {
     props: [],
     items: [
       { id: "ammo_storage_01", type: "ammo", name: "Balas x6", x: 610, y: 455, color: 0xd6d6d6, amount: 6 },
-      { id: "fuse_01", type: "key", name: "Fusible", x: 205, y: 455, color: 0x8ce6ff, description: "Pieza electrica para activar el generador." },
+      { id: "fuse_01", type: "key", name: "Fusible", x: 100, y: 255, color: 0x8ce6ff, description: "Pieza electrica para activar el generador." },
       {
         id: "note_power_01",
         type: "note",
