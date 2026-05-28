@@ -3,7 +3,7 @@ export const ROOMS = {
     name: "Orilla / moto rota",
     zone: "forest",
     backgroundImage: { key: "bg_shore", path: "src/background/orilla.png" },
-    showWallVisuals: false,
+    // showWallVisuals: false,
     playerStart: { x: 165, y: 300, angle: 0 },
     walls: [
       { x: 0, y: 0, w: 800, h: 18 },
@@ -33,6 +33,8 @@ export const ROOMS = {
   forest_path: {
     name: "Camino del bosque",
     zone: "forest",
+    backgroundImage: { key: "bg_forest", path: "src/background/forest.png" },
+    // showWallVisuals: false,
     playerStart: { x: 95, y: 300, angle: 0 },
     walls: [
       { x: 0, y: 0, w: 800, h: 48 },
@@ -50,14 +52,13 @@ export const ROOMS = {
       from_shore: { x: 92, y: 302, angle: 0 },
       from_control: { x: 700, y: 302, angle: 180 },
     },
-    props: [
-      { x: 395, y: 116, text: "BOSQUE" },
-      { x: 395, y: 492, text: "SENDA" },
-    ],
+    props: [],
   },
   control_room: {
     name: "Pantallas de control",
     zone: "control",
+    backgroundImage: { key: "bg_control", path: "src/background/control.png" },
+    // showWallVisuals: false,
     walls: [
       { x: 0, y: 0, w: 800, h: 48 },
       { x: 0, y: 552, w: 800, h: 48 },
@@ -75,10 +76,7 @@ export const ROOMS = {
       from_forest: { x: 92, y: 302, angle: 0 },
       from_entry: { x: 700, y: 302, angle: 180 },
     },
-    props: [
-      { x: 245, y: 175, text: "MONITORES" },
-      { x: 555, y: 175, text: "CONSOLA" },
-    ],
+    props: [],
     items: [
       { id: "lab_key", type: "key", name: "Llave lab", x: 400, y: 430, color: 0xe6c84f, description: "Abre la puerta del pasillo bloqueado desde el hall." },
     ],
@@ -86,6 +84,8 @@ export const ROOMS = {
   building_entry: {
     name: "Entrada del edificio",
     zone: "building",
+    backgroundImage: { key: "bg_entry", path: "src/background/recepcion.png" },
+    // showWallVisuals: false,
     walls: [
       { x: 0, y: 0, w: 800, h: 42 },
       { x: 0, y: 558, w: 800, h: 42 },
@@ -105,9 +105,7 @@ export const ROOMS = {
       from_hall: { x: 700, y: 302, angle: 180 },
       from_safe: { x: 400, y: 498, angle: 270 },
     },
-    props: [
-      { x: 400, y: 340, text: "RECEPCION" },
-    ],
+    props: [],
     items: [
       { id: "ammo_entry_01", type: "ammo", name: "Balas x6", x: 400, y: 390, color: 0xd6d6d6, amount: 6 },
     ],
@@ -115,6 +113,8 @@ export const ROOMS = {
   safe_room: {
     name: "Sala segura",
     zone: "building",
+    backgroundImage: { key: "bg_safe", path: "src/background/safe.png" },
+    // showWallVisuals: false,
     walls: [
       { x: 0, y: 0, w: 800, h: 42 },
       { x: 0, y: 558, w: 800, h: 42 },
@@ -130,11 +130,7 @@ export const ROOMS = {
     spawns: {
       from_entry: { x: 400, y: 92, angle: 90 },
     },
-    props: [
-      { x: 190, y: 165, text: "GUARDADO" },
-      { x: 607, y: 165, text: "BAUL" },
-      { x: 400, y: 438, text: "DESCANSO" },
-    ],
+    props: [],
     items: [
       { id: "medikit_safe_01", type: "medikit", name: "Medikit", x: 400, y: 310, color: 0x5fd178, heal: 35 },
     ],
@@ -142,7 +138,9 @@ export const ROOMS = {
   main_hall: {
     name: "Hall principal",
     zone: "lab",
-    requiresPower: true,
+    backgroundImage: { key: "bg_hall", path: "src/background/hall.png" },
+    // showWallVisuals: false,
+    requiresPower: false,
     walls: [
       { x: 0, y: 0, w: 800, h: 42 },
       { x: 0, y: 558, w: 800, h: 42 },
@@ -160,9 +158,7 @@ export const ROOMS = {
       from_entry: { x: 92, y: 302, angle: 0 },
       from_locked: { x: 700, y: 302, angle: 180 },
     },
-    props: [
-      { x: 400, y: 300, text: "PUERTA AL RESTO DEL MAPA" },
-    ],
+    props: [],
     enemies: [
       { id: "hall_zombie_01", type: "zombie", x: 400, y: 130, speed: 65, aggroRange: 280, damage: 12, health: 60 },
     ],
