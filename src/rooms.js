@@ -196,6 +196,16 @@ export const ROOMS = {
       from_generator: { x: 400, y: 500, angle: 270 },
     },
     props: [],
+    items: [{
+        id: "note_power_01",
+        type: "note",
+        name: "Nota arrugada",
+        x: 400,
+        y: 235,
+        color: 0xf0e6cf,
+        description: "Una nota de mantenimiento.",
+        text: "El generador no arranca sin fusible. Si vuelve la energia, la puerta de mantenimiento deberia destrabarse.",
+      },],
     enemies: [
       { id: "locked_runner_01", type: "runner", x: 430, y: 300, speed: 125, aggroRange: 360, damage: 8, health: 35 },
     ],
@@ -212,7 +222,6 @@ export const ROOMS = {
       { x: 0, y: 0, w: 102, h: 600 },
       { x: 708, y: 0, w: 142, h: 600 },
       { x: 620, y: 420, w: 170, h: 90 },
-      
     ],
     doors: [
       { id: "storage_to_locked", x: 350, y: 500, w: 120, h: 42, to: "locked_corridor", spawn: "from_storage", label: "Pasillo" },
@@ -224,17 +233,7 @@ export const ROOMS = {
     items: [
       { id: "ammo_storage_01", type: "ammo", name: "Balas x6", x: 610, y: 455, color: 0xd6d6d6, amount: 6 },
       { id: "fuse_01", type: "key", name: "Fusible", x: 100, y: 255, color: 0x8ce6ff, description: "Pieza electrica para activar el generador." },
-      {
-        id: "note_power_01",
-        type: "note",
-        name: "Nota arrugada",
-        x: 400,
-        y: 235,
-        color: 0xf0e6cf,
-        description: "Una nota de mantenimiento.",
-        text: "El generador no arranca sin fusible. Si vuelve la energia, la puerta de mantenimiento deberia destrabarse.",
-      },
-    ],
+      ],
     enemies: [
       { id: "storage_sleeper_01", type: "sleeper", x: 590, y: 255, speed: 82, wakeRange: 95, aggroRange: 310, damage: 13, health: 70 },
     ],
