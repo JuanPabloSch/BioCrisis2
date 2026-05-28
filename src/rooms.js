@@ -382,7 +382,7 @@ export const ROOMS = {
       },
     ],
   },
-  underground_entry: {
+underground_entry: {
     name: "Entrada subterranea",
     zone: "underground",
     backgroundImage: { key: "bg_under", path: "src/background/underground.png" },
@@ -401,8 +401,25 @@ export const ROOMS = {
     ],
     doors: [
       { id: "underground_to_generator", x: 320, y: 118, w: 120, h: 42, to: "generator_room", spawn: "from_underground", label: "Generador" },
+      
+      // PUERTA 1: Acceso normal de ida a la sala de bombas (ej. por el pasillo superior derecho)
       { id: "underground_to_pumps", x: 710, y: 240, w: 42, h: 128, to: "underground_pumps", spawn: "from_entry", label: "Bombas" },
-      { id: "locked_to_pump", x: 320, y: 340, w: 120, h: 42, to: "underground_pumps", spawn: "from_corridor", label: "Bombas" },
+      
+      // PUERTA 2 (LA QUE SE DESBLOQUEA): He corregido las coordenadas y su destino.
+      // Usa 'objectiveLocked' (o la propiedad que use tu motor de juego, como 'pumpLocked') 
+      // para que solo se abra cuando la bomba cambie el estado del juego.
+      { 
+        id: "locked_to_pump", 
+        x: 320, 
+        y: 340, 
+        w: 120, 
+        h: 42, 
+        to: "underground_pumps", 
+        spawn: "from_flooded_path", // Le asignamos un spawn especial de llegada
+        label: "Zona Drenada", 
+        objectiveLocked: "pumpSolved", // O la variable que uses en tu código para la bomba
+        lockedMessage: "El camino está inundado. Debes activar las bombas primero."
+      },
     ],
     spawns: {
       from_generator: { x: 400, y: 92, angle: 90 },
@@ -433,9 +450,11 @@ export const ROOMS = {
       { x: 65, y: 10, w: 190, h: 110 },
     ],
     doors: [
+      // CORREGIDO: Volvemos a underground_entry buscando su spawn "from_pumps"
       { id: "pumps_to_underground", x: 50, y: 220, w: 42, h: 128, to: "underground_entry", spawn: "from_pumps", label: "Subsuelo" },
     ],
     spawns: {
+      // Recibe al jugador desde la entrada subterránea
       from_entry: { x: 92, y: 302, angle: 0 },
     },
     props: [],
@@ -448,7 +467,7 @@ export const ROOMS = {
     interactables: [
       {
         id: "pump_switch",
-        type: "pump",
+        type: "pump", // Asegúrate de que tu motor reconozca el tipo "pump" igual que "generator"
         label: "activar bomba",
         x: 400,
         y: 300,

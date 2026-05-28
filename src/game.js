@@ -670,6 +670,8 @@ class PrototypeScene extends Phaser.Scene {
     this.flashPrompt("Generador encendido");
   }
 
+  
+
   getPuzzleSwitches() {
     this.worldState.objectives.switchPuzzle ??= { a: false, b: false, c: false };
     return this.worldState.objectives.switchPuzzle;
