@@ -51,19 +51,19 @@ export const ROOMS = {
     name: "Pantallas de control",
     zone: "control",
     backgroundImage: { key: "bg_control", path: "src/background/control.png" },
-    // showWallVisuals: false,
+    showWallVisuals: false,
     walls: [
-      { x: 0, y: 0, w: 800, h: 48 },
+      { x: 0, y: 0, w: 800, h: 130 },
       { x: 0, y: 552, w: 800, h: 48 },
       { x: 0, y: 0, w: 42, h: 600 },
-      { x: 758, y: 0, w: 42, h: 600 },
-      { x: 160, y: 130, w: 170, h: 90 },
-      { x: 470, y: 130, w: 170, h: 90 },
-      { x: 300, y: 390, w: 200, h: 70 },
+      { x: 740, y: 0, w: 42, h: 600 },
+      { x: 40, y: 450, w: 170, h: 90 },
+      { x: 470, y: 130, w: 120, h: 90 },
+      { x: 480, y: 480, w: 300, h: 70 },
     ],
     doors: [
-      { id: "control_to_forest", x: 18, y: 260, w: 42, h: 88, to: "forest_path", spawn: "from_control", label: "Bosque" },
-      { id: "control_to_entry", x: 740, y: 260, w: 42, h: 88, to: "building_entry", spawn: "from_control", label: "Edificio" },
+      { id: "control_to_forest", x: 28, y: 260, w: 60, h: 88, to: "forest_path", spawn: "from_control", label: "Bosque" },
+      { id: "control_to_entry", x: 740, y: 260, w: 42, h: 180, to: "building_entry", spawn: "from_control", label: "Edificio" },
     ],
     spawns: {
       from_forest: { x: 92, y: 302, angle: 0 },
@@ -71,7 +71,7 @@ export const ROOMS = {
     },
     props: [],
     items: [
-      { id: "lab_key", type: "key", name: "Llave lab", x: 400, y: 430, color: 0xe6c84f, description: "Abre la puerta del pasillo bloqueado desde el hall." },
+      { id: "lab_key", type: "key", name: "Llave lab", x: 610, y: 150, color: 0xe6c84f, description: "Abre la puerta del pasillo bloqueado desde el hall." },
     ],
   },
   building_entry: {
