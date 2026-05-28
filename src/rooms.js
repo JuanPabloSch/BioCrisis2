@@ -418,18 +418,21 @@ export const ROOMS = {
   underground_pumps: {
     name: "Sala de bombas",
     zone: "underground",
+    backgroundImage: { key: "bg_bombas", path: "src/background/bombas.png" },
     requiresFlashlight: true,
+    showWallVisuals: false,
     walls: [
-      { x: 0, y: 0, w: 800, h: 42 },
-      { x: 0, y: 558, w: 800, h: 42 },
+      { x: 0, y: 0, w: 800, h: 82 },
+      { x: 0, y: 518, w: 800, h: 42 },
       { x: 0, y: 0, w: 42, h: 600 },
-      { x: 758, y: 0, w: 42, h: 600 },
-      { x: 150, y: 100, w: 180, h: 120 },
-      { x: 465, y: 100, w: 190, h: 120 },
-      { x: 250, y: 385, w: 300, h: 82 },
+      { x: 728, y: 0, w: 42, h: 600 },
+      { x: 300, y: 230, w: 200, h: 120 },
+      { x: 565, y: 10, w: 190, h: 110 },
+      { x: 560, y: 425, w: 150, h: 82 },
+      { x: 65, y: 10, w: 190, h: 110 },
     ],
     doors: [
-      { id: "pumps_to_underground", x: 18, y: 260, w: 42, h: 88, to: "underground_entry", spawn: "from_pumps", label: "Subsuelo" },
+      { id: "pumps_to_underground", x: 50, y: 220, w: 42, h: 128, to: "underground_entry", spawn: "from_pumps", label: "Subsuelo" },
     ],
     spawns: {
       from_entry: { x: 92, y: 302, angle: 0 },
