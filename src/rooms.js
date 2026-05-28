@@ -367,6 +367,17 @@ export const ROOMS = {
         onVisual: { color: 0x65d17a, alpha: 0.9, strokeColor: 0x12381a },
       },
     ],
+    items: [
+      {
+        id: "note_switch_puzzle_01",
+        type: "note",
+        name: "Nota de paneles",
+        x: 400,
+        y: 224,
+        color: 0xf0e6cf,
+        text: "El cierre sellado usa tres paneles. El patron quedo marcado como estado de luces: verde, rojo, verde.",
+      },
+    ],
   },
   sealed_room: {
     name: "Sala sellada",
