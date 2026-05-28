@@ -11,6 +11,18 @@ export const ENEMY_TYPES = {
     strokeColor: 0x08322f,
     radius: 17,
   },
+  sleeper: {
+    color: 0x4f5146,
+    hitColor: 0xc8c1a8,
+    strokeColor: 0x161812,
+    radius: 18,
+  },
+  tank: {
+    color: 0x6c3a8f,
+    hitColor: 0xc08be8,
+    strokeColor: 0x21102d,
+    radius: 25,
+  },
 };
 
 export function getEnemyType(enemy) {

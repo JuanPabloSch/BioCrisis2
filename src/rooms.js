@@ -133,6 +133,15 @@ export const ROOMS = {
     props: [],
     items: [
       { id: "medikit_safe_01", type: "medikit", name: "Medikit", x: 400, y: 310, color: 0x5fd178, heal: 35 },
+      {
+        id: "note_switch_puzzle_01",
+        type: "note",
+        name: "Nota de paneles",
+        x: 400,
+        y: 224,
+        color: 0xf0e6cf,
+        text: "El cierre sellado usa tres paneles. El patron quedo marcado como estado de luces: verde, rojo, verde.",
+      },
     ],
   },
   main_hall: {
@@ -228,6 +237,9 @@ export const ROOMS = {
         text: "El generador no arranca sin fusible. Si vuelve la energia, la puerta de mantenimiento deberia destrabarse.",
       },
     ],
+    enemies: [
+      { id: "storage_sleeper_01", type: "sleeper", x: 590, y: 255, speed: 82, wakeRange: 95, aggroRange: 310, damage: 13, health: 70 },
+    ],
   },
   generator_room: {
     name: "Sala del generador",
@@ -249,10 +261,12 @@ export const ROOMS = {
     doors: [
       { id: "generator_to_locked", x: 360, y: 18, w: 80, h: 42, to: "locked_corridor", spawn: "from_generator", label: "Pasillo" },
       { id: "generator_to_maintenance", x: 740, y: 260, w: 42, h: 88, to: "maintenance_access", spawn: "from_generator", label: "Mantenimiento", powerLocked: true },
+      { id: "generator_to_underground", x: 360, y: 540, w: 80, h: 42, to: "underground_entry", spawn: "from_generator", label: "Subsuelo", lockedBy: "flashlight_01", lockedMessage: "Necesitas una linterna" },
     ],
     spawns: {
       from_corridor: { x: 400, y: 92, angle: 90 },
       from_maintenance: { x: 700, y: 302, angle: 180 },
+      from_underground: { x: 400, y: 500, angle: 270 },
     },
     props: [],
     interactables: [
@@ -301,6 +315,7 @@ export const ROOMS = {
     props: [],
     items: [
       { id: "ammo_maintenance_01", type: "ammo", name: "Balas x6", x: 580, y: 450, color: 0xd6d6d6, amount: 6 },
+      { id: "flashlight_01", type: "tool", name: "Linterna", x: 230, y: 450, color: 0xfff1a6, description: "Sirve para moverse por zonas sin electricidad." },
     ],
     enemies: [
       { id: "maintenance_runner_01", type: "runner", x: 590, y: 310, speed: 118, aggroRange: 340, damage: 8, health: 35 },
@@ -367,16 +382,61 @@ export const ROOMS = {
         onVisual: { color: 0x65d17a, alpha: 0.9, strokeColor: 0x12381a },
       },
     ],
+  },
+  underground_entry: {
+    name: "Entrada subterranea",
+    zone: "underground",
+    requiresFlashlight: true,
+    walls: [
+      { x: 0, y: 0, w: 800, h: 42 },
+      { x: 0, y: 558, w: 800, h: 42 },
+      { x: 0, y: 0, w: 42, h: 600 },
+      { x: 758, y: 0, w: 42, h: 600 },
+      { x: 145, y: 130, w: 170, h: 78 },
+      { x: 500, y: 120, w: 150, h: 110 },
+      { x: 290, y: 345, w: 230, h: 70 },
+    ],
+    doors: [
+      { id: "underground_to_generator", x: 360, y: 18, w: 80, h: 42, to: "generator_room", spawn: "from_underground", label: "Generador" },
+      { id: "underground_to_pumps", x: 740, y: 260, w: 42, h: 88, to: "underground_pumps", spawn: "from_entry", label: "Bombas" },
+    ],
+    spawns: {
+      from_generator: { x: 400, y: 92, angle: 90 },
+      from_pumps: { x: 700, y: 302, angle: 180 },
+    },
+    props: [],
     items: [
-      {
-        id: "note_switch_puzzle_01",
-        type: "note",
-        name: "Nota de paneles",
-        x: 400,
-        y: 224,
-        color: 0xf0e6cf,
-        text: "El cierre sellado usa tres paneles. El patron quedo marcado como estado de luces: verde, rojo, verde.",
-      },
+      { id: "ammo_underground_01", type: "ammo", name: "Balas x6", x: 180, y: 455, color: 0xd6d6d6, amount: 6 },
+    ],
+    enemies: [
+      { id: "underground_sleeper_01", type: "sleeper", x: 585, y: 355, speed: 78, wakeRange: 90, aggroRange: 280, damage: 13, health: 70 },
+    ],
+  },
+  underground_pumps: {
+    name: "Sala de bombas",
+    zone: "underground",
+    requiresFlashlight: true,
+    walls: [
+      { x: 0, y: 0, w: 800, h: 42 },
+      { x: 0, y: 558, w: 800, h: 42 },
+      { x: 0, y: 0, w: 42, h: 600 },
+      { x: 758, y: 0, w: 42, h: 600 },
+      { x: 150, y: 100, w: 180, h: 120 },
+      { x: 465, y: 100, w: 190, h: 120 },
+      { x: 250, y: 385, w: 300, h: 82 },
+    ],
+    doors: [
+      { id: "pumps_to_underground", x: 18, y: 260, w: 42, h: 88, to: "underground_entry", spawn: "from_pumps", label: "Subsuelo" },
+    ],
+    spawns: {
+      from_entry: { x: 92, y: 302, angle: 0 },
+    },
+    props: [],
+    items: [
+      { id: "medikit_pumps_01", type: "medikit", name: "Medikit", x: 610, y: 455, color: 0x5fd178, heal: 35 },
+    ],
+    enemies: [
+      { id: "pumps_tank_01", type: "tank", x: 410, y: 275, speed: 42, aggroRange: 250, damage: 22, health: 150 },
     ],
   },
   sealed_room: {
@@ -404,6 +464,9 @@ export const ROOMS = {
     items: [
       { id: "sealed_note_01", type: "note", name: "Informe viejo", x: 230, y: 278, color: 0xf0e6cf, text: "No todos los cierres dependen de llaves. Algunos paneles cambian el estado de puertas completas." },
       { id: "sealed_medikit_01", type: "medikit", name: "Medikit", x: 570, y: 278, color: 0x5fd178, heal: 35 },
+    ],
+    enemies: [
+      { id: "sealed_tank_01", type: "tank", x: 400, y: 300, speed: 45, aggroRange: 260, damage: 22, health: 150 },
     ],
   },
 };

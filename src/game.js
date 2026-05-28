@@ -17,6 +17,8 @@ const MAP_NODES = {
   maintenance_access: { label: "Mant.", x: 720, y: 340 },
   switch_room: { label: "Paneles", x: 720, y: 235 },
   sealed_room: { label: "Sellada", x: 720, y: 130 },
+  underground_entry: { label: "Subsuelo", x: 612, y: 445 },
+  underground_pumps: { label: "Bombas", x: 720, y: 445 },
 };
 
 const MAP_LINKS = [
@@ -31,6 +33,8 @@ const MAP_LINKS = [
   ["generator_room", "maintenance_access"],
   ["maintenance_access", "switch_room"],
   ["switch_room", "sealed_room"],
+  ["generator_room", "underground_entry"],
+  ["underground_entry", "underground_pumps"],
 ];
 
 class PrototypeScene extends Phaser.Scene {
@@ -60,6 +64,8 @@ class PrototypeScene extends Phaser.Scene {
     this.cameras.main.setBackgroundColor("#101010");
 
     this.roomLayer = this.add.container(0, 0);
+    this.darknessLayer = this.add.container(0, 0);
+    this.darknessLayer.setDepth(900);
     this.uiLayer = this.add.container(0, 0);
 
     this.wallGroup = this.physics.add.staticGroup();
@@ -175,6 +181,7 @@ class PrototypeScene extends Phaser.Scene {
     this.cleanupBullets();
     this.updateEnemies();
     this.updateNearestInteraction();
+    this.updateFlashlightDarkness();
 
     if (Phaser.Input.Keyboard.JustDown(this.actionKey)) {
       if (this.nearItem) {
@@ -233,6 +240,8 @@ class PrototypeScene extends Phaser.Scene {
     this.enemyGroup.clear(false, false);
     this.bulletGroup.clear(true, true);
     this.roomLayer.removeAll(true);
+    this.darknessLayer.removeAll(true);
+    this.darknessRects = null;
 
     const bg = room.backgroundImage
       ? this.add.image(WIDTH / 2, HEIGHT / 2, room.backgroundImage.key).setDisplaySize(WIDTH, HEIGHT)
@@ -286,6 +295,7 @@ class PrototypeScene extends Phaser.Scene {
       const enemyType = getEnemyType(enemy);
 
       const marker = this.add.circle(enemyState.x, enemyState.y, enemyType.radius, enemyType.color);
+      if (enemy.type === "sleeper" && !enemyState.awake) marker.setAlpha(0.58);
       marker.setData("enemy", enemy);
       marker.setData("enemyState", enemyState);
       marker.setData("enemyType", enemyType);
@@ -313,6 +323,10 @@ class PrototypeScene extends Phaser.Scene {
       this.roomLayer.add(darkness);
     }
 
+    if (room.requiresFlashlight) {
+      this.createFlashlightDarkness();
+    }
+
     this.titleText.setText(room.name);
     this.children.bringToTop(this.player);
     this.children.bringToTop(this.uiLayer);
@@ -321,6 +335,7 @@ class PrototypeScene extends Phaser.Scene {
     this.player.setPosition(spawn.x, spawn.y);
     this.player.rotation = Phaser.Math.DegToRad(spawn.angle) + Math.PI / 2;
     this.player.body.setVelocity(0, 0);
+    this.updateFlashlightDarkness();
   }
 
   createMapOverlay() {
@@ -446,7 +461,19 @@ class PrototypeScene extends Phaser.Scene {
   updateEnemies() {
     for (const enemyMarker of this.enemyGroup.getChildren()) {
       const enemy = enemyMarker.getData("enemy");
+      const enemyState = enemyMarker.getData("enemyState");
       const distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, enemyMarker.x, enemyMarker.y);
+
+      if (enemy.type === "sleeper" && !enemyState.awake) {
+        if (distance > enemy.wakeRange) {
+          enemyMarker.body.setVelocity(0, 0);
+          continue;
+        }
+
+        enemyState.awake = true;
+        enemyMarker.setAlpha(1);
+        this.flashPrompt("Algo se levanto");
+      }
 
       if (distance > enemy.aggroRange || this.worldState.health <= 0) {
         enemyMarker.body.setVelocity(0, 0);
@@ -496,6 +523,7 @@ class PrototypeScene extends Phaser.Scene {
         y: enemy.y,
         health: enemy.health,
         dead: false,
+        awake: enemy.awake ?? enemy.type !== "sleeper",
       };
     }
 
@@ -608,7 +636,7 @@ class PrototypeScene extends Phaser.Scene {
     }
 
     if (!this.hasItem(door.lockedBy)) {
-      this.flashPrompt("Necesitas una llave");
+      this.flashPrompt(door.lockedMessage ?? "Necesitas una llave");
       return;
     }
 
@@ -702,6 +730,38 @@ class PrototypeScene extends Phaser.Scene {
 
   isPowerOffRoom(room) {
     return room.requiresPower && !this.worldState.objectives.generatorOn;
+  }
+
+  hasFlashlight() {
+    return this.hasItem("flashlight_01");
+  }
+
+  createFlashlightDarkness() {
+    this.darknessRects = {
+      top: this.add.rectangle(0, 0, WIDTH, HEIGHT, 0x000000, 0.92).setOrigin(0, 0),
+      bottom: this.add.rectangle(0, 0, WIDTH, HEIGHT, 0x000000, 0.92).setOrigin(0, 0),
+      left: this.add.rectangle(0, 0, WIDTH, HEIGHT, 0x000000, 0.92).setOrigin(0, 0),
+      right: this.add.rectangle(0, 0, WIDTH, HEIGHT, 0x000000, 0.92).setOrigin(0, 0),
+    };
+    this.flashlightGlow = this.add.circle(0, 0, 40, 0xf4e9b8, 0.12);
+    this.darknessLayer.add([...Object.values(this.darknessRects), this.flashlightGlow]);
+  }
+
+  updateFlashlightDarkness() {
+    if (!this.darknessRects) return;
+
+    const radius = this.hasFlashlight() ? 155 : 58;
+    const left = Phaser.Math.Clamp(this.player.x - radius, 0, WIDTH);
+    const right = Phaser.Math.Clamp(this.player.x + radius, 0, WIDTH);
+    const top = Phaser.Math.Clamp(this.player.y - radius, 0, HEIGHT);
+    const bottom = Phaser.Math.Clamp(this.player.y + radius, 0, HEIGHT);
+
+    this.darknessRects.top.setPosition(0, 0).setSize(WIDTH, top);
+    this.darknessRects.bottom.setPosition(0, bottom).setSize(WIDTH, HEIGHT - bottom);
+    this.darknessRects.left.setPosition(0, top).setSize(left, bottom - top);
+    this.darknessRects.right.setPosition(right, top).setSize(WIDTH - right, bottom - top);
+    this.flashlightGlow.setPosition(this.player.x, this.player.y);
+    this.flashlightGlow.setRadius(radius);
   }
 
   useMedikit() {
