@@ -169,7 +169,7 @@ export const ROOMS = {
     },
     props: [],
     enemies: [
-      { id: "hall_zombie_01", type: "zombie", x: 400, y: 130, speed: 65, aggroRange: 280, damage: 12, health: 60 },
+      { id: "hall_zombie_01", type: "zombie", x: 400, y: 430, speed: 65, aggroRange: 280, damage: 12, health: 60 },
     ],
   },
   locked_corridor: {
@@ -200,14 +200,14 @@ export const ROOMS = {
         id: "note_power_01",
         type: "note",
         name: "Nota arrugada",
-        x: 400,
-        y: 235,
+        x: 620,
+        y: 255,
         color: 0xf0e6cf,
         description: "Una nota de mantenimiento.",
         text: "El generador no arranca sin fusible. Si vuelve la energia, la puerta de mantenimiento deberia destrabarse.",
       },],
     enemies: [
-      { id: "locked_runner_01", type: "runner", x: 430, y: 300, speed: 125, aggroRange: 360, damage: 8, health: 35 },
+      { id: "locked_runner_01", type: "runner", x: 80, y: 80, speed: 125, aggroRange: 360, damage: 8, health: 35 },
     ],
   },
   laboratory_storage: {
@@ -231,11 +231,11 @@ export const ROOMS = {
     },
     props: [],
     items: [
-      { id: "ammo_storage_01", type: "ammo", name: "Balas x6", x: 610, y: 455, color: 0xd6d6d6, amount: 6 },
+      { id: "ammo_storage_01", type: "ammo", name: "Balas x6", x: 610, y: 130, color: 0xd6d6d6, amount: 6 },
       { id: "fuse_01", type: "key", name: "Fusible", x: 100, y: 255, color: 0x8ce6ff, description: "Pieza electrica para activar el generador." },
       ],
     enemies: [
-      { id: "storage_sleeper_01", type: "sleeper", x: 590, y: 255, speed: 82, wakeRange: 95, aggroRange: 310, damage: 13, health: 70 },
+      { id: "storage_sleeper_01", type: "sleeper", x: 590, y: 205, speed: 82, wakeRange: 95, aggroRange: 310, damage: 13, health: 70 },
     ],
   },
   generator_room: {
