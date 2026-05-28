@@ -289,19 +289,20 @@ export const ROOMS = {
     name: "Acceso de mantenimiento",
     zone: "service",
     backgroundImage: { key: "mantenimiento", path: "src/background/mantenimiento.png" },
-    // showWallVisuals: false,
+    showWallVisuals: false,
     walls: [
-      { x: 0, y: 0, w: 800, h: 42 },
+      { x: 0, y: 0, w: 800, h: 152 },
       { x: 0, y: 558, w: 800, h: 42 },
       { x: 0, y: 0, w: 42, h: 600 },
       { x: 758, y: 0, w: 42, h: 600 },
-      // { x: 140, y: 115, w: 140, h: 100 },
-      // { x: 500, y: 115, w: 160, h: 100 },
-      // { x: 250, y: 355, w: 300, h: 78 },
+      { x: 100, y: 115, w: 140, h: 70 },
+      { x: 550, y: 135, w: 160, h: 100 },
+      { x: 240, y: 355, w: 100, h: 78 },
+      { x: 600, y: 455, w: 150, h: 118 },
     ],
     doors: [
-      { id: "maintenance_to_generator", x: 18, y: 260, w: 42, h: 88, to: "generator_room", spawn: "from_maintenance", label: "Generador" },
-      { id: "maintenance_to_switch", x: 740, y: 260, w: 42, h: 88, to: "switch_room", spawn: "from_maintenance", label: "Paneles" },
+      { id: "maintenance_to_generator", x: 18, y: 260, w: 42, h: 118, to: "generator_room", spawn: "from_maintenance", label: "Generador" },
+      { id: "maintenance_to_switch", x: 740, y: 260, w: 42, h: 118, to: "switch_room", spawn: "from_maintenance", label: "Paneles" },
     ],
     spawns: {
       from_generator: { x: 92, y: 302, angle: 0 },
@@ -309,9 +310,8 @@ export const ROOMS = {
     },
     props: [],
     items: [
-      { id: "ammo_maintenance_01", type: "ammo", name: "Balas x6", x: 580, y: 450, color: 0xd6d6d6, amount: 6 },
-      { id: "flashlight_01", type: "tool", name: "Linterna", x: 230, y: 450, color: 0xfff1a6, description: "Sirve para moverse por zonas sin electricidad." },
-    ],
+      { id: "ammo_maintenance_01", type: "ammo", name: "Balas x6", x: 140, y: 180, color: 0xd6d6d6, amount: 6 },
+      ],
     enemies: [
       { id: "maintenance_runner_01", type: "runner", x: 590, y: 310, speed: 118, aggroRange: 340, damage: 8, health: 35 },
     ],
@@ -339,6 +339,7 @@ export const ROOMS = {
       from_sealed: { x: 400, y: 92, angle: 90 },
     },
     props: [],
+    items: [{ id: "flashlight_01", type: "tool", name: "Linterna", x: 230, y: 450, color: 0xfff1a6, description: "Sirve para moverse por zonas sin electricidad." },],
     interactables: [
       {
         id: "switch_a",
