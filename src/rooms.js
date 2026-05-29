@@ -510,22 +510,22 @@ underground_entry: {
     name: "Túnel Drenado",
     zone: "underground", // Para que mantenga el color de la zona
     backgroundImage: { key: "bg_tunel1", path: "src/background/tunel1.png" },
-    showWallVisuals: true,
+    showWallVisuals: false,
     requiresFlashlight: false,
     requiresPower: false,
     walls: [
-      // Acá ponés los rectángulos de tus paredes fijas
-      { x: 0, y: 0, w: 800, h: 40 },
-      { x: 0, y: 560, w: 800, h: 40 },
-      { x: 0, y: 40, w: 40, h: 520 },
-      { x: 760, y: 40, w: 40, h: 520 },
+      { x: 0, y: 0, w: 800, h: 180 },
+      { x: 0, y: 428, w: 800, h: 120 },
+      { x: 0, y: 0, w: 42, h: 600 },
+      { x: 708, y: 0, w: 180, h: 600 },
+      
     ],
     doors: [
       // PUERTA 1 (ARRIBA - EN EL MEDIO): Vuelve a la Entrada Subterránea
       {
         id: "tunnel_to_underground",
         x: 340, // Centrada en el medio (X)
-        y: 40,  // Pegada a la pared de arriba (Y)
+        y: 200,  // Pegada a la pared de arriba (Y)
         w: 120, 
         h: 20,  
         label: "Volver al Subsuelo",
