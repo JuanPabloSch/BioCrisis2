@@ -777,9 +777,9 @@ underground_entry: {
 
   underground_lab5: {
     name: "Criogenia (Sector 5)",
-    zone: "underground", requiresPower: false, showWallVisuals: true,
+    zone: "underground", requiresPower: false, showWallVisuals: false,
     backgroundImage: { key: "bg_lab5", path: "src/background/lab5.png" },
-    walls: [{ x: 0, y: 0, w: 800, h: 40 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 0, y: 40, w: 40, h: 520 }, { x: 760, y: 40, w: 40, h: 520 }],
+    walls: [{ x: 0, y: 0, w: 800, h: 110 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 0, y: 40, w: 40, h: 520 }, { x: 760, y: 40, w: 40, h: 520 }, { x: 280, y: 200, w: 200, h: 80 }, { x: 280, y: 335, w: 270, h: 140 }, { x: 40, y: 360, w: 80, h: 190 }, { x: 680, y: 340, w: 80, h: 220 }, { x: 600, y: 60, w: 140, h: 120 }],
     doors: [
       { id: "lab5_to_lab6", x: 40, y: 240, w: 20, h: 120, label: "Ir al Lab 6", to: "underground_lab6", spawn: "from_lab5" },
       { id: "lab5_to_lab1", x: 740, y: 240, w: 20, h: 120, label: "Volver al Lab 1", to: "underground_lab1", spawn: "from_lab5" }
