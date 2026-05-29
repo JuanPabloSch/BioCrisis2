@@ -665,11 +665,13 @@ underground_entry: {
     backgroundImage: { key: "bg_tunel3", path: "src/background/tunel3.png" },
     requiresPower: false,
     requiresFlashlight: true, // Sigue pidiendo linterna
-    showWallVisuals: true,
+    showWallVisuals: false,
     walls: [
-      { x: 0, y: 0, w: 800, h: 40 },
+      { x: 0, y: 0, w: 800, h: 80 },
+      { x: 230, y: 150, w: 600, h: 80 },
       { x: 0, y: 560, w: 800, h: 40 },
-      { x: 0, y: 40, w: 40, h: 520 },
+      { x: 0, y: 40, w: 80, h: 520 },
+      { x: 240, y: 150, w: 80, h: 420 },
       { x: 760, y: 40, w: 40, h: 520 },
     ],
     doors: [
