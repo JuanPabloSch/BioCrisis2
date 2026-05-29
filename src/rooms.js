@@ -733,12 +733,12 @@ underground_entry: {
 
   underground_lab2: {
     name: "Laboratorio de Ensayos (Sector 2)",
-    zone: "underground", requiresPower: false, showWallVisuals: true,
+    zone: "underground", requiresPower: false, showWallVisuals: false,
     backgroundImage: { key: "bg_lab2", path: "src/background/lab2.png" },
-    walls: [{ x: 0, y: 0, w: 800, h: 40 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 0, y: 40, w: 40, h: 520 }, { x: 760, y: 40, w: 40, h: 520 }],
+    walls: [{ x: 0, y: 0, w: 800, h: 80 }, { x: 0, y: 500, w: 800, h: 40 }, { x: 0, y: 40, w: 100, h: 520 }, { x: 700, y: 40, w: 40, h: 520 },{ x: 350, y: 140, w: 100, h: 200 },{ x: 270, y: 200, w: 50, h: 80 },{ x: 480, y: 200, w: 50, h: 140 },{ x: 280, y: 410, w: 240, h: 20 }],
     doors: [
-      { id: "lab2_to_lab1", x: 40, y: 240, w: 20, h: 120, label: "Volver al Lab 1", to: "underground_lab1", spawn: "from_lab2" },
-      { id: "lab2_to_lab3", x: 740, y: 240, w: 20, h: 120, label: "Ir al Lab 3", to: "underground_lab3", spawn: "from_lab2" }
+      { id: "lab2_to_lab1", x: 80, y: 240, w: 20, h: 120, label: "Volver al Lab 1", to: "underground_lab1", spawn: "from_lab2" },
+      { id: "lab2_to_lab3", x: 700, y: 240, w: 20, h: 120, label: "Ir al Lab 3", to: "underground_lab3", spawn: "from_lab2" }
     ],
     spawns: {
       from_lab1: { x: 90, y: 300, angle: 0 },
@@ -749,11 +749,11 @@ underground_entry: {
 
   underground_lab3: {
     name: "Almacén Biológico (Sector 3)",
-    zone: "underground", requiresPower: false, showWallVisuals: true,
+    zone: "underground", requiresPower: false, showWallVisuals: false,
     backgroundImage: { key: "bg_lab3", path: "src/background/lab3.png" },
-    walls: [{ x: 0, y: 0, w: 800, h: 40 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 0, y: 40, w: 40, h: 520 }, { x: 760, y: 40, w: 40, h: 520 }],
+    walls: [{ x: 0, y: 0, w: 800, h: 80 }, { x: 0, y: 520, w: 800, h: 40 }, { x: 0, y: 40, w: 60, h: 520 }, { x: 660, y: 40, w: 40, h: 520 }, { x: 320, y: 210, w: 150, h: 120 }, { x: 70, y: 430, w: 200, h: 100 }, { x: 570, y: 430, w: 100, h: 100 }],
     doors: [
-      { id: "lab3_to_lab2", x: 40, y: 240, w: 20, h: 120, label: "Volver al Lab 2", to: "underground_lab2", spawn: "from_lab3" }
+      { id: "lab3_to_lab2", x: 60, y: 220, w: 20, h: 120, label: "Volver al Lab 2", to: "underground_lab2", spawn: "from_lab3" }
     ],
     spawns: {
       from_lab2: { x: 90, y: 300, angle: 0 }
@@ -763,11 +763,11 @@ underground_entry: {
 
   underground_lab4: {
     name: "Cámara de Desechos (Sector 4)",
-    zone: "underground", requiresPower: false, showWallVisuals: true,
+    zone: "underground", requiresPower: false, showWallVisuals: false,
     backgroundImage: { key: "bg_lab4", path: "src/background/lab4.png" },
-    walls: [{ x: 0, y: 0, w: 800, h: 40 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 0, y: 40, w: 40, h: 520 }, { x: 760, y: 40, w: 40, h: 520 }],
+    walls: [{ x: 0, y: 0, w: 800, h: 90 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 180, y: 150, w: 40, h: 360 }, { x: 670, y: 40, w: 40, h: 520 }, { x: 40, y: 90, w: 40, h: 100 }, { x: 90, y: 150, w: 100, h: 40 }, { x: 440, y: 330, w: 180, h: 100 }, { x: 560, y: 460, w: 100, h: 100 }, { x: 560, y: 60, w: 100, h: 100 }, { x: 40, y: 490, w: 40, h: 100 }, { x: 90, y: 470, w: 100, h: 40 }],
     doors: [
-      { id: "lab4_to_lab1", x: 340, y: 40, w: 120, h: 20, label: "Volver al Lab 1", to: "underground_lab1", spawn: "from_lab4" }
+      { id: "lab4_to_lab1", x: 340, y: 80, w: 120, h: 20, label: "Volver al Lab 1", to: "underground_lab1", spawn: "from_lab4" }
     ],
     spawns: {
       from_lab1: { x: 400, y: 90, angle: 90 }
