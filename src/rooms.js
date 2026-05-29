@@ -386,6 +386,7 @@ underground_entry: {
     name: "Entrada subterranea",
     zone: "underground",
     backgroundImage: { key: "bg_under", path: "src/background/underground.png" },
+    backgroundImageDry: { key: "bg_under_dry", path: "src/background/underground_dry.png" },
     showWallVisuals: false,
     requiresFlashlight: true,
     walls: [
@@ -401,30 +402,26 @@ underground_entry: {
     ],
     doors: [
       { id: "underground_to_generator", x: 320, y: 118, w: 120, h: 42, to: "generator_room", spawn: "from_underground", label: "Generador" },
-      
-      // PUERTA 1: Acceso normal de ida a la sala de bombas (ej. por el pasillo superior derecho)
       { id: "underground_to_pumps", x: 710, y: 240, w: 42, h: 128, to: "underground_pumps", spawn: "from_entry", label: "Bombas" },
       
-      // PUERTA 2 (LA QUE SE DESBLOQUEA): He corregido las coordenadas y su destino.
-      // Usa 'objectiveLocked' (o la propiedad que use tu motor de juego, como 'pumpLocked') 
-      // para que solo se abra cuando la bomba cambie el estado del juego.
+      // PUERTA 2 CORREGIDA: Limpiada la duplicidad y configurada hacia la nueva zona
       { 
         id: "locked_to_pump", 
         x: 320, 
         y: 340, 
         w: 120, 
         h: 42, 
-        to: "underground_pumps", 
-        spawn: "from_flooded_path", // Le asignamos un spawn especial de llegada
+        to: "flooded_zone", // 🟢 Apunta al nuevo túnel drenado
+        spawn: "from_underground", // El spawn donde aparecerá en el túnel
         label: "Zona Drenada", 
-        objectiveLocked: "pumpSolved", // O la variable que uses en tu código para la bomba
-        to: "flooded_zone",
+        objectiveLocked: "pumpSolved",
         lockedMessage: "El camino está inundado. Debes activar las bombas primero."
       },
     ],
     spawns: {
       from_generator: { x: 400, y: 92, angle: 90 },
       from_pumps: { x: 700, y: 302, angle: 180 },
+      from_flooded_zone: { x: 400, y: 320, angle: 90 }, // Spawn por si vuelve de la zona nueva
     },
     props: [],
     items: [
@@ -434,10 +431,12 @@ underground_entry: {
       { id: "underground_sleeper_01", type: "sleeper", x: 585, y: 355, speed: 78, wakeRange: 90, aggroRange: 280, damage: 13, health: 70 },
     ],
   },
+
   underground_pumps: {
     name: "Sala de bombas",
     zone: "underground",
     backgroundImage: { key: "bg_bombas", path: "src/background/bombas.png" },
+    backgroundImageDry: { key: "bg_bombas_dry", path: "src/background/bombas_dry.png" },
     requiresFlashlight: true,
     showWallVisuals: false,
     walls: [
@@ -451,11 +450,9 @@ underground_entry: {
       { x: 65, y: 10, w: 190, h: 110 },
     ],
     doors: [
-      // CORREGIDO: Volvemos a underground_entry buscando su spawn "from_pumps"
       { id: "pumps_to_underground", x: 50, y: 220, w: 42, h: 128, to: "underground_entry", spawn: "from_pumps", label: "Subsuelo" },
     ],
     spawns: {
-      // Recibe al jugador desde la entrada subterránea
       from_entry: { x: 92, y: 302, angle: 0 },
     },
     props: [],
@@ -468,7 +465,7 @@ underground_entry: {
     interactables: [
       {
         id: "pump_switch",
-        type: "pump", // Asegúrate de que tu motor reconozca el tipo "pump" igual que "generator"
+        type: "pump",
         label: "activar bomba",
         x: 400,
         y: 300,

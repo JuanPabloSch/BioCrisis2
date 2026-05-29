@@ -46,8 +46,14 @@ class PrototypeScene extends Phaser.Scene {
 
   preload() {
     for (const room of Object.values(ROOMS)) {
+      // Carga la imagen normal (con agua)
       if (room.backgroundImage) {
         this.load.image(room.backgroundImage.key, room.backgroundImage.path);
+      }
+      
+      // 🟢 NUEVO: Si la habitación tiene fondo seco, lo precarga automáticamente también
+      if (room.backgroundImageDry) {
+        this.load.image(room.backgroundImageDry.key, room.backgroundImageDry.path);
       }
     }
   }
@@ -227,6 +233,16 @@ class PrototypeScene extends Phaser.Scene {
   loadRoom(roomId, spawnId) {
     this.worldState = normalizeWorldState(this.worldState);
     this.saveCurrentRoomEnemies();
+
+    // Refuerzo preventivo de las keys por si venimos de un LoadGame
+    if (this.worldState.objectives.pumpSolved) {
+      if (ROOMS["underground_entry"] && ROOMS["underground_entry"].backgroundImage) {
+        ROOMS["underground_entry"].backgroundImage.key = "bg_under_dry";
+      }
+      if (ROOMS["underground_pumps"] && ROOMS["underground_pumps"].backgroundImage) {
+        ROOMS["underground_pumps"].backgroundImage.key = "bg_bombas_dry";
+      }
+    }
 
     const room = ROOMS[roomId];
     this.currentRoomId = roomId;
@@ -672,15 +688,36 @@ class PrototypeScene extends Phaser.Scene {
       return;
     }
 
+// 3. CASO: BOMBA DE AGUA (Actualizado con keys dinámicas)
     if (interactable.type === "pump") {
       if (this.worldState.objectives.pumpSolved) {
         this.flashPrompt("Las bombas ya estan funcionando");
         return;
       }
 
+      this.player.body.setVelocity(0, 0);
       this.worldState.objectives.pumpSolved = true;
-      this.reloadCurrentRoomAtPlayerPosition();
-      this.flashPrompt("Bomba activada. Zona drenada.");
+
+      // Asignamos las versiones secas agregando el "_dry" a las keys
+      if (ROOMS["underground_entry"] && ROOMS["underground_entry"].backgroundImage) {
+        ROOMS["underground_entry"].backgroundImage.key = "bg_under_dry"; 
+      }
+      if (ROOMS["underground_pumps"] && ROOMS["underground_pumps"].backgroundImage) {
+        ROOMS["underground_pumps"].backgroundImage.key = "bg_bombas_dry";
+      }
+
+      this.flashPrompt("Activando sistema de drenaje...");
+      this.cameras.main.fadeOut(500, 0, 0, 0);
+
+      this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
+        this.reloadCurrentRoomAtPlayerPosition();
+
+        this.time.delayedCall(1000, () => {
+          this.cameras.main.fadeIn(500, 0, 0, 0);
+          this.flashPrompt("Bomba activada. Zona drenada con exito.");
+        });
+      });
+
       return;
     }
   }
