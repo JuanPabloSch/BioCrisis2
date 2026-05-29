@@ -590,14 +590,14 @@ underground_entry: {
       },
       // PUERTA 2 (IZQUIERDA): Reservada para lo que agregues después
       {
-        id: "tunnel2_to_left_zone",
+        id: "tunnel2_to_tunnel3",
         x: 40,  // Pegada a la pared izquierda (X)
         y: 240, // Centrada verticalmente (Y)
         w: 20,
         h: 120,
-        label: "Camino Izquierdo (Bloqueado)",
-        to: "underground_tunnel2", // Por ahora te recarga acá mismo para que no falle
-        spawn: "from_left"
+        label: "Ir al Túnel 3",
+        to: "underground_tunnel3", // 🟢 Cambiado: Ahora va al Túnel 3
+        spawn: "from_tunnel2"
       },
       // PUERTA 3 (ARRIBA - EN EL MEDIO): Reservada para lo que agregues después
       // PUERTA 3 (ARRIBA - EN EL MEDIO): ¡Ahora sí conecta!
@@ -657,6 +657,56 @@ underground_entry: {
       // 🟢 Tu caja de balas bien ubicada en el mapa
       { id: "ammo_pipes_01", type: "ammo", name: "Balas x6", x: 400, y: 250, color: 0xd6d6d6, amount: 6 },
     ],
+    enemies: []
+  },
+  underground_tunnel3: {
+    name: "Túnel Oscuro",
+    zone: "underground",
+    backgroundImage: { key: "bg_tunel3", path: "src/background/tunel3.png" },
+    requiresPower: false,
+    requiresFlashlight: true, // Sigue pidiendo linterna
+    showWallVisuals: false,
+    walls: [
+      { x: 0, y: 0, w: 800, h: 40 },
+      { x: 0, y: 560, w: 800, h: 40 },
+      { x: 0, y: 40, w: 40, h: 520 },
+      { x: 760, y: 40, w: 40, h: 520 },
+    ],
+    doors: [
+      // PUERTA 1: PARED DERECHA - BIEN ARRIBA (Vuelve al Túnel 2)
+      {
+        id: "tunnel3_to_tunnel2",
+        x: 740,   // Acoplada a la derecha
+        y: 60,    // Bien arriba (Y: 60)
+        w: 20,    // Puerta vertical
+        h: 120,
+        label: "Volver al Túnel 2",
+        to: "underground_tunnel2",
+        spawn: "from_left" // Te saca por la izquierda del túnel 2
+      },
+      // PUERTA 2: PARED DE ABAJO - CERCA DE LA IZQUIERDA (Bloqueada por ahora)
+      {
+        id: "tunnel3_to_lab",
+        x: 120,   // Cerca de la pared izquierda (X: 120)
+        y: 540,   // Acoplada al suelo (Y: 540)
+        w: 120,   // Puerta horizontal
+        h: 20,
+        label: "Acceso al Laboratorio (Cerrado)",
+        to: "underground_tunnel3", // Se recarga a sí misma por ahora
+        spawn: "from_locked_exit",
+        lockedMessage: "Está cerrada firmemente desde el otro lado."
+      }
+    ],
+    spawns: {
+      // 🟢 CORREGIDO: Ahora aparecés bien arriba a la derecha (X: 700, Y: 120)
+      // mirando hacia la izquierda (angle: 180) justo al cruzar la puerta
+      from_tunnel2: { x: 700, y: 120, angle: 180 },
+      
+      // Spawn de reserva por si en el futuro volvés desde la puerta de abajo
+      from_lab: { x: 180, y: 500, angle: 270 }
+    },
+    props: [],
+    items: [],
     enemies: []
   },
 };
