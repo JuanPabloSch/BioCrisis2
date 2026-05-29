@@ -518,12 +518,27 @@ underground_entry: {
       { x: 760, y: 40, w: 40, h: 520 },
     ],
     doors: [
+      // PUERTA 1 (ARRIBA - EN EL MEDIO): Vuelve a la Entrada Subterránea
       {
         id: "tunnel_to_underground",
-        x: 40, y: 270, w: 20, h: 60, // Posición de la puerta de regreso
+        x: 340, // Centrada en el medio (X)
+        y: 40,  // Pegada a la pared de arriba (Y)
+        w: 120, 
+        h: 20,  
         label: "Volver al Subsuelo",
-        to: "underground_entry", // Te lleva de vuelta
-        spawn: "from_tunnel"
+        to: "underground_entry",
+        spawn: "from_flooded_zone" // Recordá que este spawn lo agregamos antes en under_entry
+      },
+      // PUERTA 2 (A LA IZQUIERDA): Conecta con el Túnel 2
+      {
+        id: "tunnel_to_tunnel2",
+        x: 40,  // Pegada a la pared izquierda (X)
+        y: 240, // Centrada verticalmente (Y)
+        w: 20, 
+        h: 120, 
+        label: "Ir al Túnel 2",
+        to: "underground_tunnel2",
+        spawn: "from_tunnel1" // Registrá este nombre para cuando crees la otra sala
       }
     ],
     items: [
@@ -539,7 +554,68 @@ underground_entry: {
       { x: 400, y: 100, text: "El agua se ha ido. El camino está despejado." }
     ],
     spawns: {
-      from_underground: { x: 80, y: 300, angle: 0 } // Dónde aparece el jugador al entrar
-    }
+      // Punto de aparición cuando el jugador entra desde la Entrada Subterránea (baja desde arriba)
+      from_underground: { x: 400, y: 90, angle: 90 },
+      // Punto de aparición cuando el jugador vuelve desde el Túnel 2 (entra desde la izquierda)
+      from_tunnel2: { x: 90, y: 300, angle: 0 }
+    },
+  },
+  underground_tunnel2: {
+    name: "Túnel Secundario",
+    zone: "underground",
+    requiresPower: false,
+    // backgroundImage: { key: "bg_tunnel2", path: "src/background/tunnel2.png" }, // Ajustá la key y ruta si tenés foto para esta sala
+    showWallVisuals: false,
+    walls: [
+      { x: 0, y: 0, w: 800, h: 40 },
+      { x: 0, y: 560, w: 800, h: 40 },
+      { x: 0, y: 40, w: 40, h: 520 },
+      { x: 760, y: 40, w: 40, h: 520 },
+    ],
+    doors: [
+      // PUERTA 1 (DERECHA): Vuelve al Túnel Drenado (flooded_zone)
+      {
+        id: "tunnel2_to_tunnel1",
+        x: 740, // Pegada a la pared derecha (X)
+        y: 240, // Centrada verticalmente (Y)
+        w: 20,
+        h: 120,
+        label: "Volver al Túnel 1",
+        to: "flooded_zone",
+        spawn: "from_tunnel2" // Le dice a flooded_zone dónde reubicarte
+      },
+      // PUERTA 2 (IZQUIERDA): Reservada para lo que agregues después
+      {
+        id: "tunnel2_to_left_zone",
+        x: 40,  // Pegada a la pared izquierda (X)
+        y: 240, // Centrada verticalmente (Y)
+        w: 20,
+        h: 120,
+        label: "Camino Izquierdo (Bloqueado)",
+        to: "underground_tunnel2", // Por ahora te recarga acá mismo para que no falle
+        spawn: "from_left"
+      },
+      // PUERTA 3 (ARRIBA - EN EL MEDIO): Reservada para lo que agregues después
+      {
+        id: "tunnel2_to_top_zone",
+        x: 340, // Centrada en el medio (X)
+        y: 40,  // Pegada al techo (Y)
+        w: 120,
+        h: 20,
+        label: "Camino Superior (Bloqueado)",
+        to: "underground_tunnel2", // Por ahora te recarga acá mismo para que no falle
+        spawn: "from_top"
+      }
+    ],
+    spawns: {
+      // Reacciona cuando el jugador entra desde el primer túnel (entra por la derecha)
+      from_tunnel1: { x: 710, y: 300, angle: 180 },
+      // Puntos de spawn de reserva para cuando uses las otras puertas en el futuro:
+      from_left: { x: 90, y: 300, angle: 0 },
+      from_top: { x: 400, y: 90, angle: 90 }
+    },
+    props: [],
+    items: [],
+    enemies: []
   },
 };
