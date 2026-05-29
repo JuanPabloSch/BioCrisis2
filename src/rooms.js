@@ -714,12 +714,12 @@ underground_entry: {
   underground_lab1: {
     name: "Laboratorio Principal (Sector 1)",
     backgroundImage: { key: "bg_lab1", path: "src/background/lab1.png" },
-    zone: "underground", requiresPower: false, showWallVisuals: true,
-    walls: [{ x: 0, y: 0, w: 800, h: 40 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 0, y: 40, w: 40, h: 520 }, { x: 760, y: 40, w: 40, h: 520 }],
+    zone: "underground", requiresPower: false, showWallVisuals: false,
+    walls: [{ x: 0, y: 0, w: 800, h: 80 }, { x: 0, y: 520, w: 800, h: 40 }, { x: 0, y: 40, w: 120, h: 520 }, { x: 700, y: 40, w: 40, h: 520 }, { x: 650, y: 80, w: 40, h: 100 }, { x: 110, y: 80, w: 40, h: 100 }, { x: 300, y: 260, w: 220, h: 100 }],
     doors: [
-      { id: "lab1_to_tunnel3", x: 340, y: 40, w: 120, h: 20, label: "Subir al Túnel 3", to: "underground_tunnel3", spawn: "from_lab" },
-      { id: "lab1_to_lab5", x: 40, y: 240, w: 20, h: 120, label: "Ir al Lab 5 (Oeste)", to: "underground_lab5", spawn: "from_lab1" },
-      { id: "lab1_to_lab2", x: 740, y: 240, w: 20, h: 120, label: "Ir al Lab 2 (Este)", to: "underground_lab2", spawn: "from_lab1" },
+      { id: "lab1_to_tunnel3", x: 340, y: 80, w: 120, h: 20, label: "Subir al Túnel 3", to: "underground_tunnel3", spawn: "from_lab" },
+      { id: "lab1_to_lab5", x: 100, y: 240, w: 20, h: 120, label: "Ir al Lab 5 (Oeste)", to: "underground_lab5", spawn: "from_lab1" },
+      { id: "lab1_to_lab2", x: 700, y: 240, w: 20, h: 120, label: "Ir al Lab 2 (Este)", to: "underground_lab2", spawn: "from_lab1" },
       { id: "lab1_to_lab4", x: 340, y: 540, w: 120, h: 20, label: "Bajar al Lab 4 (Sur)", to: "underground_lab4", spawn: "from_lab1" }
     ],
     spawns: {
