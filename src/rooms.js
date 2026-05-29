@@ -569,11 +569,10 @@ underground_entry: {
     backgroundImage: { key: "bg_tunel2", path: "src/background/tunel2.png" },
     requiresFlashlight: false,
     requiresPower: false,
-    // backgroundImage: { key: "bg_tunnel2", path: "src/background/tunnel2.png" }, // Ajustá la key y ruta si tenés foto para esta sala
-    showWallVisuals: true,
+    showWallVisuals: false,
     walls: [
-      { x: 0, y: 0, w: 800, h: 40 },
-      { x: 0, y: 560, w: 800, h: 40 },
+      { x: 0, y: 0, w: 800, h: 140 },
+      { x: 0, y: 450, w: 800, h: 40 },
       { x: 0, y: 40, w: 40, h: 520 },
       { x: 760, y: 40, w: 40, h: 520 },
     ],
@@ -605,7 +604,7 @@ underground_entry: {
       {
         id: "tunnel2_to_pipes",
         x: 340, // Centrada en el medio (X)
-        y: 40,  // Pegada al techo (Y)
+        y: 140,  // Pegada al techo (Y)
         w: 120,
         h: 20,
         label: "Subir a Sala de Tuberías",
@@ -633,8 +632,8 @@ underground_entry: {
     walls: [
       { x: 0, y: 0, w: 800, h: 40 },
       { x: 0, y: 560, w: 800, h: 40 },
-      { x: 0, y: 40, w: 40, h: 520 },
-      { x: 760, y: 40, w: 40, h: 520 },
+      { x: 0, y: 40, w: 340, h: 520 },
+      { x: 430, y: 40, w: 40, h: 520 },
     ],
     doors: [
       // PUERTA (ABAJO - EN EL MEDIO): Para volver al Túnel 2
