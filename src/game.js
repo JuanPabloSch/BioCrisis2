@@ -5,24 +5,41 @@ import { ROOMS } from "./rooms.js";
 import { createInitialWorldState, loadGameData, normalizeWorldState, saveGameData } from "./saveSystem.js";
 
 const MAP_NODES = {
-  shore: { label: "Orilla", x: 82, y: 235 },
-  forest_path: { label: "Bosque", x: 185, y: 235 },
-  control_room: { label: "Control", x: 288, y: 235 },
-  building_entry: { label: "Entrada", x: 392, y: 235 },
-  safe_room: { label: "Sala segura", x: 392, y: 340 },
-  main_hall: { label: "Hall", x: 502, y: 235 },
-  locked_corridor: { label: "Pasillo", x: 612, y: 235 },
-  laboratory_storage: { label: "Deposito", x: 612, y: 130 },
-  generator_room: { label: "Generador", x: 612, y: 340 },
-  maintenance_access: { label: "Mant.", x: 720, y: 340 },
-  switch_room: { label: "Paneles", x: 720, y: 235 },
-  sealed_room: { label: "Sellada", x: 720, y: 130 },
-  underground_entry: { label: "Subsuelo", x: 612, y: 445 },
-  underground_pumps: { label: "Bombas", x: 720, y: 445 },
-  flooded_zone: { label: "Túnel", x: 612, y: 550 },
-  underground_tunnel2: { label: "Túnel 2", x: 502, y: 550 },
-  underground_pipes: { label: "Tuberías", x: 502, y: 445 },
-  underground_tunnel3: { label: "Túnel 3", x: 392, y: 550 }
+  // --- HILERA SUPERIOR ---
+  laboratory_storage: { label: "Deposito", x: 612, y: 110 },
+  sealed_room: { label: "Sellada", x: 720, y: 110 },
+
+  // --- HILERA PRINCIPAL (El eje central) ---
+  shore: { label: "Orilla", x: 82, y: 185 },
+  forest_path: { label: "Bosque", x: 185, y: 185 },
+  control_room: { label: "Control", x: 288, y: 185 },
+  building_entry: { label: "Entrada", x: 392, y: 185 },
+  main_hall: { label: "Hall", x: 502, y: 185 },
+  locked_corridor: { label: "Pasillo", x: 612, y: 185 },
+  switch_room: { label: "Paneles", x: 720, y: 185 },
+
+  // --- HILERA MEDIA ---
+  safe_room: { label: "Sala segura", x: 392, y: 260 },
+  generator_room: { label: "Generador", x: 612, y: 260 },
+  maintenance_access: { label: "Mant.", x: 720, y: 260 },
+
+  // --- SUBSUELO PARTE 1 ---
+  underground_entry: { label: "Subsuelo", x: 612, y: 335 },
+  underground_pumps: { label: "Bombas", x: 720, y: 335 },
+  underground_pipes: { label: "Tuberías", x: 502, y: 335 },
+
+  // --- SUBSUELO PARTE 2 ---
+  flooded_zone: { label: "Túnel", x: 612, y: 410 },
+  underground_tunnel2: { label: "Túnel 2", x: 502, y: 410 },
+  underground_tunnel3: { label: "Túnel 3", x: 392, y: 410 },
+  // --- COMPLEJO DE LABORATORIOS UNDER ---
+  underground_lab1: { label: "Lab 1", x: 392, y: 485 },
+  underground_lab2: { label: "Lab 2", x: 492, y: 485 },
+  underground_lab3: { label: "Lab 3", x: 592, y: 485 },
+  underground_lab4: { label: "Lab 4", x: 392, y: 550 }, // Va abajo de Lab 1
+  underground_lab5: { label: "Lab 5", x: 292, y: 485 },
+  underground_lab6: { label: "Lab 6", x: 192, y: 485 },
+  underground_lab7: { label: "Lab 7", x: 92,  y: 485 }
 };
 
 const MAP_LINKS = [
@@ -42,7 +59,14 @@ const MAP_LINKS = [
   ["underground_entry", "flooded_zone"],
   ["flooded_zone", "underground_tunnel2"],
   ["underground_tunnel2", "underground_pipes"],
-  ["underground_tunnel2", "underground_tunnel3"]
+  ["underground_tunnel2", "underground_tunnel3"],
+  ["underground_tunnel3", "underground_lab1"], // Conexión desde el túnel
+  ["underground_lab1", "underground_lab2"],
+  ["underground_lab2", "underground_lab3"],
+  ["underground_lab1", "underground_lab4"],
+  ["underground_lab1", "underground_lab5"],
+  ["underground_lab5", "underground_lab6"],
+  ["underground_lab6", "underground_lab7"]
 ];
 
 class PrototypeScene extends Phaser.Scene {

@@ -686,15 +686,11 @@ underground_entry: {
       },
       // PUERTA 2: PARED DE ABAJO - CERCA DE LA IZQUIERDA (Bloqueada por ahora)
       {
-        id: "tunnel3_to_lab",
-        x: 120,   // Cerca de la pared izquierda (X: 120)
-        y: 540,   // Acoplada al suelo (Y: 540)
-        w: 120,   // Puerta horizontal
-        h: 20,
-        label: "Acceso al Laboratorio (Cerrado)",
-        to: "underground_tunnel3", // Se recarga a sí misma por ahora
-        spawn: "from_locked_exit",
-        lockedMessage: "Está cerrada firmemente desde el otro lado."
+        id: "tunnel3_to_lab1",
+        x: 120, y: 540, w: 120, h: 20, // Puerta horizontal abajo a la izquierda
+        label: "Ingresar al Laboratorio",
+        to: "underground_lab1", 
+        spawn: "from_tunnel3"
       }
     ],
     spawns: {
@@ -709,4 +705,111 @@ underground_entry: {
     items: [],
     enemies: []
   },
+  // ==========================================
+  //            ZONA: LABORATORIO Under
+  // ==========================================
+
+  underground_lab1: {
+    name: "Laboratorio Principal (Sector 1)",
+    zone: "underground", requiresPower: false, showWallVisuals: false,
+    walls: [{ x: 0, y: 0, w: 800, h: 40 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 0, y: 40, w: 40, h: 520 }, { x: 760, y: 40, w: 40, h: 520 }],
+    doors: [
+      { id: "lab1_to_tunnel3", x: 340, y: 40, w: 120, h: 20, label: "Subir al Túnel 3", to: "underground_tunnel3", spawn: "from_lab" },
+      { id: "lab1_to_lab5", x: 40, y: 240, w: 20, h: 120, label: "Ir al Lab 5 (Oeste)", to: "underground_lab5", spawn: "from_lab1" },
+      { id: "lab1_to_lab2", x: 740, y: 240, w: 20, h: 120, label: "Ir al Lab 2 (Este)", to: "underground_lab2", spawn: "from_lab1" },
+      { id: "lab1_to_lab4", x: 340, y: 540, w: 120, h: 20, label: "Bajar al Lab 4 (Sur)", to: "underground_lab4", spawn: "from_lab1" }
+    ],
+    spawns: {
+      from_tunnel3: { x: 400, y: 100, angle: 90 }, // Entrás cayendo desde arriba
+      from_lab5: { x: 90, y: 300, angle: 0 },
+      from_lab2: { x: 710, y: 300, angle: 180 },
+      from_lab4: { x: 400, y: 500, angle: 270 }
+    },
+    props: [], items: [], enemies: []
+  },
+
+  underground_lab2: {
+    name: "Laboratorio de Ensayos (Sector 2)",
+    zone: "underground", requiresPower: false, showWallVisuals: false,
+    walls: [{ x: 0, y: 0, w: 800, h: 40 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 0, y: 40, w: 40, h: 520 }, { x: 760, y: 40, w: 40, h: 520 }],
+    doors: [
+      { id: "lab2_to_lab1", x: 40, y: 240, w: 20, h: 120, label: "Volver al Lab 1", to: "underground_lab1", spawn: "from_lab2" },
+      { id: "lab2_to_lab3", x: 740, y: 240, w: 20, h: 120, label: "Ir al Lab 3", to: "underground_lab3", spawn: "from_lab2" }
+    ],
+    spawns: {
+      from_lab1: { x: 90, y: 300, angle: 0 },
+      from_lab3: { x: 710, y: 300, angle: 180 }
+    },
+    props: [], items: [], enemies: []
+  },
+
+  underground_lab3: {
+    name: "Almacén Biológico (Sector 3)",
+    zone: "underground", requiresPower: false, showWallVisuals: false,
+    walls: [{ x: 0, y: 0, w: 800, h: 40 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 0, y: 40, w: 40, h: 520 }, { x: 760, y: 40, w: 40, h: 520 }],
+    doors: [
+      { id: "lab3_to_lab2", x: 40, y: 240, w: 20, h: 120, label: "Volver al Lab 2", to: "underground_lab2", spawn: "from_lab3" }
+    ],
+    spawns: {
+      from_lab2: { x: 90, y: 300, angle: 0 }
+    },
+    props: [], items: [], enemies: []
+  },
+
+  underground_lab4: {
+    name: "Cámara de Desechos (Sector 4)",
+    zone: "underground", requiresPower: false, showWallVisuals: false,
+    walls: [{ x: 0, y: 0, w: 800, h: 40 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 0, y: 40, w: 40, h: 520 }, { x: 760, y: 40, w: 40, h: 520 }],
+    doors: [
+      { id: "lab4_to_lab1", x: 340, y: 40, w: 120, h: 20, label: "Volver al Lab 1", to: "underground_lab1", spawn: "from_lab4" }
+    ],
+    spawns: {
+      from_lab1: { x: 400, y: 90, angle: 90 }
+    },
+    props: [], items: [], enemies: []
+  },
+
+  underground_lab5: {
+    name: "Criogenia (Sector 5)",
+    zone: "underground", requiresPower: false, showWallVisuals: false,
+    walls: [{ x: 0, y: 0, w: 800, h: 40 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 0, y: 40, w: 40, h: 520 }, { x: 760, y: 40, w: 40, h: 520 }],
+    doors: [
+      { id: "lab5_to_lab6", x: 40, y: 240, w: 20, h: 120, label: "Ir al Lab 6", to: "underground_lab6", spawn: "from_lab5" },
+      { id: "lab5_to_lab1", x: 740, y: 240, w: 20, h: 120, label: "Volver al Lab 1", to: "underground_lab1", spawn: "from_lab5" }
+    ],
+    spawns: {
+      from_lab1: { x: 710, y: 300, angle: 180 },
+      from_lab6: { x: 90, y: 300, angle: 0 }
+    },
+    props: [], items: [], enemies: []
+  },
+
+  underground_lab6: {
+    name: "Laboratorio Químico (Sector 6)",
+    zone: "underground", requiresPower: false, showWallVisuals: false,
+    walls: [{ x: 0, y: 0, w: 800, h: 40 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 0, y: 40, w: 40, h: 520 }, { x: 760, y: 40, w: 40, h: 520 }],
+    doors: [
+      { id: "lab6_to_elevator", x: 340, y: 40, w: 120, h: 20, label: "Ascensor de Evacuación (Bloqueado)", to: "underground_lab6", spawn: "from_elev", lockedMessage: "El ascensor principal no tiene energía de reserva." },
+      { id: "lab6_to_lab7", x: 40, y: 240, w: 20, h: 120, label: "Ir al Lab 7", to: "underground_lab7", spawn: "from_lab6" },
+      { id: "lab6_to_lab5", x: 740, y: 240, w: 20, h: 120, label: "Volver al Lab 5", to: "underground_lab5", spawn: "from_lab6" }
+    ],
+    spawns: {
+      from_lab5: { x: 710, y: 300, angle: 180 },
+      from_lab7: { x: 90, y: 300, angle: 0 }
+    },
+    props: [], items: [], enemies: []
+  },
+
+  underground_lab7: {
+    name: "Sala de Servidores Central (Sector 7)",
+    zone: "underground", requiresPower: false, showWallVisuals: false,
+    walls: [{ x: 0, y: 0, w: 800, h: 40 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 0, y: 40, w: 40, h: 520 }, { x: 760, y: 40, w: 40, h: 520 }],
+    doors: [
+      { id: "lab7_to_lab6", x: 740, y: 240, w: 20, h: 120, label: "Volver al Lab 6", to: "underground_lab6", spawn: "from_lab7" }
+    ],
+    spawns: {
+      from_lab6: { x: 710, y: 300, angle: 180 }
+    },
+    props: [], items: [], enemies: []
+  }
 };
