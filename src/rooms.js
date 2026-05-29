@@ -418,6 +418,7 @@ underground_entry: {
         spawn: "from_flooded_path", // Le asignamos un spawn especial de llegada
         label: "Zona Drenada", 
         objectiveLocked: "pumpSolved", // O la variable que uses en tu código para la bomba
+        to: "flooded_zone",
         lockedMessage: "El camino está inundado. Debes activar las bombas primero."
       },
     ],
@@ -507,5 +508,41 @@ underground_entry: {
     enemies: [
       { id: "sealed_tank_01", type: "tank", x: 400, y: 300, speed: 45, aggroRange: 260, damage: 22, health: 150 },
     ],
+  },
+  flooded_zone: {
+    name: "Túnel Drenado",
+    zone: "underground", // Para que mantenga el color de la zona
+    requiresPower: false,
+    walls: [
+      // Acá ponés los rectángulos de tus paredes fijas
+      { x: 0, y: 0, w: 800, h: 40 },
+      { x: 0, y: 560, w: 800, h: 40 },
+      { x: 0, y: 40, w: 40, h: 520 },
+      { x: 760, y: 40, w: 40, h: 520 },
+    ],
+    doors: [
+      {
+        id: "tunnel_to_underground",
+        x: 40, y: 270, w: 20, h: 60, // Posición de la puerta de regreso
+        label: "Volver al Subsuelo",
+        to: "underground_entry", // Te lleva de vuelta
+        spawn: "from_tunnel"
+      }
+    ],
+    items: [
+      // Podés meter una recompensa por haber drenado la zona, como balas o una llave
+      { id: "rare_key", name: "Llave de Laboratorio", type: "key", x: 400, y: 300, color: 0xffd700 }
+    ],
+    interactables: [],
+    enemies: [
+      // Metemos un sleeper que se despierte al verte en esta nueva zona
+      { id: "tunnel_zombie_01", type: "sleeper", x: 500, y: 250, wakeRange: 100, aggroRange: 200, speed: 120, health: 50, damage: 20 }
+    ],
+    props: [
+      { x: 400, y: 100, text: "El agua se ha ido. El camino está despejado." }
+    ],
+    spawns: {
+      from_underground: { x: 80, y: 300, angle: 0 } // Dónde aparece el jugador al entrar
+    }
   },
 };

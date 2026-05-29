@@ -19,6 +19,7 @@ const MAP_NODES = {
   sealed_room: { label: "Sellada", x: 720, y: 130 },
   underground_entry: { label: "Subsuelo", x: 612, y: 445 },
   underground_pumps: { label: "Bombas", x: 720, y: 445 },
+  flooded_zone: { label: "Túnel", x: 612, y: 550 },
 };
 
 const MAP_LINKS = [
@@ -35,6 +36,7 @@ const MAP_LINKS = [
   ["switch_room", "sealed_room"],
   ["generator_room", "underground_entry"],
   ["underground_entry", "underground_pumps"],
+  ["underground_entry", "flooded_zone"],
 ];
 
 class PrototypeScene extends Phaser.Scene {
