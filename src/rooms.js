@@ -509,6 +509,8 @@ underground_entry: {
   flooded_zone: {
     name: "Túnel Drenado",
     zone: "underground", // Para que mantenga el color de la zona
+    backgroundImage: { key: "bg_tunel1", path: "src/background/tunel1.png" },
+    requiresFlashlight: false,
     requiresPower: false,
     walls: [
       // Acá ponés los rectángulos de tus paredes fijas
@@ -563,6 +565,8 @@ underground_entry: {
   underground_tunnel2: {
     name: "Túnel Secundario",
     zone: "underground",
+    backgroundImage: { key: "bg_tunel2", path: "src/background/tunel2.png" },
+    requiresFlashlight: false,
     requiresPower: false,
     // backgroundImage: { key: "bg_tunnel2", path: "src/background/tunnel2.png" }, // Ajustá la key y ruta si tenés foto para esta sala
     showWallVisuals: false,
