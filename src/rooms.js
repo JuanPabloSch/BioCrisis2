@@ -510,6 +510,7 @@ underground_entry: {
     name: "Túnel Drenado",
     zone: "underground", // Para que mantenga el color de la zona
     backgroundImage: { key: "bg_tunel1", path: "src/background/tunel1.png" },
+    showWallVisuals: true,
     requiresFlashlight: false,
     requiresPower: false,
     walls: [
@@ -569,7 +570,7 @@ underground_entry: {
     requiresFlashlight: false,
     requiresPower: false,
     // backgroundImage: { key: "bg_tunnel2", path: "src/background/tunnel2.png" }, // Ajustá la key y ruta si tenés foto para esta sala
-    showWallVisuals: false,
+    showWallVisuals: true,
     walls: [
       { x: 0, y: 0, w: 800, h: 40 },
       { x: 0, y: 560, w: 800, h: 40 },
@@ -628,7 +629,7 @@ underground_entry: {
     zone: "underground",
     requiresPower: false,
     backgroundImage: { key: "bg_pipes", path: "src/background/pipe.png" }, // 🟢 Tu fondo "pipe"
-    showWallVisuals: false,
+    showWallVisuals: true,
     walls: [
       { x: 0, y: 0, w: 800, h: 40 },
       { x: 0, y: 560, w: 800, h: 40 },
@@ -665,7 +666,7 @@ underground_entry: {
     backgroundImage: { key: "bg_tunel3", path: "src/background/tunel3.png" },
     requiresPower: false,
     requiresFlashlight: true, // Sigue pidiendo linterna
-    showWallVisuals: false,
+    showWallVisuals: true,
     walls: [
       { x: 0, y: 0, w: 800, h: 40 },
       { x: 0, y: 560, w: 800, h: 40 },
@@ -711,7 +712,8 @@ underground_entry: {
 
   underground_lab1: {
     name: "Laboratorio Principal (Sector 1)",
-    zone: "underground", requiresPower: false, showWallVisuals: false,
+    backgroundImage: { key: "bg_lab1", path: "src/background/lab1.png" },
+    zone: "underground", requiresPower: false, showWallVisuals: true,
     walls: [{ x: 0, y: 0, w: 800, h: 40 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 0, y: 40, w: 40, h: 520 }, { x: 760, y: 40, w: 40, h: 520 }],
     doors: [
       { id: "lab1_to_tunnel3", x: 340, y: 40, w: 120, h: 20, label: "Subir al Túnel 3", to: "underground_tunnel3", spawn: "from_lab" },
@@ -730,7 +732,8 @@ underground_entry: {
 
   underground_lab2: {
     name: "Laboratorio de Ensayos (Sector 2)",
-    zone: "underground", requiresPower: false, showWallVisuals: false,
+    zone: "underground", requiresPower: false, showWallVisuals: true,
+    backgroundImage: { key: "bg_lab2", path: "src/background/lab2.png" },
     walls: [{ x: 0, y: 0, w: 800, h: 40 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 0, y: 40, w: 40, h: 520 }, { x: 760, y: 40, w: 40, h: 520 }],
     doors: [
       { id: "lab2_to_lab1", x: 40, y: 240, w: 20, h: 120, label: "Volver al Lab 1", to: "underground_lab1", spawn: "from_lab2" },
@@ -745,7 +748,8 @@ underground_entry: {
 
   underground_lab3: {
     name: "Almacén Biológico (Sector 3)",
-    zone: "underground", requiresPower: false, showWallVisuals: false,
+    zone: "underground", requiresPower: false, showWallVisuals: true,
+    backgroundImage: { key: "bg_lab3", path: "src/background/lab3.png" },
     walls: [{ x: 0, y: 0, w: 800, h: 40 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 0, y: 40, w: 40, h: 520 }, { x: 760, y: 40, w: 40, h: 520 }],
     doors: [
       { id: "lab3_to_lab2", x: 40, y: 240, w: 20, h: 120, label: "Volver al Lab 2", to: "underground_lab2", spawn: "from_lab3" }
@@ -758,7 +762,8 @@ underground_entry: {
 
   underground_lab4: {
     name: "Cámara de Desechos (Sector 4)",
-    zone: "underground", requiresPower: false, showWallVisuals: false,
+    zone: "underground", requiresPower: false, showWallVisuals: true,
+    backgroundImage: { key: "bg_lab4", path: "src/background/lab4.png" },
     walls: [{ x: 0, y: 0, w: 800, h: 40 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 0, y: 40, w: 40, h: 520 }, { x: 760, y: 40, w: 40, h: 520 }],
     doors: [
       { id: "lab4_to_lab1", x: 340, y: 40, w: 120, h: 20, label: "Volver al Lab 1", to: "underground_lab1", spawn: "from_lab4" }
@@ -771,7 +776,8 @@ underground_entry: {
 
   underground_lab5: {
     name: "Criogenia (Sector 5)",
-    zone: "underground", requiresPower: false, showWallVisuals: false,
+    zone: "underground", requiresPower: false, showWallVisuals: true,
+    backgroundImage: { key: "bg_lab5", path: "src/background/lab5.png" },
     walls: [{ x: 0, y: 0, w: 800, h: 40 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 0, y: 40, w: 40, h: 520 }, { x: 760, y: 40, w: 40, h: 520 }],
     doors: [
       { id: "lab5_to_lab6", x: 40, y: 240, w: 20, h: 120, label: "Ir al Lab 6", to: "underground_lab6", spawn: "from_lab5" },
@@ -786,7 +792,8 @@ underground_entry: {
 
   underground_lab6: {
     name: "Laboratorio Químico (Sector 6)",
-    zone: "underground", requiresPower: false, showWallVisuals: false,
+    zone: "underground", requiresPower: false, showWallVisuals: true,
+    backgroundImage: { key: "bg_lab6", path: "src/background/lab6.png" },
     walls: [{ x: 0, y: 0, w: 800, h: 40 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 0, y: 40, w: 40, h: 520 }, { x: 760, y: 40, w: 40, h: 520 }],
     doors: [
       { id: "lab6_to_elevator", x: 340, y: 40, w: 120, h: 20, label: "Ascensor de Evacuación (Bloqueado)", to: "underground_lab6", spawn: "from_elev", lockedMessage: "El ascensor principal no tiene energía de reserva." },
@@ -802,7 +809,8 @@ underground_entry: {
 
   underground_lab7: {
     name: "Sala de Servidores Central (Sector 7)",
-    zone: "underground", requiresPower: false, showWallVisuals: false,
+    zone: "underground", requiresPower: false, showWallVisuals: true,
+    backgroundImage: { key: "bg_lab7", path: "src/background/lab7.png" },
     walls: [{ x: 0, y: 0, w: 800, h: 40 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 0, y: 40, w: 40, h: 520 }, { x: 760, y: 40, w: 40, h: 520 }],
     doors: [
       { id: "lab7_to_lab6", x: 740, y: 240, w: 20, h: 120, label: "Volver al Lab 6", to: "underground_lab6", spawn: "from_lab7" }
