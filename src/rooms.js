@@ -600,15 +600,16 @@ underground_entry: {
         spawn: "from_left"
       },
       // PUERTA 3 (ARRIBA - EN EL MEDIO): Reservada para lo que agregues después
+      // PUERTA 3 (ARRIBA - EN EL MEDIO): ¡Ahora sí conecta!
       {
-        id: "tunnel2_to_top_zone",
+        id: "tunnel2_to_pipes",
         x: 340, // Centrada en el medio (X)
         y: 40,  // Pegada al techo (Y)
         w: 120,
         h: 20,
-        label: "Camino Superior (Bloqueado)",
-        to: "underground_tunnel2", // Por ahora te recarga acá mismo para que no falle
-        spawn: "from_top"
+        label: "Subir a Sala de Tuberías",
+        to: "underground_pipes", // 🟢 Cambiado: Ahora te lleva a las tuberías
+        spawn: "from_tunnel2"
       }
     ],
     spawns: {
@@ -620,6 +621,42 @@ underground_entry: {
     },
     props: [],
     items: [],
+    enemies: []
+  },
+  underground_pipes: {
+    name: "Sala de Tuberías",
+    zone: "underground",
+    requiresPower: false,
+    backgroundImage: { key: "bg_pipes", path: "src/background/pipe.png" }, // 🟢 Tu fondo "pipe"
+    showWallVisuals: false,
+    walls: [
+      { x: 0, y: 0, w: 800, h: 40 },
+      { x: 0, y: 560, w: 800, h: 40 },
+      { x: 0, y: 40, w: 40, h: 520 },
+      { x: 760, y: 40, w: 40, h: 520 },
+    ],
+    doors: [
+      // PUERTA (ABAJO - EN EL MEDIO): Para volver al Túnel 2
+      {
+        id: "pipes_to_tunnel2",
+        x: 340,  // Centrada en el medio (X)
+        y: 540,  // Pegada al suelo (Y) para bajar
+        w: 120,
+        h: 20,
+        label: "Bajar al Túnel 2",
+        to: "underground_tunnel2",
+        spawn: "from_top" // Te escupe en el spawn de arriba del túnel 2
+      }
+    ],
+    spawns: {
+      // Apareces abajo (Y: 510) mirando hacia arriba cuando subes desde el Túnel 2
+      from_tunnel2: { x: 400, y: 510, angle: 270 }
+    },
+    props: [],
+    items: [
+      // 🟢 Tu caja de balas bien ubicada en el mapa
+      { id: "ammo_pipes_01", type: "ammo", name: "Balas x6", x: 400, y: 250, color: 0xd6d6d6, amount: 6 },
+    ],
     enemies: []
   },
 };
