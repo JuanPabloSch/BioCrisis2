@@ -169,7 +169,7 @@ export const ROOMS = {
     },
     props: [],
     enemies: [
-      { id: "hall_zombie_01", type: "zombie", x: 400, y: 430, speed: 65, aggroRange: 280, damage: 12, health: 60 },
+      { id: "hall_zombie_01", type: "zombie", x: 400, y: 440, speed: 65, aggroRange: 280, damage: 12, health: 60 },
     ],
   },
   locked_corridor: {
@@ -183,7 +183,7 @@ export const ROOMS = {
       { x: 0, y: 558, w: 800, h: 42 },
       { x: 0, y: 0, w: 42, h: 600 },
       { x: 708, y: 0, w: 80, h: 600 },
-      { x: 338, y: 100, w: 200, h: 325 },
+      { x: 338, y: 120, w: 200, h: 305 },
     ],
     doors: [
       { id: "locked_to_hall", x: 18, y: 260, w: 42, h: 88, to: "main_hall", spawn: "from_locked", label: "Hall" },
@@ -339,7 +339,7 @@ export const ROOMS = {
     ],
     spawns: {
       from_maintenance: { x: 92, y: 302, angle: 0 },
-      from_sealed: { x: 400, y: 92, angle: 90 },
+      from_sealed: { x: 400, y: 152, angle: 90 },
     },
     props: [],
     items: [{ id: "flashlight_01", type: "tool", name: "Linterna", x: 110, y: 400, color: 0xfff1a6, description: "Sirve para moverse por zonas sin electricidad." },],
@@ -617,7 +617,7 @@ underground_entry: {
       from_tunnel1: { x: 710, y: 300, angle: 180 },
       // Puntos de spawn de reserva para cuando uses las otras puertas en el futuro:
       from_left: { x: 90, y: 300, angle: 0 },
-      from_top: { x: 400, y: 90, angle: 90 }
+      from_top: { x: 400, y: 200, angle: 90 }
     },
     props: [],
     items: [],
