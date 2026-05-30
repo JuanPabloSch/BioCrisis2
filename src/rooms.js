@@ -868,10 +868,18 @@ export const ROOMS = {
   //         ZONA NUEVA: SECTOR ELÉCTRICO
   // ==========================================
 
+// ===================================================
+  //   ZONA NUEVA: SECTOR ELÉCTRICO (PUZZLE DE FASES)
+  // ===================================================
+
   elec_elevator_exit: {
-    name: "Piso Técnico - Salida del Ascensor",
-    zone: "electrical", requiresPower: false, showWallVisuals: false,
-    walls: [{ x: 0, y: 0, w: 800, h: 40 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 0, y: 40, w: 40, h: 520 }, { x: 760, y: 40, w: 40, h: 520 }],
+    name: "Piso Técnico - Salida del Ascensor (Sector E1)",
+    zone: "electrical", requiresPower: false, showWallVisuals: true,
+    // Muros perimetrales + cajas de herramientas como obstáculos en las esquinas
+    walls: [
+      { x: 0, y: 0, w: 800, h: 40 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 0, y: 40, w: 40, h: 520 }, { x: 760, y: 40, w: 40, h: 520 },
+      { x: 40, y: 40, w: 120, h: 100 }, { x: 600, y: 460, w: 160, h: 100 } // Cajas / Obstáculos
+    ],
     doors: [
       { id: "elec_elev_to_lab6", x: 340, y: 540, w: 120, h: 20, label: "Bajar por el Ascensor", to: "underground_lab6", spawn: "from_elev" },
       { id: "elec_elev_to_e2", x: 40, y: 240, w: 20, h: 120, label: "Ir a Sector E2", to: "elec_corridor_down", spawn: "from_elevator" }
@@ -881,36 +889,78 @@ export const ROOMS = {
   },
 
   elec_corridor_down: {
-    name: "Pasillo Técnico Inferior (Sector E2)",
-    zone: "electrical", requiresPower: false, showWallVisuals: false,
-    walls: [{ x: 0, y: 0, w: 800, h: 40 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 0, y: 40, w: 40, h: 520 }, { x: 760, y: 40, w: 40, h: 520 }],
+    name: "Pasillo Técnico Inferior (Sector E2) - FASE 2",
+    zone: "electrical", requiresPower: false, showWallVisuals: true,
+    // Bloques en el centro que te obligan a caminar en forma de "S" para esquivar zombies o a Mr. X
+    walls: [
+      { x: 0, y: 0, w: 800, h: 40 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 0, y: 40, w: 40, h: 520 }, { x: 760, y: 40, w: 40, h: 520 },
+      // { x: 250, y: 40, w: 300, h: 160 }, // Turbina central superior
+      { x: 40, y: 360, w: 400, h: 100 }  // Banco de carga inferior
+    ],
     doors: [
       { id: "e2_to_elec_elev", x: 740, y: 240, w: 20, h: 120, label: "Volver al Ascensor", to: "elec_elevator_exit", spawn: "from_e2" },
       { id: "e2_to_e3", x: 340, y: 40, w: 120, h: 20, label: "Subir a Sector E3", to: "elec_corridor_mid", spawn: "from_e2" }
+    ],
+    interactables: [
+      {
+        id: "switch_phase_2",
+        type: "phase_switch",
+        label: "Accionar Disyuntor: FASE 2",
+        x: 680, y: 120, w: 80, h: 60,
+        visual: { color: 0x3a7dba, strokeColor: 0x1a3d5c }
+      }
     ],
     spawns: { from_elevator: { x: 700, y: 300, angle: 180 }, from_e3: { x: 400, y: 100, angle: 90 } },
     props: [], items: [], enemies: []
   },
 
   elec_corridor_mid: {
-    name: "Distribuidor Eléctrico Medio (Sector E3)",
-    zone: "electrical", requiresPower: false, showWallVisuals: false,
-    walls: [{ x: 0, y: 0, w: 800, h: 40 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 0, y: 40, w: 40, h: 520 }, { x: 760, y: 40, w: 40, h: 520 }],
+    name: "Distribuidor Eléctrico Medio (Sector E3) - FASE 3",
+    zone: "electrical", requiresPower: false, showWallVisuals: true,
+    // Dos grandes generadores en paralelo en el medio de la sala
+    walls: [
+      { x: 0, y: 0, w: 800, h: 40 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 0, y: 40, w: 40, h: 520 }, { x: 760, y: 40, w: 40, h: 520 },
+      { x: 180, y: 180, w: 160, h: 240 }, // Generador Izquierdo
+      { x: 460, y: 180, w: 160, h: 240 }  // Generador Derecho
+    ],
     doors: [
       { id: "e3_to_e2", x: 340, y: 540, w: 120, h: 20, label: "Bajar a Sector E2", to: "elec_corridor_down", spawn: "from_e3" },
       { id: "e3_to_e4", x: 340, y: 40, w: 120, h: 20, label: "Subir a Sector E4", to: "elec_corridor_top", spawn: "from_e3" }
+    ],
+    interactables: [
+      {
+        id: "switch_phase_3",
+        type: "phase_switch",
+        label: "Accionar Disyuntor: FASE 3",
+        x: 360, y: 280, w: 80, h: 60, // Justo entre medio de los dos generadores
+        visual: { color: 0x3a7dba, strokeColor: 0x1a3d5c }
+      }
     ],
     spawns: { from_e2: { x: 400, y: 480, angle: 270 }, from_e4: { x: 400, y: 100, angle: 90 } },
     props: [], items: [], enemies: []
   },
 
   elec_corridor_top: {
-    name: "Subestación de Alta Tensión (Sector E4)",
-    zone: "electrical", requiresPower: false, showWallVisuals: false,
-    walls: [{ x: 0, y: 0, w: 800, h: 40 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 0, y: 40, w: 40, h: 520 }, { x: 760, y: 40, w: 40, h: 520 }],
+    name: "Subestación de Alta Tensión (Sector E4) - FASE 1",
+    zone: "electrical", requiresPower: false, showWallVisuals: true,
+    // Laberinto de transformadores chicos (bobinas) esparcidas
+    walls: [
+      { x: 0, y: 0, w: 800, h: 40 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 0, y: 40, w: 40, h: 520 }, { x: 760, y: 40, w: 40, h: 520 },
+      { x: 120, y: 120, w: 100, h: 100 }, { x: 580, y: 120, w: 100, h: 100 },
+      { x: 120, y: 380, w: 100, h: 100 }, { x: 580, y: 380, w: 100, h: 100 }
+    ],
     doors: [
       { id: "e4_to_e3", x: 340, y: 540, w: 120, h: 20, label: "Bajar a Sector E3", to: "elec_corridor_mid", spawn: "from_e4" },
       { id: "e4_to_core", x: 740, y: 240, w: 20, h: 120, label: "Ir al Núcleo", to: "elec_core", spawn: "from_e4" }
+    ],
+    interactables: [
+      {
+        id: "switch_phase_1",
+        type: "phase_switch",
+        label: "Accionar Disyuntor: FASE 1",
+        x: 400, y: 60, w: 80, h: 40,
+        visual: { color: 0x3a7dba, strokeColor: 0x1a3d5c }
+      }
     ],
     spawns: { from_e3: { x: 400, y: 480, angle: 270 }, from_core: { x: 700, y: 300, angle: 180 } },
     props: [], items: [], enemies: []
@@ -918,25 +968,71 @@ export const ROOMS = {
 
   elec_core: {
     name: "Núcleo de Control de Energía",
-    zone: "electrical", requiresPower: false, showWallVisuals: false,
-    walls: [{ x: 0, y: 0, w: 800, h: 40 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 0, y: 40, w: 40, h: 520 }, { x: 760, y: 40, w: 40, h: 520 }],
+    zone: "electrical", requiresPower: false, showWallVisuals: true,
+    // Consola central grande tipo isla que te permite rodearla corriendo
+    walls: [
+      { x: 0, y: 0, w: 800, h: 40 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 0, y: 40, w: 40, h: 520 }, { x: 760, y: 40, w: 40, h: 520 },
+      { x: 250, y: 220, w: 300, h: 160 } // Computadora central isla
+    ],
     doors: [
       { id: "core_to_e4", x: 40, y: 240, w: 20, h: 120, label: "Volver a Sector E4", to: "elec_corridor_top", spawn: "from_core" },
-      { id: "core_to_escape", x: 340, y: 540, w: 120, h: 20, label: "Bajar al Hangar de Escape", to: "elec_escape", spawn: "from_core" }
+      { id: "core_to_escape", x: 340, y: 540, w: 120, h: 20, label: "Bajar al Hangar de Escape", to: "elec_escape", spawn: "from_core", puzzleLocked: "fasesCompletas" }
+    ],
+    interactables: [
+      {
+        id: "main_power_console",
+        type: "core_console",
+        label: "Consola Principal: Sincronizar Sistema",
+        x: 360, y: 45, w: 140, h: 40
+      }
     ],
     spawns: { from_e4: { x: 100, y: 300, angle: 0 }, from_escape: { x: 400, y: 480, angle: 270 } },
     props: [], items: [], enemies: []
   },
 
   elec_escape: {
-    name: "Hangar Técnico (Punto de Salida)",
+    name: "Hangar Técnico (Arena de Emergencia)",
     zone: "electrical", requiresPower: false, showWallVisuals: false,
-    walls: [{ x: 0, y: 0, w: 800, h: 40 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 0, y: 40, w: 40, h: 520 }, { x: 760, y: 40, w: 40, h: 520 }],
-    doors: [
-      { id: "escape_to_core", x: 340, y: 40, w: 120, h: 20, label: "Volver al Núcleo", to: "elec_core", spawn: "from_escape" }
+    // Espacio 100% limpio en el centro para poder correr, rodar y balear al Boss
+    walls: [
+      { x: 0, y: 0, w: 800, h: 40 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 0, y: 40, w: 40, h: 520 }, { x: 760, y: 40, w: 40, h: 520 }
     ],
-    spawns: { from_core: { x: 400, y: 100, angle: 90 } },
+    doors: [
+      { id: "escape_to_core", x: 340, y: 40, w: 120, h: 20, label: "Volver al Núcleo", to: "elec_core", spawn: "from_escape" },
+      // 🟢 PUERTA DE SALIDA: Mañana hacés que se desbloquee cuando la vida de Mr. X llegue a 0
+      { id: "escape_to_final", x: 740, y: 240, w: 20, h: 120, label: "Puerta de Evacuación", to: "elec_final_escape", spawn: "from_hangar", bossLocked: true, lockedMessage: "La compuerta está sellada por el protocolo de combate." }
+    ],
+    spawns: { 
+      from_core: { x: 400, y: 100, angle: 90 },
+      from_final: { x: 700, y: 300, angle: 180 }
+    },
     props: [], items: [], enemies: []
-    }
+  },
+
+  elec_final_escape: {
+    name: "Túnel de Salida Exterior",
+    zone: "electrical", requiresPower: false, showWallVisuals: false,
+    // Un pasillo ancho que va hacia la derecha con la moto esperándote
+    walls: [
+      { x: 0, y: 0, w: 800, h: 120 }, // Techo bajo para dar sensación de túnel de escape
+      { x: 0, y: 480, w: 800, h: 120 },
+      { x: 0, y: 120, w: 40, h: 360 }  // Fondo izquierdo tapado excepto la puerta
+    ],
+    doors: [
+      { id: "final_to_escape", x: 40, y: 240, w: 20, h: 120, label: "Volver al Hangar", to: "elec_escape", spawn: "from_final" }
+    ],
+    interactables: [
+      {
+        id: "escape_motorcycle",
+        type: "vehicle_escape",
+        label: "Subir a la Moto y Escapar a la Chota",
+        x: 500, y: 260, w: 100, h: 80
+      }
+    ],
+    spawns: { 
+      from_hangar: { x: 90, y: 300, angle: 0 } 
+    },
+    props: [], items: [], enemies: []
+  }
   
 };

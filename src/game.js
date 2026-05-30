@@ -48,7 +48,8 @@ const MAP_NODES = {
   elec_corridor_mid:  { label: "Sector E3", x: 92,  y: 305 }, // Subiendo...
   elec_corridor_top:  { label: "Sector E4", x: 92,  y: 230 }, // Esquina superior izquierda
   elec_core:          { label: "Núcleo",    x: 192, y: 230 }, // Centro del bucle blanco
-  elec_escape:        { label: "Hangar E",  x: 292, y: 305 }  // El bloque del medio a la derecha
+ elec_escape:        { label: "Hangar E",  x: 292, y: 305 }, // Arena de pelea con Mr. X
+  elec_final_escape:  { label: "Salida",    x: 392, y: 305 }  // 🟢 Nueva: Acá está la moto tranqui
 };
 
 const MAP_LINKS = [
@@ -84,7 +85,8 @@ const MAP_LINKS = [
   ["elec_corridor_down", "elec_corridor_mid"],
   ["elec_corridor_mid",  "elec_corridor_top"],
   ["elec_corridor_top",  "elec_core"],
-  ["elec_core",          "elec_escape"] 
+  ["elec_core",          "elec_escape"],
+  ["elec_escape",        "elec_final_escape"] // 🟢 Conexión nueva
 ]; // <-- Asegurate de que cierre con ];
 
 class PrototypeScene extends Phaser.Scene {
