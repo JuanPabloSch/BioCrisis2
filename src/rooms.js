@@ -395,7 +395,7 @@ export const ROOMS = {
       },
     ],
   },
-underground_entry: {
+  underground_entry: {
     name: "Entrada subterranea",
     zone: "underground",
     backgroundImage: { key: "bg_under", path: "src/background/underground.png" },
