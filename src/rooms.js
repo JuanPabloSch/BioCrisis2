@@ -793,26 +793,26 @@ underground_entry: {
 
   underground_lab6: {
     name: "Laboratorio Químico (Sector 6)",
-    zone: "underground", requiresPower: false, showWallVisuals: true,
+    zone: "underground", requiresPower: false, showWallVisuals: false,
     backgroundImage: { key: "bg_lab6", path: "src/background/lab6.png" },
-    walls: [{ x: 0, y: 0, w: 800, h: 40 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 0, y: 40, w: 40, h: 520 }, { x: 760, y: 40, w: 40, h: 520 }],
+    walls: [{ x: 0, y: 0, w: 800, h: 120 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 200, y: 520, w: 450, h: 40 }, { x: 60, y: 40, w: 40, h: 520 }, { x: 700, y: 40, w: 40, h: 520 }, { x: 340, y: 230, w: 100, h: 140 }, { x: 170, y: 340, w: 80, h: 80 }, { x: 540, y: 320, w: 80, h: 50 }, { x: 600, y: 120, w: 80, h: 50 }],
     doors: [
-      { id: "lab6_to_elevator", x: 340, y: 40, w: 120, h: 20, label: "Ascensor de Evacuación (Bloqueado)", to: "underground_lab6", spawn: "from_elev", lockedMessage: "El ascensor principal no tiene energía de reserva." },
-      { id: "lab6_to_lab7", x: 40, y: 240, w: 20, h: 120, label: "Ir al Lab 7", to: "underground_lab7", spawn: "from_lab6" },
-      { id: "lab6_to_lab5", x: 740, y: 240, w: 20, h: 120, label: "Volver al Lab 5", to: "underground_lab5", spawn: "from_lab6" }
+      { id: "lab6_to_elevator", x: 340, y: 90, w: 120, h: 20, label: "Ascensor de Evacuación (Bloqueado)", to: "underground_lab6", spawn: "from_elev", lockedMessage: "El ascensor principal no tiene energía de reserva." },
+      { id: "lab6_to_lab7", x: 100, y: 280, w: 20, h: 120, label: "Ir al Lab 7", to: "underground_lab7", spawn: "from_lab6" },
+      { id: "lab6_to_lab5", x: 700, y: 280, w: 20, h: 120, label: "Volver al Lab 5", to: "underground_lab5", spawn: "from_lab6" }
     ],
     spawns: {
       from_lab5: { x: 710, y: 300, angle: 180 },
-      from_lab7: { x: 90, y: 300, angle: 0 }
+      from_lab7: { x: 120, y: 300, angle: 0 }
     },
     props: [], items: [], enemies: []
   },
 
   underground_lab7: {
     name: "Sala de Servidores Central (Sector 7)",
-    zone: "underground", requiresPower: false, showWallVisuals: true,
+    zone: "underground", requiresPower: false, showWallVisuals: false,
     backgroundImage: { key: "bg_lab7", path: "src/background/lab7.png" },
-    walls: [{ x: 0, y: 0, w: 800, h: 40 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 0, y: 40, w: 40, h: 520 }, { x: 760, y: 40, w: 40, h: 520 }],
+    walls: [{ x: 0, y: 0, w: 800, h: 110 }, { x: 0, y: 530, w: 800, h: 40 }, { x: 10, y: 40, w: 40, h: 520 }, { x: 740, y: 40, w: 40, h: 520 }],
     doors: [
       { id: "lab7_to_lab6", x: 740, y: 240, w: 20, h: 120, label: "Volver al Lab 6", to: "underground_lab6", spawn: "from_lab7" }
     ],
