@@ -612,7 +612,6 @@ underground_entry: {
         to: "underground_tunnel3", // 🟢 Cambiado: Ahora va al Túnel 3
         spawn: "from_tunnel2"
       },
-      // PUERTA 3 (ARRIBA - EN EL MEDIO): Reservada para lo que agregues después
       // PUERTA 3 (ARRIBA - EN EL MEDIO): ¡Ahora sí conecta!
       {
         id: "tunnel2_to_pipes",
@@ -634,7 +633,17 @@ underground_entry: {
     },
     props: [],
     items: [],
-    enemies: []
+    enemies: [
+      { id: "tunnel_rat_01", type: "rat", x: 200, y: 200, speed: 110, aggroRange: 300, damage: 3, health: 5 },
+      { id: "tunnel_rat_02", type: "rat", x: 200, y: 200, speed: 120, aggroRange: 300, damage: 3, health: 5 },
+      { id: "tunnel_rat_03", type: "rat", x: 200, y: 200, speed: 140, aggroRange: 300, damage: 3, health: 5 },
+      { id: "tunnel_rat_04", type: "rat", x: 200, y: 200, speed: 130, aggroRange: 300, damage: 3, health: 5 },
+      { id: "tunnel_rat_05", type: "rat", x: 200, y: 200, speed: 135, aggroRange: 300, damage: 3, health: 5 },
+      { id: "tunnel_rat_06", type: "rat", x: 200, y: 400, speed: 110, aggroRange: 300, damage: 3, health: 5 },
+      { id: "tunnel_rat_07", type: "rat", x: 200, y: 400, speed: 120, aggroRange: 300, damage: 3, health: 5 },
+      { id: "tunnel_rat_08", type: "rat", x: 200, y: 400, speed: 140, aggroRange: 300, damage: 3, health: 5 },
+      { id: "tunnel_rat_09", type: "rat", x: 200, y: 400, speed: 130, aggroRange: 300, damage: 3, health: 5 },
+    ]
   },
   underground_pipes: {
     name: "Sala de Tuberías",

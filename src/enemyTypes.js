@@ -23,6 +23,12 @@ export const ENEMY_TYPES = {
     strokeColor: 0x21102d,
     radius: 25,
   },
+  rat: {
+    color: 0x6c3a8c,
+    hitColor: 0xc08be8,
+    strokeColor: 0x21102d,
+    radius: 8,
+  },
 };
 
 export function getEnemyType(enemy) {
