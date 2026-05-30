@@ -38,14 +38,17 @@ export const ROOMS = {
       { x: 170, y: 340, w: 600, h: 222 },
     ],
     doors: [
-      { id: "forest_to_shore", x: 108, y: 260, w: 42, h: 88, to: "shore", spawn: "from_forest", label: "Orilla" },
+      { id: "forest_to_shore", x: 78, y: 260, w: 32, h: 88, to: "shore", spawn: "from_forest", label: "Orilla" },
       { id: "forest_to_control", x: 700, y: 200, w: 42, h: 88, to: "control_room", spawn: "from_forest", label: "Control" },
     ],
     spawns: {
-      from_shore: { x: 92, y: 302, angle: 0 },
+      from_shore: { x: 110, y: 302, angle: 0 },
       from_control: { x: 700, y: 302, angle: 180 },
     },
     props: [],
+    enemies: [
+      { id: "forest_zombie_01", type: "zombie", x: 100, y: 440, speed: 65, aggroRange: 280, damage: 12, health: 60 },
+    ],
   },
   control_room: {
     name: "Pantallas de control",
@@ -102,6 +105,9 @@ export const ROOMS = {
     items: [
       { id: "ammo_entry_01", type: "ammo", name: "Balas x6", x: 400, y: 210, color: 0xd6d6d6, amount: 6 },
     ],
+    enemies: [
+      { id: "building_zombie_01", type: "zombie", x: 600, y: 440, speed: 65, aggroRange: 280, damage: 12, health: 60 },
+    ],
   },
   safe_room: {
     name: "Sala segura",
@@ -128,6 +134,10 @@ export const ROOMS = {
       from_entry: { x: 400, y: 92, angle: 90 },
     },
     props: [],
+    enemies: [
+      { id: "safe_zombie_01", type: "zombie", x: 200, y: 440, speed: 65, aggroRange: 280, damage: 12, health: 60 },
+      { id: "safe_zombie_02", type: "zombie", x: 600, y: 440, speed: 65, aggroRange: 280, damage: 12, health: 60 },
+    ],
     items: [
       { id: "medikit_safe_01", type: "medikit", name: "Medikit", x: 180, y: 280, color: 0x5fd178, heal: 35 },
       {
@@ -208,6 +218,7 @@ export const ROOMS = {
       },],
     enemies: [
       { id: "locked_runner_01", type: "runner", x: 80, y: 80, speed: 125, aggroRange: 360, damage: 8, health: 35 },
+      { id: "locked_runner_02", type: "runner", x: 620, y: 380, speed: 135, aggroRange: 360, damage: 8, health: 35 },
     ],
   },
   laboratory_storage: {
@@ -235,7 +246,8 @@ export const ROOMS = {
       { id: "fuse_01", type: "key", name: "Fusible", x: 100, y: 255, color: 0x8ce6ff, description: "Pieza electrica para activar el generador." },
       ],
     enemies: [
-      { id: "storage_sleeper_01", type: "sleeper", x: 590, y: 205, speed: 82, wakeRange: 95, aggroRange: 310, damage: 13, health: 70 },
+      { id: "storage_sleeper_01", type: "sleeper", x: 590, y: 205, speed: 92, wakeRange: 95, aggroRange: 310, damage: 13, health: 70 },
+      { id: "storage_sleeper_02", type: "sleeper", x: 130, y: 305, speed: 82, wakeRange: 105, aggroRange: 310, damage: 13, health: 70 },
     ],
   },
   generator_room: {
@@ -282,7 +294,7 @@ export const ROOMS = {
       { id: "medikit_generator_01", type: "medikit", name: "Medikit", x: 560, y: 125, color: 0x5fd178, heal: 35 },
     ],
     enemies: [
-      { id: "generator_zombie_01", type: "zombie", x: 185, y: 330, speed: 58, aggroRange: 240, damage: 12, health: 60 },
+      { id: "generator_zombie_02", type: "zombie", x: 525, y: 330, speed: 58, aggroRange: 240, damage: 12, health: 60 },
     ],
   },
   maintenance_access: {
@@ -314,6 +326,7 @@ export const ROOMS = {
       ],
     enemies: [
       { id: "maintenance_runner_01", type: "runner", x: 590, y: 310, speed: 118, aggroRange: 340, damage: 8, health: 35 },
+      { id: "maintenance_runner_02", type: "runner", x: 620, y: 380, speed: 135, aggroRange: 360, damage: 8, health: 35 },
     ],
   },
   switch_room: {
@@ -551,14 +564,14 @@ underground_entry: {
     interactables: [],
     enemies: [
       // Metemos un sleeper que se despierte al verte en esta nueva zona
-      { id: "tunnel_zombie_01", type: "sleeper", x: 500, y: 250, wakeRange: 100, aggroRange: 200, speed: 120, health: 50, damage: 20 }
+      { id: "tunnel_zombie_02", type: "sleeper", x: 100, y: 250, wakeRange: 100, aggroRange: 200, speed: 120, health: 50, damage: 20 },
+      { id: "tunnel_zombie_03", type: "sleeper", x: 100, y: 350, wakeRange: 80, aggroRange: 200, speed: 120, health: 50, damage: 20 },
+      { id: "tunnel_zombie_04", type: "sleeper", x: 600, y: 250, wakeRange: 100, aggroRange: 200, speed: 120, health: 50, damage: 20 }
     ],
-    props: [
-      { x: 400, y: 100, text: "El agua se ha ido. El camino está despejado." }
-    ],
+    props: [],
     spawns: {
       // Punto de aparición cuando el jugador entra desde la Entrada Subterránea (baja desde arriba)
-      from_underground: { x: 400, y: 90, angle: 90 },
+      from_underground: { x: 400, y: 190, angle: 90 },
       // Punto de aparición cuando el jugador vuelve desde el Túnel 2 (entra desde la izquierda)
       from_tunnel2: { x: 90, y: 300, angle: 0 }
     },
