@@ -995,7 +995,7 @@ export const ROOMS = {
   elec_escape: {
     name: "Hangar Técnico (Arena de Emergencia)",
     zone: "electrical", requiresPower: false, showWallVisuals: false,
-    backgroundImage: { key: "bg_escape", path: "src/background/escape.png" },
+    backgroundImage: { key: "bg_hangar", path: "src/background/hangar.png" },
     // Espacio 100% limpio en el centro para poder correr, rodar y balear al Boss
     walls: [
       { x: 0, y: 0, w: 800, h: 40 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 0, y: 40, w: 40, h: 520 }, { x: 760, y: 40, w: 40, h: 520 }
@@ -1014,7 +1014,8 @@ export const ROOMS = {
 
   elec_final_escape: {
     name: "Túnel de Salida Exterior",
-    zone: "electrical", requiresPower: false, showWallVisuals: false,
+    zone: "electrical", requiresPower: false, showWallVisuals: true,
+    backgroundImage: { key: "bg_escape", path: "src/background/escape.png"},
     // Un pasillo ancho que va hacia la derecha con la moto esperándote
     walls: [
       { x: 0, y: 0, w: 800, h: 120 }, // Techo bajo para dar sensación de túnel de escape
