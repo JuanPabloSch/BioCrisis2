@@ -6,68 +6,86 @@ import { createInitialWorldState, loadGameData, normalizeWorldState, saveGameDat
 
 const MAP_NODES = {
   // --- HILERA SUPERIOR ---
-  laboratory_storage: { label: "Deposito", x: 612, y: 110 },
-  sealed_room: { label: "Sellada", x: 720, y: 110 },
+  laboratory_storage: { label: "Deposito", x: 612, y: 80 },
+  sealed_room: { label: "Sellada", x: 720, y: 80 },
 
-  // --- HILERA PRINCIPAL (El eje central) ---
-  shore: { label: "Orilla", x: 82, y: 185 },
-  forest_path: { label: "Bosque", x: 185, y: 185 },
-  control_room: { label: "Control", x: 288, y: 185 },
-  building_entry: { label: "Entrada", x: 392, y: 185 },
-  main_hall: { label: "Hall", x: 502, y: 185 },
-  locked_corridor: { label: "Pasillo", x: 612, y: 185 },
-  switch_room: { label: "Paneles", x: 720, y: 185 },
+  // --- HILERA PRINCIPAL ---
+  shore: { label: "Orilla", x: 82, y: 155 },
+  forest_path: { label: "Bosque", x: 185, y: 155 },
+  control_room: { label: "Control", x: 288, y: 155 },
+  building_entry: { label: "Entrada", x: 392, y: 155 },
+  main_hall: { label: "Hall", x: 502, y: 155 },
+  locked_corridor: { label: "Pasillo", x: 612, y: 155 },
+  switch_room: { label: "Paneles", x: 720, y: 155 },
 
   // --- HILERA MEDIA ---
-  safe_room: { label: "Sala segura", x: 392, y: 260 },
-  generator_room: { label: "Generador", x: 612, y: 260 },
-  maintenance_access: { label: "Mant.", x: 720, y: 260 },
+  safe_room: { label: "Sala segura", x: 392, y: 230 },
+  generator_room: { label: "Generador", x: 612, y: 230 },
+  maintenance_access: { label: "Mant.", x: 720, y: 230 },
 
   // --- SUBSUELO PARTE 1 ---
-  underground_entry: { label: "Subsuelo", x: 612, y: 335 },
-  underground_pumps: { label: "Bombas", x: 720, y: 335 },
-  underground_pipes: { label: "Tuberías", x: 502, y: 335 },
+  underground_entry: { label: "Subsuelo", x: 612, y: 305 },
+  underground_pumps: { label: "Bombas", x: 720, y: 305 },
+  underground_pipes: { label: "Tuberías", x: 502, y: 305 },
 
   // --- SUBSUELO PARTE 2 ---
-  flooded_zone: { label: "Túnel", x: 612, y: 410 },
-  underground_tunnel2: { label: "Túnel 2", x: 502, y: 410 },
-  underground_tunnel3: { label: "Túnel 3", x: 392, y: 410 },
+  flooded_zone: { label: "Túnel", x: 612, y: 380 },
+  underground_tunnel2: { label: "Túnel 2", x: 502, y: 380 },
+  underground_tunnel3: { label: "Túnel 3", x: 392, y: 380 },
+
   // --- COMPLEJO DE LABORATORIOS UNDER ---
-  underground_lab1: { label: "Lab 1", x: 392, y: 485 },
-  underground_lab2: { label: "Lab 2", x: 492, y: 485 },
-  underground_lab3: { label: "Lab 3", x: 592, y: 485 },
-  underground_lab4: { label: "Lab 4", x: 392, y: 550 }, // Va abajo de Lab 1
-  underground_lab5: { label: "Lab 5", x: 292, y: 485 },
-  underground_lab6: { label: "Lab 6", x: 192, y: 485 },
-  underground_lab7: { label: "Lab 7", x: 92,  y: 485 }
+  underground_lab1: { label: "Lab 1", x: 392, y: 455 },
+  underground_lab2: { label: "Lab 2", x: 492, y: 455 },
+  underground_lab3: { label: "Lab 3", x: 592, y: 455 },
+  underground_lab4: { label: "Lab 4", x: 392, y: 520 },
+  underground_lab5: { label: "Lab 5", x: 292, y: 455 },
+  underground_lab6: { label: "Lab 6", x: 192, y: 455 },
+  underground_lab7: { label: "Lab 7", x: 92,  y: 455 },
+
+  // --- 🟢 NUEVA ZONA: RECTÁNGULOS BLANCOS (ALINEACIÓN IZQUIERDA) ---
+  elec_elevator_exit: { label: "Sector E1", x: 192, y: 380 }, // Arriba de Lab 6
+  elec_corridor_down: { label: "Sector E2", x: 92,  y: 380 }, // Al lado del ascensor
+  elec_corridor_mid:  { label: "Sector E3", x: 92,  y: 305 }, // Subiendo...
+  elec_corridor_top:  { label: "Sector E4", x: 92,  y: 230 }, // Esquina superior izquierda
+  elec_core:          { label: "Núcleo",    x: 192, y: 230 }, // Centro del bucle blanco
+  elec_escape:        { label: "Hangar E",  x: 292, y: 305 }  // El bloque del medio a la derecha
 };
 
 const MAP_LINKS = [
+  // --- CONEXIONES ORIGINALES (Revisá que no falte ninguna coma) ---
   ["shore", "forest_path"],
   ["forest_path", "control_room"],
   ["control_room", "building_entry"],
-  ["building_entry", "safe_room"],
   ["building_entry", "main_hall"],
+  ["building_entry", "safe_room"],
   ["main_hall", "locked_corridor"],
   ["locked_corridor", "laboratory_storage"],
   ["locked_corridor", "generator_room"],
   ["generator_room", "maintenance_access"],
+  ["generator_room", "underground_entry"],
   ["maintenance_access", "switch_room"],
   ["switch_room", "sealed_room"],
-  ["generator_room", "underground_entry"],
   ["underground_entry", "underground_pumps"],
   ["underground_entry", "flooded_zone"],
   ["flooded_zone", "underground_tunnel2"],
   ["underground_tunnel2", "underground_pipes"],
   ["underground_tunnel2", "underground_tunnel3"],
-  ["underground_tunnel3", "underground_lab1"], // Conexión desde el túnel
+  ["underground_tunnel3", "underground_lab1"],
   ["underground_lab1", "underground_lab2"],
   ["underground_lab2", "underground_lab3"],
   ["underground_lab1", "underground_lab4"],
   ["underground_lab1", "underground_lab5"],
   ["underground_lab5", "underground_lab6"],
-  ["underground_lab6", "underground_lab7"]
-];
+  ["underground_lab6", "underground_lab7"],
+
+  // --- 🟢 NUEVAS CONEXIONES BLANCAS (Controlá los corchetes de estas) ---
+  ["underground_lab6", "elec_elevator_exit"],
+  ["elec_elevator_exit", "elec_corridor_down"],
+  ["elec_corridor_down", "elec_corridor_mid"],
+  ["elec_corridor_mid",  "elec_corridor_top"],
+  ["elec_corridor_top",  "elec_core"],
+  ["elec_core",          "elec_escape"] 
+]; // <-- Asegurate de que cierre con ];
 
 class PrototypeScene extends Phaser.Scene {
   constructor() {

@@ -834,7 +834,13 @@ export const ROOMS = {
     backgroundImage: { key: "bg_lab6", path: "src/background/lab6.png" },
     walls: [{ x: 0, y: 0, w: 800, h: 120 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 200, y: 520, w: 450, h: 40 }, { x: 60, y: 40, w: 40, h: 520 }, { x: 700, y: 40, w: 40, h: 520 }, { x: 340, y: 230, w: 100, h: 140 }, { x: 170, y: 340, w: 80, h: 80 }, { x: 540, y: 320, w: 80, h: 50 }, { x: 600, y: 120, w: 80, h: 50 }],
     doors: [
-      { id: "lab6_to_elevator", x: 340, y: 90, w: 120, h: 20, label: "Ascensor de Evacuación (Bloqueado)", to: "underground_lab6", spawn: "from_elev", lockedMessage: "El ascensor principal no tiene energía de reserva." },
+      { 
+        id: "lab6_to_elevator", 
+        x: 340, y: 140, w: 120, h: 20, 
+        label: "Usar Ascensor de Carga", 
+        to: "elec_elevator_exit", 
+        spawn: "from_elevator" 
+      },
       { id: "lab6_to_lab7", x: 100, y: 280, w: 20, h: 120, label: "Ir al Lab 7", to: "underground_lab7", spawn: "from_lab6" },
       { id: "lab6_to_lab5", x: 700, y: 280, w: 20, h: 120, label: "Volver al Lab 5", to: "underground_lab5", spawn: "from_lab6" }
     ],
@@ -857,5 +863,80 @@ export const ROOMS = {
       from_lab6: { x: 710, y: 300, angle: 180 }
     },
     props: [], items: [], enemies: []
-  }
+  },
+// ==========================================
+  //         ZONA NUEVA: SECTOR ELÉCTRICO
+  // ==========================================
+
+  elec_elevator_exit: {
+    name: "Piso Técnico - Salida del Ascensor",
+    zone: "electrical", requiresPower: false, showWallVisuals: false,
+    walls: [{ x: 0, y: 0, w: 800, h: 40 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 0, y: 40, w: 40, h: 520 }, { x: 760, y: 40, w: 40, h: 520 }],
+    doors: [
+      { id: "elec_elev_to_lab6", x: 340, y: 540, w: 120, h: 20, label: "Bajar por el Ascensor", to: "underground_lab6", spawn: "from_elev" },
+      { id: "elec_elev_to_e2", x: 40, y: 240, w: 20, h: 120, label: "Ir a Sector E2", to: "elec_corridor_down", spawn: "from_elevator" }
+    ],
+    spawns: { from_elevator: { x: 400, y: 480, angle: 270 }, from_e2: { x: 100, y: 300, angle: 0 } },
+    props: [], items: [], enemies: []
+  },
+
+  elec_corridor_down: {
+    name: "Pasillo Técnico Inferior (Sector E2)",
+    zone: "electrical", requiresPower: false, showWallVisuals: false,
+    walls: [{ x: 0, y: 0, w: 800, h: 40 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 0, y: 40, w: 40, h: 520 }, { x: 760, y: 40, w: 40, h: 520 }],
+    doors: [
+      { id: "e2_to_elec_elev", x: 740, y: 240, w: 20, h: 120, label: "Volver al Ascensor", to: "elec_elevator_exit", spawn: "from_e2" },
+      { id: "e2_to_e3", x: 340, y: 40, w: 120, h: 20, label: "Subir a Sector E3", to: "elec_corridor_mid", spawn: "from_e2" }
+    ],
+    spawns: { from_elevator: { x: 700, y: 300, angle: 180 }, from_e3: { x: 400, y: 100, angle: 90 } },
+    props: [], items: [], enemies: []
+  },
+
+  elec_corridor_mid: {
+    name: "Distribuidor Eléctrico Medio (Sector E3)",
+    zone: "electrical", requiresPower: false, showWallVisuals: false,
+    walls: [{ x: 0, y: 0, w: 800, h: 40 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 0, y: 40, w: 40, h: 520 }, { x: 760, y: 40, w: 40, h: 520 }],
+    doors: [
+      { id: "e3_to_e2", x: 340, y: 540, w: 120, h: 20, label: "Bajar a Sector E2", to: "elec_corridor_down", spawn: "from_e3" },
+      { id: "e3_to_e4", x: 340, y: 40, w: 120, h: 20, label: "Subir a Sector E4", to: "elec_corridor_top", spawn: "from_e3" }
+    ],
+    spawns: { from_e2: { x: 400, y: 480, angle: 270 }, from_e4: { x: 400, y: 100, angle: 90 } },
+    props: [], items: [], enemies: []
+  },
+
+  elec_corridor_top: {
+    name: "Subestación de Alta Tensión (Sector E4)",
+    zone: "electrical", requiresPower: false, showWallVisuals: false,
+    walls: [{ x: 0, y: 0, w: 800, h: 40 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 0, y: 40, w: 40, h: 520 }, { x: 760, y: 40, w: 40, h: 520 }],
+    doors: [
+      { id: "e4_to_e3", x: 340, y: 540, w: 120, h: 20, label: "Bajar a Sector E3", to: "elec_corridor_mid", spawn: "from_e4" },
+      { id: "e4_to_core", x: 740, y: 240, w: 20, h: 120, label: "Ir al Núcleo", to: "elec_core", spawn: "from_e4" }
+    ],
+    spawns: { from_e3: { x: 400, y: 480, angle: 270 }, from_core: { x: 700, y: 300, angle: 180 } },
+    props: [], items: [], enemies: []
+  },
+
+  elec_core: {
+    name: "Núcleo de Control de Energía",
+    zone: "electrical", requiresPower: false, showWallVisuals: false,
+    walls: [{ x: 0, y: 0, w: 800, h: 40 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 0, y: 40, w: 40, h: 520 }, { x: 760, y: 40, w: 40, h: 520 }],
+    doors: [
+      { id: "core_to_e4", x: 40, y: 240, w: 20, h: 120, label: "Volver a Sector E4", to: "elec_corridor_top", spawn: "from_core" },
+      { id: "core_to_escape", x: 340, y: 540, w: 120, h: 20, label: "Bajar al Hangar de Escape", to: "elec_escape", spawn: "from_core" }
+    ],
+    spawns: { from_e4: { x: 100, y: 300, angle: 0 }, from_escape: { x: 400, y: 480, angle: 270 } },
+    props: [], items: [], enemies: []
+  },
+
+  elec_escape: {
+    name: "Hangar Técnico (Punto de Salida)",
+    zone: "electrical", requiresPower: false, showWallVisuals: false,
+    walls: [{ x: 0, y: 0, w: 800, h: 40 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 0, y: 40, w: 40, h: 520 }, { x: 760, y: 40, w: 40, h: 520 }],
+    doors: [
+      { id: "escape_to_core", x: 340, y: 40, w: 120, h: 20, label: "Volver al Núcleo", to: "elec_core", spawn: "from_escape" }
+    ],
+    spawns: { from_core: { x: 400, y: 100, angle: 90 } },
+    props: [], items: [], enemies: []
+    }
+  
 };
