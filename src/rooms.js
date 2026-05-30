@@ -864,9 +864,6 @@ export const ROOMS = {
     },
     props: [], items: [], enemies: []
   },
-// ==========================================
-  //         ZONA NUEVA: SECTOR ELÉCTRICO
-  // ==========================================
 
 // ===================================================
   //   ZONA NUEVA: SECTOR ELÉCTRICO (PUZZLE DE FASES)
@@ -875,6 +872,7 @@ export const ROOMS = {
   elec_elevator_exit: {
     name: "Piso Técnico - Salida del Ascensor (Sector E1)",
     zone: "electrical", requiresPower: false, showWallVisuals: true,
+    backgroundImage: { key: "bg_e1", path: "src/background/e1.png" },
     // Muros perimetrales + cajas de herramientas como obstáculos en las esquinas
     walls: [
       { x: 0, y: 0, w: 800, h: 40 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 0, y: 40, w: 40, h: 520 }, { x: 760, y: 40, w: 40, h: 520 },
@@ -891,6 +889,7 @@ export const ROOMS = {
   elec_corridor_down: {
     name: "Pasillo Técnico Inferior (Sector E2) - FASE 2",
     zone: "electrical", requiresPower: false, showWallVisuals: true,
+    backgroundImage: { key: "bg_e2", path: "src/background/e2.png" },
     // Bloques en el centro que te obligan a caminar en forma de "S" para esquivar zombies o a Mr. X
     walls: [
       { x: 0, y: 0, w: 800, h: 40 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 0, y: 40, w: 40, h: 520 }, { x: 760, y: 40, w: 40, h: 520 },
@@ -917,6 +916,7 @@ export const ROOMS = {
   elec_corridor_mid: {
     name: "Distribuidor Eléctrico Medio (Sector E3) - FASE 3",
     zone: "electrical", requiresPower: false, showWallVisuals: true,
+    backgroundImage: { key: "bg_e3", path: "src/background/e3.png" },
     // Dos grandes generadores en paralelo en el medio de la sala
     walls: [
       { x: 0, y: 0, w: 800, h: 40 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 0, y: 40, w: 40, h: 520 }, { x: 760, y: 40, w: 40, h: 520 },
@@ -943,6 +943,7 @@ export const ROOMS = {
   elec_corridor_top: {
     name: "Subestación de Alta Tensión (Sector E4) - FASE 1",
     zone: "electrical", requiresPower: false, showWallVisuals: true,
+    backgroundImage: { key: "bg_e4", path: "src/background/e4.png" },
     // Laberinto de transformadores chicos (bobinas) esparcidas
     walls: [
       { x: 0, y: 0, w: 800, h: 40 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 0, y: 40, w: 40, h: 520 }, { x: 760, y: 40, w: 40, h: 520 },
@@ -969,6 +970,7 @@ export const ROOMS = {
   elec_core: {
     name: "Núcleo de Control de Energía",
     zone: "electrical", requiresPower: false, showWallVisuals: true,
+    backgroundImage: { key: "bg_nucleo", path: "src/background/nucleo.png" },
     // Consola central grande tipo isla que te permite rodearla corriendo
     walls: [
       { x: 0, y: 0, w: 800, h: 40 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 0, y: 40, w: 40, h: 520 }, { x: 760, y: 40, w: 40, h: 520 },
@@ -993,6 +995,7 @@ export const ROOMS = {
   elec_escape: {
     name: "Hangar Técnico (Arena de Emergencia)",
     zone: "electrical", requiresPower: false, showWallVisuals: false,
+    backgroundImage: { key: "bg_escape", path: "src/background/escape.png" },
     // Espacio 100% limpio en el centro para poder correr, rodar y balear al Boss
     walls: [
       { x: 0, y: 0, w: 800, h: 40 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 0, y: 40, w: 40, h: 520 }, { x: 760, y: 40, w: 40, h: 520 }
