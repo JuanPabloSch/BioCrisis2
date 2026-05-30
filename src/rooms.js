@@ -473,7 +473,7 @@ underground_entry: {
       { id: "medikit_pumps_01", type: "medikit", name: "Medikit", x: 610, y: 455, color: 0x5fd178, heal: 35 },
     ],
     enemies: [
-      { id: "pumps_tank_01", type: "tank", x: 410, y: 275, speed: 42, aggroRange: 250, damage: 22, health: 150 },
+      { id: "pumps_tank_01", type: "tank", x: 5000, y: 275, speed: 42, aggroRange: 250, damage: 22, health: 150 },
     ],
     interactables: [
       {
@@ -770,7 +770,9 @@ underground_entry: {
       from_lab1: { x: 90, y: 300, angle: 0 },
       from_lab3: { x: 710, y: 300, angle: 180 }
     },
-    props: [], items: [], enemies: []
+    props: [], items: [], enemies: [
+        { id: "lab2_zombie_01", type: "zombie", x: 600, y: 300, speed: 90, aggroRange: 250, damage: 15, health: 60 },
+        { id: "lab2_zombie_02", type: "zombie", x: 200, y: 500, speed: 80, aggroRange: 250, damage: 15, health: 60 },]
   },
 
   underground_lab3: {
@@ -784,21 +786,26 @@ underground_entry: {
     spawns: {
       from_lab2: { x: 90, y: 300, angle: 0 }
     },
-    props: [], items: [], enemies: []
+    props: [], items: [], enemies: [ 
+      { id: "lab3_zombie_01", type: "zombie", x: 500, y: 300, speed: 90, aggroRange: 250, damage: 15, health: 60 },
+      ]
   },
 
   underground_lab4: {
     name: "Cámara de Desechos (Sector 4)",
-    zone: "underground", requiresPower: false, showWallVisuals: false,
+    zone: "underground", requiresPower: false, showWallVisuals: true,
     backgroundImage: { key: "bg_lab4", path: "src/background/lab4.png" },
-    walls: [{ x: 0, y: 0, w: 800, h: 90 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 180, y: 150, w: 40, h: 360 }, { x: 670, y: 40, w: 40, h: 520 }, { x: 40, y: 90, w: 40, h: 100 }, { x: 90, y: 150, w: 100, h: 40 }, { x: 440, y: 330, w: 180, h: 100 }, { x: 560, y: 460, w: 100, h: 100 }, { x: 560, y: 60, w: 100, h: 100 }, { x: 40, y: 490, w: 40, h: 100 }, { x: 90, y: 470, w: 100, h: 40 }],
+    walls: [{ x: 0, y: 0, w: 800, h: 90 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 180, y: 150, w: 40, h: 360 }, { x: 670, y: 40, w: 40, h: 520 }, { x: 40, y: 90, w: 40, h: 100 }, { x: 90, y: 150, w: 100, h: 40 }, { x: 440, y: 330, w: 180, h: 100 }, { x: 560, y: 460, w: 100, h: 100 }, { x: 560, y: 60, w: 100, h: 100 }, { x: 40, y: 490, w: 40, h: 100 }, { x: 90, y: 470, w: 100, h: 40 }, { x: 0, y: 250, w: 200, h: 20 }, { x: 0, y: 350, w: 200, h: 20 }, { x: 0, y: 480, w: 200, h: 20 }, { x: 0, y: 150, w: 200, h: 20 }],
     doors: [
       { id: "lab4_to_lab1", x: 340, y: 80, w: 120, h: 20, label: "Volver al Lab 1", to: "underground_lab1", spawn: "from_lab4" }
     ],
     spawns: {
       from_lab1: { x: 400, y: 90, angle: 90 }
     },
-    props: [], items: [], enemies: []
+    props: [], items: [], enemies: [
+      { id: "lab4_tank_01", type: "tank", x: 100, y: 200, speed: 40, aggroRange: 250, damage: 22, health: 150 },
+      { id: "lab4_tank_02", type: "tank", x: 100, y: 300, speed: 40, aggroRange: 250, damage: 22, health: 150 },
+    ]
   },
 
   underground_lab5: {
@@ -814,7 +821,11 @@ underground_entry: {
       from_lab1: { x: 710, y: 300, angle: 180 },
       from_lab6: { x: 90, y: 300, angle: 0 }
     },
-    props: [], items: [], enemies: []
+    props: [], items: [], enemies: [
+      { id: "lab5_runner_01", type: "runner", x: 200, y: 300, speed: 80, wakeRange: 90, aggroRange: 250, damage: 15, health: 60 },
+      { id: "lab5_runner_02", type: "runner", x: 200, y: 400, speed: 80, wakeRange: 90, aggroRange: 250, damage: 15, health: 60 },
+
+    ]
   },
 
   underground_lab6: {
