@@ -963,7 +963,7 @@ underground_lab6: {
       { x: 460, y: 190, w: 20, h: 200 }, { x: 320, y: 190, w: 160, h: 20 }, { x: 320, y: 390, w: 160, h: 20 } // Cajas / Obstáculos
     ],
     doors: [
-      { id: "elec_elev_to_lab6", x: 400, y: 240, w: 20, h: 120, label: "Bajar por el Ascensor", to: "underground_lab6", spawn: "from_elev" },
+      { id: "elec_elev_to_lab6", x: 400, y: 240, w: 20, h: 120, label: "Bajar por el Ascensor", to: "underground_lab6", spawn: "from_elevator" },
       { id: "elec_elev_to_e2", x: 40, y: 200, w: 20, h: 120, label: "Ir a Sector E2", to: "elec_corridor_down", spawn: "from_elevator" }
     ],
     spawns: { from_elevator: { x: 350, y: 260, angle: 270 }, from_e2: { x: 100, y: 300, angle: 0 } },
