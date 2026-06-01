@@ -253,7 +253,7 @@ export const ROOMS = {
       { id: "storage_sleeper_02", type: "sleeper", x: 130, y: 305, speed: 82, wakeRange: 105, aggroRange: 310, damage: 13, health: 70 },
     ],
   },
-  generator_room: {
+generator_room: {
     name: "Sala del generador",
     zone: "service",
     backgroundImage: { key: "bg_generador", path: "src/background/generador.png" },
@@ -267,16 +267,25 @@ export const ROOMS = {
       { x: 200, y: 422, w: 40, h: 40 },
       { x: 265, y: 222, w: 200, h: 120 },
       { x: 520, y: 415, w: 220, h: 130 },
-      ],
+    ],
     doors: [
       { id: "generator_to_locked", x: 340, y: 60, w: 120, h: 42, to: "locked_corridor", spawn: "from_generator", label: "Pasillo" },
       { id: "generator_to_maintenance", x: 740, y: 230, w: 42, h: 118, to: "maintenance_access", spawn: "from_generator", label: "Mantenimiento", powerLocked: true },
-      { id: "generator_to_underground", x: 330, y: 500, w: 120, h: 42, to: "underground_entry", spawn: "from_generator", label: "Subsuelo", lockedBy: "flashlight_01", lockedMessage: "Necesitas una linterna" },
+      
+      // 🔓 FIJADO: Eliminamos lockedBy y lockedMessage. Ahora responde al puzzle remoto de los paneles.
+      { 
+        id: "generator_to_underground", 
+        x: 330, y: 500, w: 120, h: 42, 
+        to: "underground_entry", 
+        spawn: "from_generator", 
+        label: "Subsuelo", 
+        objectiveLocked: "switchPuzzleSolved" 
+      },
     ],
     spawns: {
       from_corridor: { x: 400, y: 92, angle: 90 },
       from_maintenance: { x: 700, y: 302, angle: 180 },
-      from_underground: { x: 400, y: 500, angle: 270 },
+      from_underground: { x: 400, y: 450, angle: 270 }, // Ajustado el Y para que el jugador no spawnee pisando el trigger de la puerta de nuevo
     },
     props: [],
     interactables: [
@@ -284,10 +293,7 @@ export const ROOMS = {
         id: "generator_switch",
         type: "generator",
         label: "activar generador",
-        x: 400,
-        y: 300,
-        w: 140,
-        h: 90,
+        x: 400, y: 300, w: 140, h: 90,
         requiresItem: "fuse_01",
         offVisual: { color: 0xc9a633, alpha: 0.72, strokeColor: 0x332500 },
         onVisual: { color: 0x7fe28a, alpha: 0.72, strokeColor: 0x17361b },
@@ -300,6 +306,58 @@ export const ROOMS = {
       { id: "generator_zombie_02", type: "zombie", x: 525, y: 330, speed: 58, aggroRange: 240, damage: 12, health: 60 },
     ],
   },
+switch_room: {
+    name: "Sala de paneles",
+    zone: "service",
+    backgroundImage: { key: "bg_paneles", path: "src/background/paneles.png" },
+    showWallVisuals: false,
+    requiresPower: true,
+    walls: [
+      { x: 0, y: 0, w: 800, h: 112 },
+      { x: 0, y: 558, w: 800, h: 42 },
+      { x: 0, y: 0, w: 42, h: 600 },
+      { x: 680, y: 0, w: 42, h: 600 },
+      { x: 320, y: 220, w: 180, h: 150 },
+      { x: 40, y: 340, w: 90, h: 200 },
+      { x: 150, y: 440, w: 90, h: 100 },
+      { x: 550, y: 440, w: 200, h: 100 },
+      { x: 550, y: 100, w: 90, h: 100 },
+    ],
+    doors: [
+      { id: "switch_to_maintenance", x: 18, y: 200, w: 42, h: 88, to: "maintenance_access", spawn: "from_switch", label: "Mantenimiento" },
+      { id: "switch_to_sealed", x: 360, y: 118, w: 80, h: 42, to: "sealed_room", spawn: "from_switch", label: "Sala sellada", objectiveLocked: "switchPuzzleSolved" },
+    ],
+    enemies: [
+      // 🧟 Te la dejé con el fix de la coordenada X para que el Tank aparezca adentro de la pantalla
+      { id: "service_tank_01", type: "tank", x: 580, y: 275, speed: 42, aggroRange: 250, damage: 22, health: 150 },
+    ],
+    spawns: {
+      from_maintenance: { x: 92, y: 302, angle: 0 },
+      from_sealed: { x: 400, y: 152, angle: 90 },
+    },
+    props: [],
+    items: [
+      { id: "flashlight_01", type: "tool", name: "Linterna", x: 110, y: 400, color: 0xfff1a6, description: "Sirve para moverse por zonas sin electricidad." },
+    ],
+    interactables: [
+      {
+        id: "switch_a", type: "puzzle_switch", switchId: "a", label: "alternar panel A", x: 325, y: 260, w: 10, h: 10,
+        offVisual: { color: 0x8c3d38, alpha: 0.84, strokeColor: 0x35110f },
+        onVisual: { color: 0x65d17a, alpha: 0.9, strokeColor: 0x12381a },
+      },
+      {
+        id: "switch_b", type: "puzzle_switch", switchId: "b", label: "alternar panel B", x: 400, y: 260, w: 10, h: 10,
+        offVisual: { color: 0x8c3d38, alpha: 0.84, strokeColor: 0x35110f },
+        onVisual: { color: 0x65d17a, alpha: 0.9, strokeColor: 0x12381a },
+      },
+      {
+        id: "switch_c", type: "puzzle_switch", switchId: "c", label: "alternar panel C", x: 485, y: 260, w: 10, h: 10,
+        offVisual: { color: 0x8c3d38, alpha: 0.84, strokeColor: 0x35110f },
+        onVisual: { color: 0x65d17a, alpha: 0.9, strokeColor: 0x12381a },
+      },
+    ],
+  },
+  
   maintenance_access: {
     name: "Acceso de mantenimiento",
     zone: "service",

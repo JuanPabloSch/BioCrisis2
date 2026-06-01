@@ -95,6 +95,7 @@ class PrototypeScene extends Phaser.Scene {
   }
 
   preload() {
+    
     for (const room of Object.values(ROOMS)) {
       // Carga la imagen normal (con agua)
       if (room.backgroundImage) {
@@ -106,6 +107,8 @@ class PrototypeScene extends Phaser.Scene {
         this.load.image(room.backgroundImageDry.key, room.backgroundImageDry.path);
       }
     }
+    this.load.image("foto_linterna", "src/background/linterna.png"); 
+
   }
 
   create() {
@@ -281,20 +284,68 @@ class PrototypeScene extends Phaser.Scene {
   }
 
 loadRoom(roomId, spawnId) {
+    // 📸 EFECTO CINEMÁTICO: Solo si es "underground_entry", no estamos en medio de la transición,
+    // Y ADEMÁS es la primera vez (el objetivo "undergroundVisited" no existe o es falso)
+    if (roomId === "underground_entry" && !this.playingTransition && !this.worldState?.objectives?.undergroundVisited) {
+      
+      this.playingTransition = true; // Flag temporal para el bucle
+      this.player.body.setVelocity(0, 0); // Frenamos al player
+      this.physics.world.pause(); // Pausamos físicas
+
+      // 1. Fade Out a negro veloz
+      this.cameras.main.fadeOut(300, 0, 0, 0);
+      this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
+        
+        // 2. Dibujamos "linterna.png"
+        const img = this.add.image(WIDTH / 2, HEIGHT / 2, "foto_linterna")
+                        .setDisplaySize(WIDTH, HEIGHT)
+                        .setDepth(9999);
+
+        this.cameras.main.fadeIn(400, 0, 0, 0);
+
+        // 3. Mantenemos la foto en pantalla por 2.5 segundos
+        this.time.delayedCall(2500, () => {
+          this.cameras.main.fadeOut(400, 0, 0, 0);
+          this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
+            img.destroy();
+            this.physics.world.resume();
+            
+            // 🚩 ¡CLAVE! Marcamos la zona como "ya visitada" para siempre
+            if (this.worldState && this.worldState.objectives) {
+              this.worldState.objectives.undergroundVisited = true;
+            }
+            
+            // 4. Cargamos la sala real
+            this.loadRoom(roomId, spawnId);
+            this.cameras.main.fadeIn(400, 0, 0, 0);
+          });
+        });
+      });
+      return; // Cortamos acá para que no dibuje la sala abajo de la foto
+    }
+
+    // Al final de la transición (o si ya estaba visitada), el flag temporal se limpia
+    this.playingTransition = false;
+
     this.worldState = normalizeWorldState(this.worldState);
     this.saveCurrentRoomEnemies();
 
-    // Refuerzo preventivo de las keys por si venimos de un LoadGame
-    if (this.worldState.objectives.pumpSolved) {
-      if (ROOMS["underground_entry"] && ROOMS["underground_entry"].backgroundImage) {
+    // 🌊 Refuerzo preventivo blindado contra crashes inesperados
+    if (this.worldState?.objectives?.pumpSolved && typeof ROOMS !== 'undefined') {
+      if (ROOMS["underground_entry"]?.backgroundImage) {
         ROOMS["underground_entry"].backgroundImage.key = "bg_under_dry";
       }
-      if (ROOMS["underground_pumps"] && ROOMS["underground_pumps"].backgroundImage) {
+      if (ROOMS["underground_pumps"]?.backgroundImage) {
         ROOMS["underground_pumps"].backgroundImage.key = "bg_bombas_dry";
       }
     }
 
-    const room = ROOMS[roomId];
+    const room = typeof ROOMS !== 'undefined' ? ROOMS[roomId] : null;
+    if (!room) {
+      console.error("No se encontró la habitación: " + roomId);
+      return;
+    }
+
     this.currentRoomId = roomId;
     this.nearDoor = null;
     this.nearItem = null;
@@ -317,11 +368,10 @@ loadRoom(roomId, spawnId) {
     if (bg.setStrokeStyle) bg.setStrokeStyle(4, 0x0b0b0b);
     this.roomLayer.add(bg);
 
-// 🧱 1. GENERACIÓN DE MUROS (CON REJA DINÁMICA)
+    // 🧱 1. GENERACIÓN DE MUROS (CON REJA DINÁMICA)
     for (const wall of room.walls) {
-      // 🚪 SI ES LA REJA LARGA Y LAS CELDAS YA SE ABRIERON, LA SALTEAMOS
       if (wall.isPrisonGate && this.worldState.objectives.cellsOpened) {
-        continue; // 'continue' saltea esta pared y pasa a la siguiente del bucle
+        continue;
       }
 
       const rect = this.add.rectangle(wall.x + wall.w / 2, wall.y + wall.h / 2, wall.w, wall.h, 0x171717);
@@ -343,7 +393,7 @@ loadRoom(roomId, spawnId) {
       this.doorGroup.add(rect);
     }
 
-    // 🔑 2. GENERACIÓN DE ITEMS (La llave ya se muestra de entrada)
+    // 🔑 2. GENERACIÓN DE ITEMS
     for (const item of room.items ?? []) {
       if (this.worldState.collectedItems[item.id]) continue;
 
@@ -354,7 +404,7 @@ loadRoom(roomId, spawnId) {
       this.itemGroup.add(marker);
     }
 
-    // 🖥️ 3. GENERACIÓN DE INTERACTUABLES (¡Esto arregla los botones/consolas del Lab 3 y Lab 4!)
+    // 🖥️ 3. GENERACIÓN DE INTERACTUABLES
     for (const interactable of room.interactables ?? []) {
       const visual = this.getInteractableVisual(interactable);
       const marker = this.add.rectangle(interactable.x, interactable.y, interactable.w, interactable.h, visual.color, visual.alpha);
@@ -365,7 +415,7 @@ loadRoom(roomId, spawnId) {
       this.interactableGroup.add(marker);
     }
 
-    // 🧟 4. GENERACIÓN DE ENEMIGOS (Los Tanks ya aparecen de entrada dentro de las celdas)
+    // 🧟 4. GENERACIÓN DE ENEMIGOS
     for (const enemy of room.enemies ?? []) {
       const enemyState = this.getEnemyState(enemy);
       if (enemyState.dead) continue;
