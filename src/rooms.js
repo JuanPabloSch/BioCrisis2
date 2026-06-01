@@ -924,7 +924,7 @@ underground_lab6: {
 
   elec_corridor_down: {
     name: "Pasillo Técnico Inferior (Sector E2) - FASE 2",
-    zone: "electrical", requiresPower: false, showWallVisuals: true,
+    zone: "electrical", requiresPower: false, showWallVisuals: false,
     backgroundImage: { key: "bg_e2", path: "src/background/e2.png" },
     // Bloques en el centro que te obligan a caminar en forma de "S" para esquivar zombies o a Mr. X
     walls: [
@@ -951,24 +951,25 @@ underground_lab6: {
 
   elec_corridor_mid: {
     name: "Distribuidor Eléctrico Medio (Sector E3) - FASE 3",
-    zone: "electrical", requiresPower: false, showWallVisuals: true,
+    zone: "electrical", requiresPower: false, showWallVisuals: false,
     backgroundImage: { key: "bg_e3", path: "src/background/e3.png" },
     // Dos grandes generadores en paralelo en el medio de la sala
     walls: [
-      { x: 0, y: 0, w: 800, h: 40 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 0, y: 40, w: 40, h: 520 }, { x: 760, y: 40, w: 40, h: 520 },
-      { x: 180, y: 180, w: 160, h: 240 }, // Generador Izquierdo
-      { x: 460, y: 180, w: 160, h: 240 }  // Generador Derecho
+      { x: 0, y: 0, w: 800, h: 70 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 2, y: 40, w: 40, h: 520 }, { x: 730, y: 40, w: 40, h: 520 },
+      { x: 220, y: 160, w: 120, h: 220 }, // Generador Izquierdo
+      { x: 460, y: 160, w: 120, h: 220 },
+      { x: 40, y: 390, w: 100, h: 150 }  // Generador Derecho
     ],
     doors: [
       { id: "e3_to_e2", x: 340, y: 540, w: 120, h: 20, label: "Bajar a Sector E2", to: "elec_corridor_down", spawn: "from_e3" },
-      { id: "e3_to_e4", x: 340, y: 40, w: 120, h: 20, label: "Subir a Sector E4", to: "elec_corridor_top", spawn: "from_e3" }
+      { id: "e3_to_e4", x: 340, y: 60, w: 120, h: 20, label: "Subir a Sector E4", to: "elec_corridor_top", spawn: "from_e3" }
     ],
     interactables: [
       {
         id: "switch_phase_3",
         type: "phase_switch",
         label: "Accionar Disyuntor: FASE 3",
-        x: 360, y: 280, w: 80, h: 60, // Justo entre medio de los dos generadores
+        x: 300, y: 280, w: 80, h: 60, // Justo entre medio de los dos generadores
         visual: { color: 0x3a7dba, strokeColor: 0x1a3d5c }
       }
     ],
@@ -978,13 +979,13 @@ underground_lab6: {
 
   elec_corridor_top: {
     name: "Subestación de Alta Tensión (Sector E4) - FASE 1",
-    zone: "electrical", requiresPower: false, showWallVisuals: true,
+    zone: "electrical", requiresPower: false, showWallVisuals: false,
     backgroundImage: { key: "bg_e4", path: "src/background/e4.png" },
     // Laberinto de transformadores chicos (bobinas) esparcidas
     walls: [
-      { x: 0, y: 0, w: 800, h: 40 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 0, y: 40, w: 40, h: 520 }, { x: 760, y: 40, w: 40, h: 520 },
-      { x: 120, y: 120, w: 100, h: 100 }, { x: 580, y: 120, w: 100, h: 100 },
-      { x: 120, y: 380, w: 100, h: 100 }, { x: 580, y: 380, w: 100, h: 100 }
+      { x: 0, y: 0, w: 800, h: 80 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 80, y: 40, w: 40, h: 520 }, { x: 730, y: 40, w: 40, h: 520 },
+      { x: 240, y: 200, w: 110, h: 230 }, { x: 450, y: 200, w: 110, h: 230 },
+      { x: 120, y: 80, w: 60, h: 150 }, { x: 660, y: 360, w: 60, h: 220 }
     ],
     doors: [
       { id: "e4_to_e3", x: 340, y: 540, w: 120, h: 20, label: "Bajar a Sector E3", to: "elec_corridor_mid", spawn: "from_e4" },
