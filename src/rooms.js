@@ -916,7 +916,7 @@ underground_lab6: {
     ],
     doors: [
       { id: "elec_elev_to_lab6", x: 400, y: 240, w: 20, h: 120, label: "Bajar por el Ascensor", to: "underground_lab6", spawn: "from_elev" },
-      { id: "elec_elev_to_e2", x: 40, y: 240, w: 20, h: 120, label: "Ir a Sector E2", to: "elec_corridor_down", spawn: "from_elevator" }
+      { id: "elec_elev_to_e2", x: 40, y: 200, w: 20, h: 120, label: "Ir a Sector E2", to: "elec_corridor_down", spawn: "from_elevator" }
     ],
     spawns: { from_elevator: { x: 350, y: 260, angle: 270 }, from_e2: { x: 100, y: 300, angle: 0 } },
     props: [], items: [], enemies: []
@@ -928,20 +928,20 @@ underground_lab6: {
     backgroundImage: { key: "bg_e2", path: "src/background/e2.png" },
     // Bloques en el centro que te obligan a caminar en forma de "S" para esquivar zombies o a Mr. X
     walls: [
-      { x: 0, y: 0, w: 800, h: 40 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 0, y: 40, w: 40, h: 520 }, { x: 760, y: 40, w: 40, h: 520 },
+      { x: 0, y: 0, w: 800, h: 80 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 100, y: 40, w: 40, h: 520 }, { x: 700, y: 40, w: 40, h: 520 },
       // { x: 250, y: 40, w: 300, h: 160 }, // Turbina central superior
-      { x: 40, y: 360, w: 400, h: 100 }  // Banco de carga inferior
+      { x: 240, y: 160, w: 110, h: 270 }, { x: 460, y: 160, w: 110, h: 270 }   // Banco de carga inferior
     ],
     doors: [
-      { id: "e2_to_elec_elev", x: 740, y: 240, w: 20, h: 120, label: "Volver al Ascensor", to: "elec_elevator_exit", spawn: "from_e2" },
-      { id: "e2_to_e3", x: 340, y: 40, w: 120, h: 20, label: "Subir a Sector E3", to: "elec_corridor_mid", spawn: "from_e2" }
+      { id: "e2_to_elec_elev", x: 740, y: 220, w: 20, h: 120, label: "Volver al Ascensor", to: "elec_elevator_exit", spawn: "from_e2" },
+      { id: "e2_to_e3", x: 340, y: 60, w: 120, h: 20, label: "Subir a Sector E3", to: "elec_corridor_mid", spawn: "from_e2" }
     ],
     interactables: [
       {
         id: "switch_phase_2",
         type: "phase_switch",
         label: "Accionar Disyuntor: FASE 2",
-        x: 680, y: 120, w: 80, h: 60,
+        x: 335, y: 350, w: 80, h: 60,
         visual: { color: 0x3a7dba, strokeColor: 0x1a3d5c }
       }
     ],
