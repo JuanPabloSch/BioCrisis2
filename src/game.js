@@ -686,13 +686,19 @@ class PrototypeScene extends Phaser.Scene {
     return this.worldState.inventory.some((item) => item.id === itemId);
   }
 
-  isDoorLocked(door) {
+ isDoorLocked(door) {
     if (door.powerLocked && !this.worldState.objectives.generatorOn) return true;
     if (door.objectiveLocked && !this.worldState.objectives[door.objectiveLocked]) return true;
+    
+    // 🟢 NUEVAS CONDICIONES: Si no se cumplen, la puerta sigue trabada (return true)
+    if (door.puzzleLocked === "fasesCompletas" && !this.worldState.objectives.coreOverloaded) return true;
+    if (door.bossLocked && !this.worldState.objectives.bossDefeated) return true;
+
     return door.lockedBy && !this.worldState.unlockedDoors[door.id];
   }
 
   tryUnlockDoor(door) {
+    // --- LÓGICA VIEJA INTACTA ---
     if (door.powerLocked && !this.worldState.objectives.generatorOn) {
       this.flashPrompt("Sin energia");
       return;
@@ -703,6 +709,20 @@ class PrototypeScene extends Phaser.Scene {
       return;
     }
 
+    // --- 🟢 NUEVOS MENSAJES PARA LA ZONA ELÉCTRICA ---
+    // Si la puerta requiere el Núcleo y todavía no sobrecargaste el sistema
+    if (door.puzzleLocked === "fasesCompletas" && !this.worldState.objectives.coreOverloaded) {
+      this.flashPrompt(door.lockedMessage ?? "Compuerta sin energía. Sincronice el Núcleo.");
+      return;
+    }
+
+    // Si la puerta requiere que muera Mr. X y todavía sigue vivo
+    if (door.bossLocked && !this.worldState.objectives.bossDefeated) {
+      this.flashPrompt(door.lockedMessage ?? "Protocolo de combate activo. Elimine la amenaza.");
+      return;
+    }
+
+    // --- CONTINÚA LÓGICA VIEJA INTACTA ---
     if (!this.hasItem(door.lockedBy)) {
       this.flashPrompt(door.lockedMessage ?? "Necesitas una llave");
       return;
@@ -713,7 +733,7 @@ class PrototypeScene extends Phaser.Scene {
     this.flashPrompt("Puerta desbloqueada");
   }
 
-  useInteractable(interactable) {
+useInteractable(interactable) {
     if (interactable.type === "puzzle_switch") {
       this.togglePuzzleSwitch(interactable);
       return;
@@ -738,7 +758,7 @@ class PrototypeScene extends Phaser.Scene {
       return;
     }
 
-// 3. CASO: BOMBA DE AGUA (Actualizado con keys dinámicas)
+    // 3. CASO: BOMBA DE AGUA (Actualizado con keys dinámicas)
     if (interactable.type === "pump") {
       if (this.worldState.objectives.pumpSolved) {
         this.flashPrompt("Las bombas ya estan funcionando");
@@ -768,6 +788,66 @@ class PrototypeScene extends Phaser.Scene {
         });
       });
 
+      return;
+    }
+
+    // =========================================================================
+    // 🟢 NUEVAS MECÁNICAS (Agregadas al final de forma segura sin tocar lo viejo)
+    // =========================================================================
+
+    // A) DISYUNTORES DE FASES
+    if (interactable.type === "phase_switch") {
+      let flagName = "";
+      if (interactable.id === "switch_phase_1") flagName = "phase1On";
+      if (interactable.id === "switch_phase_2") flagName = "phase2On";
+      if (interactable.id === "switch_phase_3") flagName = "phase3On";
+
+      if (flagName && !this.worldState.objectives[flagName]) {
+        this.worldState.objectives[flagName] = true;
+        this.flashPrompt(`${interactable.label.toUpperCase()}: CONECTADA`);
+        this.reloadCurrentRoomAtPlayerPosition(); // Refresca para pintar el switch de verde
+      } else {
+        this.flashPrompt("Esta fase ya se encuentra activa.");
+      }
+      return;
+    }
+
+    // B) CONSOLA DEL NÚCLEO
+    if (interactable.type === "core_console") {
+      const f1 = this.worldState.objectives.phase1On;
+      const f2 = this.worldState.objectives.phase2On;
+      const f3 = this.worldState.objectives.phase3On;
+
+      if (!f1 || !f2 || !f3) {
+        let faltan = [];
+        if (!f1) faltan.push("Fase 1");
+        if (!f2) faltan.push("Fase 2");
+        if (!f3) faltan.push("Fase 3");
+        this.flashPrompt(`ERROR: Líneas caídas. Falta: ${faltan.join(", ")}`);
+        return;
+      }
+
+      if (this.worldState.objectives.coreOverloaded) {
+        this.flashPrompt("El núcleo ya está sobrecargado. ¡Huye al Hangar E!");
+        return;
+      }
+
+      this.worldState.objectives.coreOverloaded = true;
+      this.cameras.main.flash(600, 200, 0, 0); // Destello rojo de alarma
+      this.flashPrompt("SOBRECARGA COMPLETA. COMPUERTA DEL HANGAR LIBERADA.");
+      return;
+    }
+
+    // C) MOTO DE ESCAPE FINAL
+    if (interactable.type === "vehicle_escape") {
+      this.player.body.setVelocity(0, 0);
+      this.flashPrompt("Arrancando motor... ¡Saliendo a la chota!");
+      
+      this.cameras.main.fadeOut(1500, 0, 0, 0);
+      this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
+        alert("¡FIN DE LA TECH DEMO! Lograste escapar del complejo en la moto.");
+        window.location.reload();
+      });
       return;
     }
   }

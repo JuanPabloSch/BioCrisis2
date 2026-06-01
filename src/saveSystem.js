@@ -28,6 +28,12 @@ export function normalizeWorldState(worldState = {}) {
   worldState.objectives.switchPuzzleSolved ??= false;
   worldState.objectives.pumpSolved ??= false; // 💡 Evita el undefined en la puerta inundada
 
+  // --- ⚡ NUEVAS VARIABLES PARA EL SECTOR ELÉCTRICO ---
+  worldState.objectives.phase1On ??= false;
+  worldState.objectives.phase2On ??= false;
+  worldState.objectives.phase3On ??= false;
+  worldState.objectives.coreOverloaded ??= false;
+
   return worldState;
 }
 
