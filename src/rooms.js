@@ -103,7 +103,7 @@ export const ROOMS = {
     },
     props: [],
     items: [
-      { id: "ammo_entry_01", type: "ammo", name: "Balas x6", x: 400, y: 210, color: 0xd6d6d6, amount: 6 },
+      { id: "ammo_entry_01", type: "ammo", name: "Balas x9", x: 400, y: 210, color: 0xd6d6d6, amount: 9 },
     ],
     enemies: [
       { id: "building_zombie_01", type: "zombie", x: 600, y: 440, speed: 65, aggroRange: 280, damage: 12, health: 60 },
@@ -177,6 +177,9 @@ export const ROOMS = {
       from_entry: { x: 92, y: 302, angle: 0 },
       from_locked: { x: 700, y: 302, angle: 180 },
     },
+    items: [
+      { id: "ammo_hall_01", type: "ammo", name: "Balas x9", x: 400, y: 210, color: 0xd6d6d6, amount: 9 },
+    ],
     props: [],
     enemies: [
       { id: "hall_zombie_01", type: "zombie", x: 400, y: 440, speed: 65, aggroRange: 280, damage: 12, health: 60 },
@@ -242,7 +245,7 @@ export const ROOMS = {
     },
     props: [],
     items: [
-      { id: "ammo_storage_01", type: "ammo", name: "Balas x6", x: 610, y: 130, color: 0xd6d6d6, amount: 6 },
+      { id: "ammo_storage_01", type: "ammo", name: "Balas x9", x: 610, y: 130, color: 0xd6d6d6, amount: 9 },
       { id: "fuse_01", type: "key", name: "Fusible", x: 100, y: 255, color: 0x8ce6ff, description: "Pieza electrica para activar el generador." },
       ],
     enemies: [
@@ -322,7 +325,7 @@ export const ROOMS = {
     },
     props: [],
     items: [
-      { id: "ammo_maintenance_01", type: "ammo", name: "Balas x6", x: 140, y: 180, color: 0xd6d6d6, amount: 6 },
+      { id: "ammo_maintenance_01", type: "ammo", name: "Balas x9", x: 140, y: 180, color: 0xd6d6d6, amount: 9 },
       ],
     enemies: [
       { id: "maintenance_runner_01", type: "runner", x: 590, y: 310, speed: 118, aggroRange: 340, damage: 8, health: 35 },
@@ -350,6 +353,8 @@ export const ROOMS = {
       { id: "switch_to_maintenance", x: 18, y: 200, w: 42, h: 88, to: "maintenance_access", spawn: "from_switch", label: "Mantenimiento" },
       { id: "switch_to_sealed", x: 360, y: 118, w: 80, h: 42, to: "sealed_room", spawn: "from_switch", label: "Sala sellada", objectiveLocked: "switchPuzzleSolved" },
     ],
+    enemies: [
+    { id: "service_tank_01", type: "tank", x: 5000, y: 275, speed: 42, aggroRange: 250, damage: 22, health: 150 },    ],
     spawns: {
       from_maintenance: { x: 92, y: 302, angle: 0 },
       from_sealed: { x: 400, y: 152, angle: 90 },
@@ -438,7 +443,7 @@ export const ROOMS = {
     },
     props: [],
     items: [
-      { id: "ammo_underground_01", type: "ammo", name: "Balas x6", x: 180, y: 455, color: 0xd6d6d6, amount: 6 },
+      { id: "ammo_underground_01", type: "ammo", name: "Balas x9", x: 180, y: 455, color: 0xd6d6d6, amount: 9 },
     ],
     enemies: [
       { id: "underground_sleeper_01", type: "sleeper", x: 585, y: 355, speed: 78, wakeRange: 90, aggroRange: 280, damage: 13, health: 70 },
@@ -674,7 +679,7 @@ export const ROOMS = {
     props: [],
     items: [
       // 🟢 Tu caja de balas bien ubicada en el mapa
-      { id: "ammo_pipes_01", type: "ammo", name: "Balas x6", x: 400, y: 250, color: 0xd6d6d6, amount: 6 },
+      { id: "ammo_pipes_01", type: "ammo", name: "Balas x9", x: 400, y: 250, color: 0xd6d6d6, amount: 9 },
     ],
     enemies: []
   },
@@ -750,7 +755,7 @@ underground_lab1: {
       }
     ],
     spawns: { from_tunnel3: { x: 400, y: 100, angle: 90 }, from_lab5: { x: 90, y: 300, angle: 0 }, from_lab2: { x: 710, y: 300, angle: 180 }, from_lab4: { x: 400, y: 500, angle: 270 } },
-    props: [], items: [], enemies: []
+    props: [], items: [{ id: "lab1_ammo_01", type: "ammo", name: "Balas x9", x: 400, y:310, color: 0xd6d6d6, amount: 9   }], enemies: []
   },
 
   underground_lab2: {
@@ -780,7 +785,7 @@ underground_lab1: {
     doors: [{ id: "lab3_to_lab2", x: 60, y: 220, w: 20, h: 120, label: "Volver al Lab 2", to: "underground_lab2", spawn: "from_lab3" }],
     spawns: { from_lab2: { x: 90, y: 300, angle: 0 } },
     props: [], items: [], 
-    enemies: [{ id: "lab3_zombie_01", type: "zombie", x: 500, y: 300, speed: 90, aggroRange: 250, damage: 15, health: 60 }],
+    enemies: [{ id: "lab3_runner_01", type: "runner", x: 500, y: 300, speed: 90, aggroRange: 250, damage: 15, health: 60 }, { id: "lab3_runner_02", type: "runner", x: 500, y: 150, speed: 90, aggroRange: 250, damage: 15, health: 60 }],
     interactables: [
       // 🖥️ MOVIDO MÁS A LA IZQUIERDA (X: 590) para despegarlo por completo del muro sólido
       { id: "lab3_console", type: "lab_terminal", x: 650, y: 350, w: 50, h: 60, label: "Consola de Seguridad Este" }
@@ -789,7 +794,7 @@ underground_lab1: {
 
 underground_lab4: {
     name: "Cámara de Desechos (Sector 4)",
-    zone: "underground", requiresPower: false, showWallVisuals: true,
+    zone: "underground", requiresPower: false, showWallVisuals: false,
     backgroundImage: { key: "bg_lab4", path: "src/background/lab4.png" },
     walls: [
       { x: 0, y: 0, w: 800, h: 90 }, 
@@ -815,7 +820,7 @@ underground_lab4: {
     props: [], 
     // 🔑 AGREGAMOS LA LLAVE AQUÍ DIRECTAMENTE TAMBIÉN:
     items: [
-      { id: "rare_key", name: "Tarjeta de Acceso - Nivel 1", type: "key", x: 100, y: 180, color: 0x3a7dba, isPrisonReward: true }
+      { id: "rare_key", name: "Tarjeta de Acceso - Nivel 1", type: "key", x: 100, y: 230, color: 0x3a7dba, isPrisonReward: true }
     ], 
     // 🧟 AGREGAMOS LOS TANKS AQUÍ:
     enemies: [
@@ -840,7 +845,7 @@ underground_lab4: {
       from_lab1: { x: 710, y: 300, angle: 180 },
       from_lab6: { x: 90, y: 300, angle: 0 }
     },
-    props: [], items: [], enemies: [
+    props: [], items: [{ id: "lab5_ammo_01", type: "ammo", name: "Balas x9", x: 100, y:410, color: 0xd6d6d6, amount: 9}], enemies: [
       { id: "lab5_runner_01", type: "runner", x: 200, y: 300, speed: 80, wakeRange: 90, aggroRange: 250, damage: 15, health: 60 },
       { id: "lab5_runner_02", type: "runner", x: 200, y: 400, speed: 80, wakeRange: 90, aggroRange: 250, damage: 15, health: 60 },
 
@@ -946,7 +951,7 @@ underground_lab6: {
       }
     ],
     spawns: { from_elevator: { x: 700, y: 300, angle: 180 }, from_e3: { x: 400, y: 100, angle: 90 } },
-    props: [], items: [], enemies: []
+    props: [], items: [{id: "e2_ammo_01", type: "ammo", name: "Balas x9", x: 130, y: 440, color: 0xd6d6d6, amount: 9}], enemies: [{ id: "e2_zombie_01", type: "zombie", x: 300, y: 120, speed: 80, aggroRange: 250, damage: 15, health: 60 }, { id: "e2_zombie_02", type: "zombie", x: 400, y: 500, speed: 80, aggroRange: 250, damage: 15, health: 60 }]
   },
 
   elec_corridor_mid: {
@@ -974,7 +979,7 @@ underground_lab6: {
       }
     ],
     spawns: { from_e2: { x: 400, y: 480, angle: 270 }, from_e4: { x: 400, y: 100, angle: 90 } },
-    props: [], items: [], enemies: []
+    props: [], items: [], enemies: [{ id: "e3_sleeper_01", type: "sleeper", x: 300, y: 120, speed: 92, wakeRange: 95, aggroRange: 310, damage: 13, health: 70 }, { id: "e3_sleeper_02", type: "sleeper", x: 650, y: 200, speed: 92, wakeRange: 95, aggroRange: 310, damage: 13, health: 70}]
   },
 
   elec_corridor_top: {
@@ -1001,7 +1006,7 @@ underground_lab6: {
       }
     ],
     spawns: { from_e3: { x: 400, y: 480, angle: 270 }, from_core: { x: 700, y: 300, angle: 180 } },
-    props: [], items: [], enemies: []
+    props: [], items: [{id: "e4_ammo_01", type: "ammo", name: "Balas x9", x: 130, y: 440, color: 0xd6d6d6, amount: 9}], enemies: [{ id: "tank_01", type: "tank", x: 300, y: 120, speed: 40, aggroRange: 250, damage: 22, health: 150 }]
   },
 
   elec_core: {
