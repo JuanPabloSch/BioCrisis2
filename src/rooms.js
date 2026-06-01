@@ -907,18 +907,18 @@ underground_lab6: {
 
   elec_elevator_exit: {
     name: "Piso Técnico - Salida del Ascensor (Sector E1)",
-    zone: "electrical", requiresPower: false, showWallVisuals: true,
+    zone: "electrical", requiresPower: false, showWallVisuals: false,
     backgroundImage: { key: "bg_e1", path: "src/background/e1.png" },
     // Muros perimetrales + cajas de herramientas como obstáculos en las esquinas
     walls: [
-      { x: 0, y: 0, w: 800, h: 40 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 0, y: 40, w: 40, h: 520 }, { x: 760, y: 40, w: 40, h: 520 },
-      { x: 40, y: 40, w: 120, h: 100 }, { x: 600, y: 460, w: 160, h: 100 } // Cajas / Obstáculos
+      { x: 0, y: 0, w: 800, h: 90 }, { x: 0, y: 540, w: 800, h: 40 }, { x: 0, y: 40, w: 40, h: 520 }, { x: 730, y: 40, w: 40, h: 520 },
+      { x: 460, y: 190, w: 20, h: 200 }, { x: 320, y: 190, w: 160, h: 20 }, { x: 320, y: 390, w: 160, h: 20 } // Cajas / Obstáculos
     ],
     doors: [
-      { id: "elec_elev_to_lab6", x: 340, y: 540, w: 120, h: 20, label: "Bajar por el Ascensor", to: "underground_lab6", spawn: "from_elev" },
+      { id: "elec_elev_to_lab6", x: 400, y: 240, w: 20, h: 120, label: "Bajar por el Ascensor", to: "underground_lab6", spawn: "from_elev" },
       { id: "elec_elev_to_e2", x: 40, y: 240, w: 20, h: 120, label: "Ir a Sector E2", to: "elec_corridor_down", spawn: "from_elevator" }
     ],
-    spawns: { from_elevator: { x: 400, y: 480, angle: 270 }, from_e2: { x: 100, y: 300, angle: 0 } },
+    spawns: { from_elevator: { x: 350, y: 260, angle: 270 }, from_e2: { x: 100, y: 300, angle: 0 } },
     props: [], items: [], enemies: []
   },
 
