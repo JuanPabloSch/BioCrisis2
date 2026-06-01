@@ -928,11 +928,16 @@ underground_lab6: {
     props: [], items: [], enemies: []
   },
 
-  underground_lab7: {
+underground_lab7: {
     name: "Sala de Servidores Central (Sector 7)",
     zone: "underground", requiresPower: false, showWallVisuals: false,
     backgroundImage: { key: "bg_lab7", path: "src/background/lab7.png" },
-    walls: [{ x: 0, y: 0, w: 800, h: 110 }, { x: 0, y: 530, w: 800, h: 40 }, { x: 10, y: 40, w: 40, h: 520 }, { x: 740, y: 40, w: 40, h: 520 }],
+    walls: [
+      { x: 0, y: 0, w: 800, h: 110 }, 
+      { x: 0, y: 530, w: 800, h: 40 }, 
+      { x: 10, y: 40, w: 40, h: 520 }, 
+      { x: 740, y: 40, w: 40, h: 520 }
+    ],
     doors: [
       { id: "lab7_to_lab6", x: 740, y: 240, w: 20, h: 120, label: "Volver al Lab 6", to: "underground_lab6", spawn: "from_lab7" }
     ],
@@ -941,10 +946,13 @@ underground_lab6: {
     },
     props: [], 
     items: [
-      // 🎁 La tarjeta final bien custodiada en el centro de los servidores
+      // 🎁 La tarjeta final en el centro
       { id: "key_card_lvl2", name: "Tarjeta de Acceso - Nivel 2", type: "key", x: 400, y: 300, color: 0xb94235 }
     ], 
-    enemies: []
+    enemies: [
+      // 🧟 NUEVO BOSS: Custodio del Sector 7 (Configuración base tipo Tank)
+      { id: "lab7_boss_server", type: "tank", x: 200, y: 300, speed: 48, aggroRange: 350, damage: 25, health: 90 }
+    ]
   },
 
 // ===================================================

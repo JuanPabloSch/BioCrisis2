@@ -462,7 +462,22 @@ loadRoom(roomId, spawnId) {
     // 🧟 4. GENERACIÓN DE ENEMIGOS
     for (const enemy of room.enemies ?? []) {
       const enemyState = this.getEnemyState(enemy);
-      if (enemyState.dead) continue;
+
+      // 🚨 INYECTOR ANTIBUGS INTELIGENTE:
+      if (enemy.id === "lab7_boss_server" || enemy.id === "pumps_tank_01") {
+        // 🔍 SOLO lo revivimos si el estado dinámico NO existe o está corrupto,
+        // pero si ya lo mataste EN ESTA SESIÓN (health <= 0), respetamos su muerte.
+        if (enemyState.health === undefined || isNaN(enemyState.health)) {
+          enemyState.dead = false;
+          enemyState.health = enemy.health; // Le damos sus HP limpios
+        }
+        
+        // La posición la aseguramos siempre para que no se meta en la pared
+        enemyState.x = enemy.x;
+        enemyState.y = enemy.y;
+      }
+
+      if (enemyState.dead || enemyState.health <= 0) continue; // 👈 Agregamos control por HP por las dudas
 
       const enemyType = getEnemyType(enemy);
       const marker = this.add.circle(enemyState.x, enemyState.y, enemyType.radius, enemyType.color);
@@ -795,6 +810,15 @@ isDoorLocked(door) {
       const bossState = this.getEnemyState ? this.getEnemyState({ id: "pumps_tank_01" }) : this.worldState?.enemiesStates?.["pumps_tank_01"];
       if (bossState && !bossState.dead) {
         door.lockedMessage = "🚨 PROTOCOLO DE ANOMALÍA: Salidas bloqueadas hasta eliminar la amenaza biológica.";
+        return true;
+      }
+    }
+
+    // 🔒 NUEVO - Control de Boss 2: Sala de Servidores (Lab 7)
+    if (this.currentRoomId === "underground_lab7" && door.id === "lab7_to_lab6") {
+      const bossState = this.getEnemyState ? this.getEnemyState({ id: "lab7_boss_server" }) : this.worldState?.enemies?.["lab7_boss_server"];
+      if (bossState && !bossState.dead) {
+        door.lockedMessage = "🚨 ALERTA: Servidores bajo asedio orgánico. Puerta bloqueada por seguridad.";
         return true;
       }
     }
@@ -1264,18 +1288,35 @@ useInteractable(interactable) {
     bullet.destroy();
   }
 
-  onBulletHitEnemy(bullet, enemyMarker) {
+onBulletHitEnemy(bullet, enemyMarker) {
     const enemyState = enemyMarker.getData("enemyState");
+    const enemyData = enemyMarker.getData("enemy"); // 👈 Traemos la data del enemigo para identificar su ID
+
     enemyState.health -= bullet.getData("damage");
     bullet.destroy();
 
     if (enemyState.health <= 0) {
       enemyState.dead = true;
+
+      // 🚩 REGISTRO SEGURO: Guardamos el estado muerto en el worldState global
+      if (this.worldState && this.worldState.enemies && enemyData) {
+        this.worldState.enemies[enemyData.id] = enemyState;
+      }
+
       enemyMarker.destroy();
-      this.flashPrompt("Enemigo abatido");
+
+      // 🎉 Carteles dinámicos según el jefe que elimines
+      if (enemyData?.id === "pumps_tank_01") {
+        this.flashPrompt("💥 ¡Amenaza erradicada! El protocolo de bioseguridad se ha desactivado.");
+      } else if (enemyData?.id === "lab7_boss_server") {
+        this.flashPrompt("💥 Servidores liberados. Las puertas de salida se han desbloqueado.");
+      } else {
+        this.flashPrompt("Enemigo abatido");
+      }
       return;
     }
 
+    // --- Tu parpadeo visual original intacto ---
     const enemyType = enemyMarker.getData("enemyType");
     enemyMarker.setFillStyle(enemyType.hitColor);
     this.time.delayedCall(120, () => {
