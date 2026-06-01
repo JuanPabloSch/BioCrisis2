@@ -783,7 +783,7 @@ underground_lab1: {
     enemies: [{ id: "lab3_zombie_01", type: "zombie", x: 500, y: 300, speed: 90, aggroRange: 250, damage: 15, health: 60 }],
     interactables: [
       // 🖥️ MOVIDO MÁS A LA IZQUIERDA (X: 590) para despegarlo por completo del muro sólido
-      { id: "lab3_console", type: "lab_terminal", x: 590, y: 300, w: 50, h: 60, label: "Consola de Seguridad Este" }
+      { id: "lab3_console", type: "lab_terminal", x: 650, y: 350, w: 50, h: 60, label: "Consola de Seguridad Este" }
     ]
   },
 
@@ -823,7 +823,7 @@ underground_lab4: {
       { id: "lab4_tank_02", type: "tank", x: 100, y: 400, speed: 40, aggroRange: 250, damage: 22, health: 150, isPrisonEnemy: true }
     ],
     interactables: [
-      { id: "prison_panel", type: "prison_release", x: 240, y: 300, w: 40, h: 40, label: "Panel de Control de Celdas" }
+      { id: "prison_panel", type: "prison_release", x: 150, y: 500, w: 40, h: 40, label: "Panel de Control de Celdas" }
     ]
   },
 
@@ -847,7 +847,7 @@ underground_lab4: {
     ]
   },
 
-  underground_lab6: {
+underground_lab6: {
     name: "Laboratorio Químico (Sector 6)",
     zone: "underground", requiresPower: false, showWallVisuals: false,
     backgroundImage: { key: "bg_lab6", path: "src/background/lab6.png" },
@@ -855,11 +855,10 @@ underground_lab4: {
     doors: [
       { 
         id: "lab6_to_elevator", 
-        x: 340, y: 140, w: 120, h: 20, 
+        x: 340, y: 110, w: 120, h: 20, 
         label: "Usar Ascensor de Carga", 
         to: "elec_elevator_exit", 
-        spawn: "from_elevator",
-        // 🔒 Bloqueamos el ascensor final hasta tener la tarjeta del sector 7
+        spawn: "from_elevator", // 👈 Tu puerta busca este ID al volver
         lockedBy: "key_card_lvl2",
         lockedMessage: "Código de seguridad requerido. Inserte Tarjeta de Nivel 2."
       },
@@ -869,7 +868,6 @@ underground_lab4: {
         label: "Ir al Lab 7", 
         to: "underground_lab7", 
         spawn: "from_lab6",
-        // 🔒 Bloqueamos la entrada al sector de servidores con la llave del túnel
         lockedBy: "rare_key",
         lockedMessage: "Cerrado. Requiere Tarjeta de Acceso - Nivel 1."
       },
@@ -877,7 +875,9 @@ underground_lab4: {
     ],
     spawns: {
       from_lab5: { x: 710, y: 300, angle: 180 },
-      from_lab7: { x: 120, y: 300, angle: 0 }
+      from_lab7: { x: 120, y: 300, angle: 0 },
+      // 🟢 NUEVO: Posicionamos al jugador saliendo del ascensor mirando hacia ABAJO (90°)
+      from_elevator: { x: 400, y: 100, angle: 90 } 
     },
     props: [], items: [], enemies: []
   },
