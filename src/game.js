@@ -317,7 +317,7 @@ loadRoom(roomId, spawnId) {
     if (bg.setStrokeStyle) bg.setStrokeStyle(4, 0x0b0b0b);
     this.roomLayer.add(bg);
 
-    // 🧱 1. GENERACIÓN DE MUROS (CON REJA DINÁMICA)
+// 🧱 1. GENERACIÓN DE MUROS (CON REJA DINÁMICA)
     for (const wall of room.walls) {
       // 🚪 SI ES LA REJA LARGA Y LAS CELDAS YA SE ABRIERON, LA SALTEAMOS
       if (wall.isPrisonGate && this.worldState.objectives.cellsOpened) {
@@ -343,14 +343,9 @@ loadRoom(roomId, spawnId) {
       this.doorGroup.add(rect);
     }
 
-    // 🔑 2. GENERACIÓN DE ITEMS (CON RECOMPENSA OCULTA)
+    // 🔑 2. GENERACIÓN DE ITEMS (La llave ya se muestra de entrada)
     for (const item of room.items ?? []) {
       if (this.worldState.collectedItems[item.id]) continue;
-
-      // 🚪 Si la tarjeta es la de la celda y todavía NO abrimos el panel, no la creamos
-      if (item.isPrisonReward && !this.worldState.objectives.cellsOpened) {
-        continue;
-      }
 
       const marker = this.add.star(item.x, item.y, 5, 8, 17, item.color ?? 0xffffff);
       marker.setData("item", item);
@@ -359,6 +354,7 @@ loadRoom(roomId, spawnId) {
       this.itemGroup.add(marker);
     }
 
+    // 🖥️ 3. GENERACIÓN DE INTERACTUABLES (¡Esto arregla los botones/consolas del Lab 3 y Lab 4!)
     for (const interactable of room.interactables ?? []) {
       const visual = this.getInteractableVisual(interactable);
       const marker = this.add.rectangle(interactable.x, interactable.y, interactable.w, interactable.h, visual.color, visual.alpha);
@@ -369,15 +365,10 @@ loadRoom(roomId, spawnId) {
       this.interactableGroup.add(marker);
     }
 
-    // 🧟 3. GENERACIÓN DE ENEMIGOS (CON TANKS OCULTOS)
+    // 🧟 4. GENERACIÓN DE ENEMIGOS (Los Tanks ya aparecen de entrada dentro de las celdas)
     for (const enemy of room.enemies ?? []) {
       const enemyState = this.getEnemyState(enemy);
       if (enemyState.dead) continue;
-
-      // 🚪 Si son los Tanks de las celdas y todavía NO abrimos el panel, los dejamos ocultos
-      if (enemy.isPrisonEnemy && !this.worldState.objectives.cellsOpened) {
-        continue;
-      }
 
       const enemyType = getEnemyType(enemy);
       const marker = this.add.circle(enemyState.x, enemyState.y, enemyType.radius, enemyType.color);
