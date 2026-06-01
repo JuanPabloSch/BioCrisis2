@@ -332,72 +332,57 @@ export const ROOMS = {
       { id: "maintenance_runner_02", type: "runner", x: 620, y: 380, speed: 135, aggroRange: 360, damage: 8, health: 35 },
     ],
   },
-  switch_room: {
-    name: "Sala de paneles",
+  generator_room: {
+    name: "Sala del generador",
     zone: "service",
-    backgroundImage: { key: "bg_paneles", path: "src/background/paneles.png" },
+    backgroundImage: { key: "bg_generador", path: "src/background/generador.png" },
     showWallVisuals: false,
     requiresPower: true,
     walls: [
-      { x: 0, y: 0, w: 800, h: 112 },
+      { x: 0, y: 0, w: 800, h: 82 },
       { x: 0, y: 558, w: 800, h: 42 },
-      { x: 0, y: 0, w: 42, h: 600 },
-      { x: 680, y: 0, w: 42, h: 600 },
-      { x: 320, y: 220, w: 180, h: 150 },
-      { x: 40, y: 340, w: 90, h: 200 },
-      { x: 150, y: 440, w: 90, h: 100 },
-      { x: 550, y: 440, w: 200, h: 100 },
-      { x: 550, y: 100, w: 90, h: 100 },
+      { x: 0, y: 0, w: 102, h: 600 },
+      { x: 758, y: 0, w: 102, h: 600 },
+      { x: 200, y: 422, w: 40, h: 40 },
+      { x: 265, y: 222, w: 200, h: 120 },
+      { x: 520, y: 415, w: 220, h: 130 },
     ],
     doors: [
-      { id: "switch_to_maintenance", x: 18, y: 200, w: 42, h: 88, to: "maintenance_access", spawn: "from_switch", label: "Mantenimiento" },
-      { id: "switch_to_sealed", x: 360, y: 118, w: 80, h: 42, to: "sealed_room", spawn: "from_switch", label: "Sala sellada", objectiveLocked: "switchPuzzleSolved" },
+      { id: "generator_to_locked", x: 340, y: 60, w: 120, h: 42, to: "locked_corridor", spawn: "from_generator", label: "Pasillo" },
+      { id: "generator_to_maintenance", x: 740, y: 230, w: 42, h: 118, to: "maintenance_access", spawn: "from_generator", label: "Mantenimiento", powerLocked: true },
+      
+      // 🔓 MODIFICADO: Ahora esta puerta se destraba automágicamente desde la otra punta del mapa
+      { 
+        id: "generator_to_underground", 
+        x: 330, y: 500, w: 120, h: 42, 
+        to: "underground_entry", 
+        spawn: "from_generator", 
+        label: "Subsuelo", 
+        objectiveLocked: "switchPuzzleSolved" // 👈 Vinculado al puzzle de la switch_room
+      },
     ],
-    enemies: [
-    { id: "service_tank_01", type: "tank", x: 5000, y: 275, speed: 42, aggroRange: 250, damage: 22, health: 150 },    ],
     spawns: {
-      from_maintenance: { x: 92, y: 302, angle: 0 },
-      from_sealed: { x: 400, y: 152, angle: 90 },
+      from_corridor: { x: 400, y: 92, angle: 90 },
+      from_maintenance: { x: 700, y: 302, angle: 180 },
+      from_underground: { x: 400, y: 450, angle: 270 },
     },
     props: [],
-    items: [{ id: "flashlight_01", type: "tool", name: "Linterna", x: 110, y: 400, color: 0xfff1a6, description: "Sirve para moverse por zonas sin electricidad." },],
     interactables: [
       {
-        id: "switch_a",
-        type: "puzzle_switch",
-        switchId: "a",
-        label: "alternar panel A",
-        x: 325,
-        y: 260,
-        w: 10,
-        h: 10,
-        offVisual: { color: 0x8c3d38, alpha: 0.84, strokeColor: 0x35110f },
-        onVisual: { color: 0x65d17a, alpha: 0.9, strokeColor: 0x12381a },
+        id: "generator_switch",
+        type: "generator",
+        label: "activar generador",
+        x: 400, y: 300, w: 140, h: 90,
+        requiresItem: "fuse_01",
+        offVisual: { color: 0xc9a633, alpha: 0.72, strokeColor: 0x332500 },
+        onVisual: { color: 0x7fe28a, alpha: 0.72, strokeColor: 0x17361b },
       },
-      {
-        id: "switch_b",
-        type: "puzzle_switch",
-        switchId: "b",
-        label: "alternar panel B",
-        x: 400,
-        y: 260,
-        w: 10,
-        h: 10,
-        offVisual: { color: 0x8c3d38, alpha: 0.84, strokeColor: 0x35110f },
-        onVisual: { color: 0x65d17a, alpha: 0.9, strokeColor: 0x12381a },
-      },
-      {
-        id: "switch_c",
-        type: "puzzle_switch",
-        switchId: "c",
-        label: "alternar panel C",
-        x: 485,
-        y: 260,
-        w: 10,
-        h: 10,
-        offVisual: { color: 0x8c3d38, alpha: 0.84, strokeColor: 0x35110f },
-        onVisual: { color: 0x65d17a, alpha: 0.9, strokeColor: 0x12381a },
-      },
+    ],
+    items: [
+      { id: "medikit_generator_01", type: "medikit", name: "Medikit", x: 560, y: 125, color: 0x5fd178, heal: 35 },
+    ],
+    enemies: [
+      { id: "generator_zombie_02", type: "zombie", x: 525, y: 330, speed: 58, aggroRange: 240, damage: 12, health: 60 },
     ],
   },
   underground_entry: {
@@ -1045,7 +1030,7 @@ underground_lab6: {
     doors: [
       { id: "escape_to_core", x: 340, y: 40, w: 120, h: 20, label: "Volver al Núcleo", to: "elec_core", spawn: "from_escape" },
       // 🟢 PUERTA DE SALIDA: Mañana hacés que se desbloquee cuando la vida de Mr. X llegue a 0
-      { id: "escape_to_final", x: 740, y: 240, w: 20, h: 120, label: "Puerta de Evacuación", to: "elec_final_escape", spawn: "from_hangar", bossLocked: true, lockedMessage: "La compuerta está sellada por el protocolo de combate." }
+      { id: "escape_to_final", x: 340, y: 500, w: 120, h: 20, label: "Puerta de Evacuación", to: "elec_final_escape", spawn: "from_hangar", bossLocked: true, lockedMessage: "La compuerta está sellada por el protocolo de combate." }
     ],
     spawns: { 
       from_core: { x: 400, y: 100, angle: 90 },
