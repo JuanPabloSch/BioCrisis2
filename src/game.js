@@ -108,6 +108,7 @@ class PrototypeScene extends Phaser.Scene {
       }
     }
     this.load.image("foto_linterna", "src/background/linterna.png"); 
+    this.load.image("foto_labo", "src/background/labo.png");
 
   }
 
@@ -284,52 +285,76 @@ class PrototypeScene extends Phaser.Scene {
   }
 
 loadRoom(roomId, spawnId) {
-    // 📸 EFECTO CINEMÁTICO: Solo si es "underground_entry", no estamos en medio de la transición,
-    // Y ADEMÁS es la primera vez (el objetivo "undergroundVisited" no existe o es falso)
+    // 📸 CASO 1: CINEMÁTICA ENTRADA SUBTERRÁNEA (La de la linterna)
     if (roomId === "underground_entry" && !this.playingTransition && !this.worldState?.objectives?.undergroundVisited) {
-      
-      this.playingTransition = true; // Flag temporal para el bucle
-      this.player.body.setVelocity(0, 0); // Frenamos al player
-      this.physics.world.pause(); // Pausamos físicas
+      this.playingTransition = true;
+      this.player.body.setVelocity(0, 0);
+      this.physics.world.pause();
 
-      // 1. Fade Out a negro veloz
       this.cameras.main.fadeOut(300, 0, 0, 0);
       this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
-        
-        // 2. Dibujamos "linterna.png"
-        const img = this.add.image(WIDTH / 2, HEIGHT / 2, "foto_linterna")
-                        .setDisplaySize(WIDTH, HEIGHT)
-                        .setDepth(9999);
-
+        const img = this.add.image(WIDTH / 2, HEIGHT / 2, "foto_linterna").setDisplaySize(WIDTH, HEIGHT).setDepth(9999);
         this.cameras.main.fadeIn(400, 0, 0, 0);
 
-        // 3. Mantenemos la foto en pantalla por 2.5 segundos
         this.time.delayedCall(2500, () => {
           this.cameras.main.fadeOut(400, 0, 0, 0);
           this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
             img.destroy();
             this.physics.world.resume();
-            
-            // 🚩 ¡CLAVE! Marcamos la zona como "ya visitada" para siempre
-            if (this.worldState && this.worldState.objectives) {
-              this.worldState.objectives.undergroundVisited = true;
-            }
-            
-            // 4. Cargamos la sala real
+            if (this.worldState?.objectives) this.worldState.objectives.undergroundVisited = true;
             this.loadRoom(roomId, spawnId);
             this.cameras.main.fadeIn(400, 0, 0, 0);
           });
         });
       });
-      return; // Cortamos acá para que no dibuje la sala abajo de la foto
+      return;
+    }
+    
+    // 📸 CASO 2: NUEVA CINEMÁTICA LABORATORIO PRINCIPAL (Usa labo.png)
+    else if (roomId === "underground_lab1" && !this.playingTransition && !this.worldState?.objectives?.lab1Visited) {
+      this.playingTransition = true;
+      this.player.body.setVelocity(0, 0);
+      this.physics.world.pause();
+
+      // 1. Fade Out suave a negro
+      this.cameras.main.fadeOut(300, 0, 0, 0);
+      this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
+        
+        // 2. Mostramos "labo.png" a pantalla completa arriba de todo
+        const img = this.add.image(WIDTH / 2, HEIGHT / 2, "foto_labo")
+                        .setDisplaySize(WIDTH, HEIGHT)
+                        .setDepth(9999);
+
+        this.cameras.main.fadeIn(400, 0, 0, 0);
+
+        // 3. Dejamos la foto 2.5 segundos para dar ambiente
+        this.time.delayedCall(2500, () => {
+          this.cameras.main.fadeOut(400, 0, 0, 0);
+          this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
+            img.destroy(); // Limpiamos memoria
+            this.physics.world.resume(); // Reactivamos físicas
+            
+            // 🚩 Marcamos el laboratorio 1 como visitado
+            if (this.worldState?.objectives) {
+              this.worldState.objectives.lab1Visited = true;
+            }
+            
+            // 4. Cargamos la sala real de juego
+            this.loadRoom(roomId, spawnId);
+            this.cameras.main.fadeIn(400, 0, 0, 0);
+          });
+        });
+      });
+      return; // Cortamos la ejecución para que no renderice el mapa atrás
     }
 
-    // Al final de la transición (o si ya estaba visitada), el flag temporal se limpia
+    // Si no es ninguna de las dos o ya fueron visitadas, limpiamos el flag temporal
     this.playingTransition = false;
 
     this.worldState = normalizeWorldState(this.worldState);
     this.saveCurrentRoomEnemies();
-
+    
+    // ... RESTO DE TU CÓDIGO NORMAL DE LOADROOM HACIA ABAJO ...
     // 🌊 Refuerzo preventivo blindado contra crashes inesperados
     if (this.worldState?.objectives?.pumpSolved && typeof ROOMS !== 'undefined') {
       if (ROOMS["underground_entry"]?.backgroundImage) {
