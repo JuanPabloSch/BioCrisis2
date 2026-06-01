@@ -521,17 +521,15 @@ switch_room: {
       { id: "medikit_pumps_01", type: "medikit", name: "Medikit", x: 610, y: 455, color: 0x5fd178, heal: 35 },
     ],
     enemies: [
-      { id: "pumps_tank_01", type: "tank", x: 5000, y: 275, speed: 42, aggroRange: 250, damage: 22, health: 150 },
+      // 📍 Reubicado lejos de muros y configurado para durar 7-8 disparos
+      { id: "pumps_tank_01", type: "tank", x: 620, y: 300, speed: 45, aggroRange: 280, damage: 22, health: 75 },
     ],
     interactables: [
       {
         id: "pump_switch",
         type: "pump",
         label: "activar bomba",
-        x: 400,
-        y: 300,
-        w: 140,
-        h: 90,
+        x: 400, y: 300, w: 140, h: 90,
         offVisual: { color: 0xc9a633, alpha: 0.72, strokeColor: 0x332500 },
         onVisual: { color: 0x7fe28a, alpha: 0.72, strokeColor: 0x17361b },
       },

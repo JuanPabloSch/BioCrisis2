@@ -789,7 +789,17 @@ loadRoom(roomId, spawnId) {
     return this.worldState.inventory.some((item) => item.id === itemId);
   }
 
- isDoorLocked(door) {
+isDoorLocked(door) {
+    // 🔒 Control de Boss: Si el jefe de bombas está vivo, la salida se sella
+    if (this.currentRoomId === "underground_pumps" && door.id === "pumps_to_underground") {
+      const bossState = this.getEnemyState ? this.getEnemyState({ id: "pumps_tank_01" }) : this.worldState?.enemiesStates?.["pumps_tank_01"];
+      if (bossState && !bossState.dead) {
+        door.lockedMessage = "🚨 PROTOCOLO DE ANOMALÍA: Salidas bloqueadas hasta eliminar la amenaza biológica.";
+        return true;
+      }
+    }
+
+    // Tu código normal de llaves o condiciones sigue acá abajo...
     if (door.powerLocked && !this.worldState.objectives.generatorOn) return true;
     if (door.objectiveLocked && !this.worldState.objectives[door.objectiveLocked]) return true;
     
@@ -836,7 +846,30 @@ loadRoom(roomId, spawnId) {
     this.flashPrompt("Puerta desbloqueada");
   }
 
+  
+
 useInteractable(interactable) {
+  if (interactable.type === "pump") {
+    // 🧠 Si el Boss sigue respirando, la consola no responde
+    const bossState = this.getEnemyState ? this.getEnemyState({ id: "pumps_tank_01" }) : this.worldState?.enemiesStates?.["pumps_tank_01"];
+    if (bossState && !bossState.dead) {
+      this.cameras.main.shake(100, 0.004);
+      this.flashPrompt("❌ Consola inactiva: Interferencia bio-orgánica en el área.");
+      return; // Bloquea la interacción
+    }
+
+    // Si ya murió, tu código original de activar la bomba sigue acá abajo...
+    if (this.worldState.objectives.pumpSolved) {
+      this.flashPrompt("Las bombas ya están trabajando.");
+      return;
+    }
+    this.worldState.objectives.pumpSolved = true;
+    this.flashPrompt("🔊 Bombas principales ACTIVADAS. Desaguando niveles inferiores...");
+    this.reloadCurrentRoomAtPlayerPosition(); 
+    return;
+  }
+
+
   // 1. CASO: INTERRUPTORES DE PUZZLES
   if (interactable.type === "puzzle_switch") {
     this.togglePuzzleSwitch(interactable);
