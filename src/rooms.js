@@ -1006,15 +1006,15 @@ underground_lab6: {
 
   elec_core: {
     name: "Núcleo de Control de Energía",
-    zone: "electrical", requiresPower: false, showWallVisuals: true,
+    zone: "electrical", requiresPower: false, showWallVisuals: false,
     backgroundImage: { key: "bg_nucleo", path: "src/background/nucleo.png" },
     // Consola central grande tipo isla que te permite rodearla corriendo
     walls: [
-      { x: 0, y: 0, w: 800, h: 40 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 0, y: 40, w: 40, h: 520 }, { x: 760, y: 40, w: 40, h: 520 },
-      { x: 250, y: 220, w: 300, h: 160 } // Computadora central isla
+      { x: 0, y: 0, w: 800, h: 80 }, { x: 0, y: 560, w: 800, h: 40 }, { x:20, y: 40, w: 40, h: 520 }, { x: 700, y: 40, w: 40, h: 520 },
+      { x: 160, y: 120, w: 60, h: 60 }, { x: 460, y: 120, w: 60, h: 100 }, { x: 460, y: 280, w: 60, h: 60 }, { x: 460, y: 400, w: 60, h: 60 }, { x: 260, y: 180, w: 60, h: 60 }, { x: 260, y: 280, w: 60, h: 60 }, { x: 260, y: 400, w: 60, h: 60 }, { x: 580, y: 180, w: 60, h: 60 }, { x: 580, y: 420, w: 60, h: 60 }, { x: 80, y: 320, w: 60, h: 60 }, { x: 150, y: 490, w: 60, h: 60 }  // Computadora central isla
     ],
     doors: [
-      { id: "core_to_e4", x: 40, y: 240, w: 20, h: 120, label: "Volver a Sector E4", to: "elec_corridor_top", spawn: "from_core" },
+      { id: "core_to_e4", x: 40, y: 220, w: 20, h: 120, label: "Volver a Sector E4", to: "elec_corridor_top", spawn: "from_core" },
       { id: "core_to_escape", x: 340, y: 540, w: 120, h: 20, label: "Bajar al Hangar de Escape", to: "elec_escape", spawn: "from_core", puzzleLocked: "fasesCompletas" }
     ],
     interactables: [
@@ -1022,7 +1022,7 @@ underground_lab6: {
         id: "main_power_console",
         type: "core_console",
         label: "Consola Principal: Sincronizar Sistema",
-        x: 360, y: 45, w: 140, h: 40
+        x: 400, y: 80, w: 80, h: 40
       }
     ],
     spawns: { from_e4: { x: 100, y: 300, angle: 0 }, from_escape: { x: 400, y: 480, angle: 270 } },
@@ -1031,7 +1031,7 @@ underground_lab6: {
 
   elec_escape: {
     name: "Hangar Técnico (Arena de Emergencia)",
-    zone: "electrical", requiresPower: false, showWallVisuals: false,
+    zone: "electrical", requiresPower: false, showWallVisuals: true,
     backgroundImage: { key: "bg_hangar", path: "src/background/hangar.png" },
     // Espacio 100% limpio en el centro para poder correr, rodar y balear al Boss
     walls: [
