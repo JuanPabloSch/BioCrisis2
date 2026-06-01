@@ -280,7 +280,7 @@ class PrototypeScene extends Phaser.Scene {
 
   }
 
-  loadRoom(roomId, spawnId) {
+loadRoom(roomId, spawnId) {
     this.worldState = normalizeWorldState(this.worldState);
     this.saveCurrentRoomEnemies();
 
@@ -317,7 +317,13 @@ class PrototypeScene extends Phaser.Scene {
     if (bg.setStrokeStyle) bg.setStrokeStyle(4, 0x0b0b0b);
     this.roomLayer.add(bg);
 
+    // 🧱 1. GENERACIÓN DE MUROS (CON REJA DINÁMICA)
     for (const wall of room.walls) {
+      // 🚪 SI ES LA REJA LARGA Y LAS CELDAS YA SE ABRIERON, LA SALTEAMOS
+      if (wall.isPrisonGate && this.worldState.objectives.cellsOpened) {
+        continue; // 'continue' saltea esta pared y pasa a la siguiente del bucle
+      }
+
       const rect = this.add.rectangle(wall.x + wall.w / 2, wall.y + wall.h / 2, wall.w, wall.h, 0x171717);
       if (room.showWallVisuals === false) {
         rect.setVisible(false);
@@ -337,8 +343,14 @@ class PrototypeScene extends Phaser.Scene {
       this.doorGroup.add(rect);
     }
 
+    // 🔑 2. GENERACIÓN DE ITEMS (CON RECOMPENSA OCULTA)
     for (const item of room.items ?? []) {
       if (this.worldState.collectedItems[item.id]) continue;
+
+      // 🚪 Si la tarjeta es la de la celda y todavía NO abrimos el panel, no la creamos
+      if (item.isPrisonReward && !this.worldState.objectives.cellsOpened) {
+        continue;
+      }
 
       const marker = this.add.star(item.x, item.y, 5, 8, 17, item.color ?? 0xffffff);
       marker.setData("item", item);
@@ -357,11 +369,17 @@ class PrototypeScene extends Phaser.Scene {
       this.interactableGroup.add(marker);
     }
 
+    // 🧟 3. GENERACIÓN DE ENEMIGOS (CON TANKS OCULTOS)
     for (const enemy of room.enemies ?? []) {
       const enemyState = this.getEnemyState(enemy);
       if (enemyState.dead) continue;
-      const enemyType = getEnemyType(enemy);
 
+      // 🚪 Si son los Tanks de las celdas y todavía NO abrimos el panel, los dejamos ocultos
+      if (enemy.isPrisonEnemy && !this.worldState.objectives.cellsOpened) {
+        continue;
+      }
+
+      const enemyType = getEnemyType(enemy);
       const marker = this.add.circle(enemyState.x, enemyState.y, enemyType.radius, enemyType.color);
       if (enemy.type === "sleeper" && !enemyState.awake) marker.setAlpha(0.58);
       marker.setData("enemy", enemy);
@@ -734,62 +752,96 @@ class PrototypeScene extends Phaser.Scene {
   }
 
 useInteractable(interactable) {
-    if (interactable.type === "puzzle_switch") {
-      this.togglePuzzleSwitch(interactable);
+  // 1. CASO: INTERRUPTORES DE PUZZLES
+  if (interactable.type === "puzzle_switch") {
+    this.togglePuzzleSwitch(interactable);
+    return;
+  }
+
+  // 2. CASO: GENERADOR ELÉCTRICO
+  if (interactable.type === "generator") {
+    if (this.worldState.objectives.generatorOn) {
+      this.flashPrompt("El generador ya esta encendido");
       return;
     }
 
-    if (interactable.type === "generator") {
-      if (this.worldState.objectives.generatorOn) {
-        this.flashPrompt("El generador ya esta encendido");
-        return;
-      }
+    if (!this.hasItem(interactable.requiresItem)) {
+      this.flashPrompt("Falta un fusible");
+      return;
+    }
 
-      if (!this.hasItem(interactable.requiresItem)) {
-        this.flashPrompt("Falta un fusible");
-        return;
-      }
+    this.consumeItem(interactable.requiresItem);
+    this.worldState.objectives.generatorOn = true;
+    this.updateInventoryText();
+    this.reloadCurrentRoomAtPlayerPosition();
+    this.flashPrompt("Generador encendido");
+    return;
+  }
 
-      this.consumeItem(interactable.requiresItem);
-      this.worldState.objectives.generatorOn = true;
-      this.updateInventoryText();
+  // 3. CASO: BOMBA DE AGUA (Drenaje)
+  if (interactable.type === "pump") {
+    if (this.worldState.objectives.pumpSolved) {
+      this.flashPrompt("Las bombas ya estan funcionando");
+      return;
+    }
+
+    this.player.body.setVelocity(0, 0);
+    this.worldState.objectives.pumpSolved = true;
+
+    if (ROOMS["underground_entry"] && ROOMS["underground_entry"].backgroundImage) {
+      ROOMS["underground_entry"].backgroundImage.key = "bg_under_dry"; 
+    }
+    if (ROOMS["underground_pumps"] && ROOMS["underground_pumps"].backgroundImage) {
+      ROOMS["underground_pumps"].backgroundImage.key = "bg_bombas_dry";
+    }
+
+    this.flashPrompt("Activando sistema de drenaje...");
+    this.cameras.main.fadeOut(500, 0, 0, 0);
+
+    this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
       this.reloadCurrentRoomAtPlayerPosition();
-      this.flashPrompt("Generador encendido");
-      return;
-    }
 
-    // 3. CASO: BOMBA DE AGUA (Actualizado con keys dinámicas)
-    if (interactable.type === "pump") {
-      if (this.worldState.objectives.pumpSolved) {
-        this.flashPrompt("Las bombas ya estan funcionando");
-        return;
-      }
-
-      this.player.body.setVelocity(0, 0);
-      this.worldState.objectives.pumpSolved = true;
-
-      // Asignamos las versiones secas agregando el "_dry" a las keys
-      if (ROOMS["underground_entry"] && ROOMS["underground_entry"].backgroundImage) {
-        ROOMS["underground_entry"].backgroundImage.key = "bg_under_dry"; 
-      }
-      if (ROOMS["underground_pumps"] && ROOMS["underground_pumps"].backgroundImage) {
-        ROOMS["underground_pumps"].backgroundImage.key = "bg_bombas_dry";
-      }
-
-      this.flashPrompt("Activando sistema de drenaje...");
-      this.cameras.main.fadeOut(500, 0, 0, 0);
-
-      this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
-        this.reloadCurrentRoomAtPlayerPosition();
-
-        this.time.delayedCall(1000, () => {
-          this.cameras.main.fadeIn(500, 0, 0, 0);
-          this.flashPrompt("Bomba activada. Zona drenada con exito.");
-        });
+      this.time.delayedCall(1000, () => {
+        this.cameras.main.fadeIn(500, 0, 0, 0);
+        this.flashPrompt("Bomba activada. Zona drenada con exito.");
       });
+    });
 
+    return;
+  }
+
+  // 4. CASO: CONSOLA DE SEGURIDAD ESTE (LAB 3)
+  if (interactable.type === "lab_terminal") {
+    if (this.worldState.objectives.lab4AccessGranted) {
+      this.flashPrompt("Terminal en línea. Los bloqueos del Sector Sur (Lab 4) ya fueron removidos.");
       return;
     }
+
+    this.worldState.objectives.lab4AccessGranted = true;
+    this.cameras.main.flash(300, 0, 150, 250); // Destello cyan de pc
+    this.flashPrompt("SISTEMA DE DESECHOS ABIERTO: Se liberó el acceso al Lab 4.");
+    return;
+  }
+
+  // 5. CASO: PANEL DE APERTURA DE CELDAS (LAB 4) - ¡ACTUALIZADO Y SEGURO!
+  if (interactable.type === "prison_release") {
+    if (this.worldState.objectives.cellsOpened) {
+      this.flashPrompt("Las celdas ya se encuentran abiertas.");
+      return;
+    }
+
+    this.worldState.objectives.cellsOpened = true;
+    
+    // Efectos visuales en la pantalla del jugador
+    this.cameras.main.shake(500, 0.02);
+    this.cameras.main.flash(500, 255, 0, 0); 
+    this.flashPrompt("⚠️ ALERTA: Celdas de contención abiertas. Sujetos liberados.");
+
+    // Recargamos la sala actual. El método loadRoom se encarga del resto.
+    this.reloadCurrentRoomAtPlayerPosition(); 
+    return;
+  }
+
 
     // =========================================================================
     // 🟢 NUEVAS MECÁNICAS (Agregadas al final de forma segura sin tocar lo viejo)

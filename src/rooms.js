@@ -557,10 +557,7 @@ export const ROOMS = {
         spawn: "from_tunnel1" // Registrá este nombre para cuando crees la otra sala
       }
     ],
-    items: [
-      // Podés meter una recompensa por haber drenado la zona, como balas o una llave
-      { id: "rare_key", name: "Llave de Laboratorio", type: "key", x: 400, y: 300, color: 0xffd700 }
-    ],
+    items: [],
     interactables: [],
     enemies: [
       // Metemos un sleeper que se despierte al verte en esta nueva zona
@@ -737,7 +734,7 @@ export const ROOMS = {
   //            ZONA: LABORATORIO Under
   // ==========================================
 
-  underground_lab1: {
+underground_lab1: {
     name: "Laboratorio Principal (Sector 1)",
     backgroundImage: { key: "bg_lab1", path: "src/background/lab1.png" },
     zone: "underground", requiresPower: false, showWallVisuals: false,
@@ -746,14 +743,13 @@ export const ROOMS = {
       { id: "lab1_to_tunnel3", x: 340, y: 80, w: 120, h: 20, label: "Subir al Túnel 3", to: "underground_tunnel3", spawn: "from_lab" },
       { id: "lab1_to_lab5", x: 100, y: 240, w: 20, h: 120, label: "Ir al Lab 5 (Oeste)", to: "underground_lab5", spawn: "from_lab1" },
       { id: "lab1_to_lab2", x: 700, y: 240, w: 20, h: 120, label: "Ir al Lab 2 (Este)", to: "underground_lab2", spawn: "from_lab1" },
-      { id: "lab1_to_lab4", x: 340, y: 540, w: 120, h: 20, label: "Bajar al Lab 4 (Sur)", to: "underground_lab4", spawn: "from_lab1" }
+      { 
+        id: "lab1_to_lab4", x: 340, y: 540, w: 120, h: 20, label: "Bajar al Lab 4 (Sur)", to: "underground_lab4", spawn: "from_lab1",
+        objectiveLocked: "lab4AccessGranted",
+        lockedMessage: "Compuerta hidráulica sellada. Requiere autorización desde la consola del Almacén Biológico (Lab 3)."
+      }
     ],
-    spawns: {
-      from_tunnel3: { x: 400, y: 100, angle: 90 }, // Entrás cayendo desde arriba
-      from_lab5: { x: 90, y: 300, angle: 0 },
-      from_lab2: { x: 710, y: 300, angle: 180 },
-      from_lab4: { x: 400, y: 500, angle: 270 }
-    },
+    spawns: { from_tunnel3: { x: 400, y: 100, angle: 90 }, from_lab5: { x: 90, y: 300, angle: 0 }, from_lab2: { x: 710, y: 300, angle: 180 }, from_lab4: { x: 400, y: 500, angle: 270 } },
     props: [], items: [], enemies: []
   },
 
@@ -771,8 +767,9 @@ export const ROOMS = {
       from_lab3: { x: 710, y: 300, angle: 180 }
     },
     props: [], items: [], enemies: [
-        { id: "lab2_zombie_01", type: "zombie", x: 600, y: 300, speed: 90, aggroRange: 250, damage: 15, health: 60 },
-        { id: "lab2_zombie_02", type: "zombie", x: 200, y: 500, speed: 80, aggroRange: 250, damage: 15, health: 60 },]
+      { id: "lab2_zombie_01", type: "zombie", x: 600, y: 300, speed: 90, aggroRange: 250, damage: 15, health: 60 },
+      { id: "lab2_zombie_02", type: "zombie", x: 200, y: 400, speed: 80, aggroRange: 250, damage: 15, health: 60 } // Corregido Y: 500 a 400 para que no spawnee adentro de la colisión inferior
+    ]
   },
 
   underground_lab3: {
@@ -780,31 +777,53 @@ export const ROOMS = {
     zone: "underground", requiresPower: false, showWallVisuals: false,
     backgroundImage: { key: "bg_lab3", path: "src/background/lab3.png" },
     walls: [{ x: 0, y: 0, w: 800, h: 80 }, { x: 0, y: 520, w: 800, h: 40 }, { x: 0, y: 40, w: 60, h: 520 }, { x: 660, y: 40, w: 40, h: 520 }, { x: 320, y: 210, w: 150, h: 120 }, { x: 70, y: 430, w: 200, h: 100 }, { x: 570, y: 430, w: 100, h: 100 }],
-    doors: [
-      { id: "lab3_to_lab2", x: 60, y: 220, w: 20, h: 120, label: "Volver al Lab 2", to: "underground_lab2", spawn: "from_lab3" }
-    ],
-    spawns: {
-      from_lab2: { x: 90, y: 300, angle: 0 }
-    },
-    props: [], items: [], enemies: [ 
-      { id: "lab3_zombie_01", type: "zombie", x: 500, y: 300, speed: 90, aggroRange: 250, damage: 15, health: 60 },
-      ]
+    doors: [{ id: "lab3_to_lab2", x: 60, y: 220, w: 20, h: 120, label: "Volver al Lab 2", to: "underground_lab2", spawn: "from_lab3" }],
+    spawns: { from_lab2: { x: 90, y: 300, angle: 0 } },
+    props: [], items: [], 
+    enemies: [{ id: "lab3_zombie_01", type: "zombie", x: 500, y: 300, speed: 90, aggroRange: 250, damage: 15, health: 60 }],
+    interactables: [
+      // 🖥️ MOVIDO MÁS A LA IZQUIERDA (X: 590) para despegarlo por completo del muro sólido
+      { id: "lab3_console", type: "lab_terminal", x: 590, y: 300, w: 50, h: 60, label: "Consola de Seguridad Este" }
+    ]
   },
 
-  underground_lab4: {
+underground_lab4: {
     name: "Cámara de Desechos (Sector 4)",
     zone: "underground", requiresPower: false, showWallVisuals: true,
     backgroundImage: { key: "bg_lab4", path: "src/background/lab4.png" },
-    walls: [{ x: 0, y: 0, w: 800, h: 90 }, { x: 0, y: 560, w: 800, h: 40 }, { x: 180, y: 150, w: 40, h: 360 }, { x: 670, y: 40, w: 40, h: 520 }, { x: 40, y: 90, w: 40, h: 100 }, { x: 90, y: 150, w: 100, h: 40 }, { x: 440, y: 330, w: 180, h: 100 }, { x: 560, y: 460, w: 100, h: 100 }, { x: 560, y: 60, w: 100, h: 100 }, { x: 40, y: 490, w: 40, h: 100 }, { x: 90, y: 470, w: 100, h: 40 }, { x: 0, y: 250, w: 200, h: 20 }, { x: 0, y: 350, w: 200, h: 20 }, { x: 0, y: 480, w: 200, h: 20 }, { x: 0, y: 150, w: 200, h: 20 }],
+    walls: [
+      { x: 0, y: 0, w: 800, h: 90 }, 
+      { x: 0, y: 560, w: 800, h: 40 }, 
+      { x: 180, y: 150, w: 40, h: 360, isPrisonGate: true }, 
+      { x: 670, y: 40, w: 40, h: 520 }, 
+      { x: 40, y: 90, w: 40, h: 100 }, 
+      { x: 90, y: 150, w: 100, h: 40 }, 
+      { x: 440, y: 330, w: 180, h: 100 }, 
+      { x: 560, y: 460, w: 100, h: 100 }, 
+      { x: 560, y: 60, w: 100, h: 100 }, 
+      { x: 40, y: 490, w: 40, h: 100 }, 
+      { x: 90, y: 470, w: 100, h: 40 }, 
+      { x: 0, y: 250, w: 200, h: 20 }, 
+      { x: 0, y: 350, w: 200, h: 20 }, 
+      { x: 0, y: 480, w: 200, h: 20 }, 
+      { x: 0, y: 150, w: 200, h: 20 }
+    ],
     doors: [
       { id: "lab4_to_lab1", x: 340, y: 80, w: 120, h: 20, label: "Volver al Lab 1", to: "underground_lab1", spawn: "from_lab4" }
     ],
-    spawns: {
-      from_lab1: { x: 400, y: 90, angle: 90 }
-    },
-    props: [], items: [], enemies: [
-      { id: "lab4_tank_01", type: "tank", x: 100, y: 200, speed: 40, aggroRange: 250, damage: 22, health: 150 },
-      { id: "lab4_tank_02", type: "tank", x: 100, y: 300, speed: 40, aggroRange: 250, damage: 22, health: 150 },
+    spawns: { from_lab1: { x: 400, y: 90, angle: 90 } },
+    props: [], 
+    // 🔑 AGREGAMOS LA LLAVE AQUÍ DIRECTAMENTE TAMBIÉN:
+    items: [
+      { id: "rare_key", name: "Tarjeta de Acceso - Nivel 1", type: "key", x: 100, y: 180, color: 0x3a7dba, isPrisonReward: true }
+    ], 
+    // 🧟 AGREGAMOS LOS TANKS AQUÍ:
+    enemies: [
+      { id: "lab4_tank_01", type: "tank", x: 100, y: 200, speed: 40, aggroRange: 250, damage: 22, health: 150, isPrisonEnemy: true },
+      { id: "lab4_tank_02", type: "tank", x: 100, y: 400, speed: 40, aggroRange: 250, damage: 22, health: 150, isPrisonEnemy: true }
+    ],
+    interactables: [
+      { id: "prison_panel", type: "prison_release", x: 240, y: 300, w: 40, h: 40, label: "Panel de Control de Celdas" }
     ]
   },
 
@@ -839,9 +858,21 @@ export const ROOMS = {
         x: 340, y: 140, w: 120, h: 20, 
         label: "Usar Ascensor de Carga", 
         to: "elec_elevator_exit", 
-        spawn: "from_elevator" 
+        spawn: "from_elevator",
+        // 🔒 Bloqueamos el ascensor final hasta tener la tarjeta del sector 7
+        lockedBy: "key_card_lvl2",
+        lockedMessage: "Código de seguridad requerido. Inserte Tarjeta de Nivel 2."
       },
-      { id: "lab6_to_lab7", x: 100, y: 280, w: 20, h: 120, label: "Ir al Lab 7", to: "underground_lab7", spawn: "from_lab6" },
+      { 
+        id: "lab6_to_lab7", 
+        x: 100, y: 280, w: 20, h: 120, 
+        label: "Ir al Lab 7", 
+        to: "underground_lab7", 
+        spawn: "from_lab6",
+        // 🔒 Bloqueamos la entrada al sector de servidores con la llave del túnel
+        lockedBy: "rare_key",
+        lockedMessage: "Cerrado. Requiere Tarjeta de Acceso - Nivel 1."
+      },
       { id: "lab6_to_lab5", x: 700, y: 280, w: 20, h: 120, label: "Volver al Lab 5", to: "underground_lab5", spawn: "from_lab6" }
     ],
     spawns: {
@@ -862,7 +893,12 @@ export const ROOMS = {
     spawns: {
       from_lab6: { x: 710, y: 300, angle: 180 }
     },
-    props: [], items: [], enemies: []
+    props: [], 
+    items: [
+      // 🎁 La tarjeta final bien custodiada en el centro de los servidores
+      { id: "key_card_lvl2", name: "Tarjeta de Acceso - Nivel 2", type: "key", x: 400, y: 300, color: 0xb94235 }
+    ], 
+    enemies: []
   },
 
 // ===================================================
