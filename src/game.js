@@ -109,7 +109,7 @@ class PrototypeScene extends Phaser.Scene {
     }
     this.load.image("foto_linterna", "src/background/linterna.png"); 
     this.load.image("foto_labo", "src/background/labo.png");
-
+    this.load.image("foto_superficie", "src/background/superficie.png");
   }
 
   create() {
@@ -283,19 +283,16 @@ class PrototypeScene extends Phaser.Scene {
     }
 
   }
-
 loadRoom(roomId, spawnId) {
-    // 📸 CASO 1: CINEMÁTICA ENTRADA SUBTERRÁNEA (La de la linterna)
+    // 📸 CASO 1: CINEMÁTICA ENTRADA SUBTERRÁNEA (linterna.png)
     if (roomId === "underground_entry" && !this.playingTransition && !this.worldState?.objectives?.undergroundVisited) {
       this.playingTransition = true;
       this.player.body.setVelocity(0, 0);
       this.physics.world.pause();
-
       this.cameras.main.fadeOut(300, 0, 0, 0);
       this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
         const img = this.add.image(WIDTH / 2, HEIGHT / 2, "foto_linterna").setDisplaySize(WIDTH, HEIGHT).setDepth(9999);
         this.cameras.main.fadeIn(400, 0, 0, 0);
-
         this.time.delayedCall(2500, () => {
           this.cameras.main.fadeOut(400, 0, 0, 0);
           this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
@@ -310,51 +307,73 @@ loadRoom(roomId, spawnId) {
       return;
     }
     
-    // 📸 CASO 2: NUEVA CINEMÁTICA LABORATORIO PRINCIPAL (Usa labo.png)
+    // 📸 CASO 2: CINEMÁTICA LABORATORIO PRINCIPAL (labo.png)
     else if (roomId === "underground_lab1" && !this.playingTransition && !this.worldState?.objectives?.lab1Visited) {
       this.playingTransition = true;
       this.player.body.setVelocity(0, 0);
       this.physics.world.pause();
-
-      // 1. Fade Out suave a negro
       this.cameras.main.fadeOut(300, 0, 0, 0);
       this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
-        
-        // 2. Mostramos "labo.png" a pantalla completa arriba de todo
-        const img = this.add.image(WIDTH / 2, HEIGHT / 2, "foto_labo")
-                        .setDisplaySize(WIDTH, HEIGHT)
-                        .setDepth(9999);
-
+        const img = this.add.image(WIDTH / 2, HEIGHT / 2, "foto_labo").setDisplaySize(WIDTH, HEIGHT).setDepth(9999);
         this.cameras.main.fadeIn(400, 0, 0, 0);
-
-        // 3. Dejamos la foto 2.5 segundos para dar ambiente
         this.time.delayedCall(2500, () => {
           this.cameras.main.fadeOut(400, 0, 0, 0);
           this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
-            img.destroy(); // Limpiamos memoria
-            this.physics.world.resume(); // Reactivamos físicas
-            
-            // 🚩 Marcamos el laboratorio 1 como visitado
-            if (this.worldState?.objectives) {
-              this.worldState.objectives.lab1Visited = true;
-            }
-            
-            // 4. Cargamos la sala real de juego
+            img.destroy();
+            this.physics.world.resume();
+            if (this.worldState?.objectives) this.worldState.objectives.lab1Visited = true;
             this.loadRoom(roomId, spawnId);
             this.cameras.main.fadeIn(400, 0, 0, 0);
           });
         });
       });
-      return; // Cortamos la ejecución para que no renderice el mapa atrás
+      return;
     }
 
-    // Si no es ninguna de las dos o ya fueron visitadas, limpiamos el flag temporal
+    // 📸 CASO 3: NUEVA CINEMÁTICA SALIDA A LA SUPERFICIE (superficie.png)
+    else if (roomId === "elec_elevator_exit" && !this.playingTransition && !this.worldState?.objectives?.surfaceVisited) {
+      this.playingTransition = true;
+      this.player.body.setVelocity(0, 0);
+      this.physics.world.pause();
+
+      // Fade Out a negro
+      this.cameras.main.fadeOut(300, 0, 0, 0);
+      this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
+        
+        // Dibujamos "superficie.png" a pantalla completa
+        const img = this.add.image(WIDTH / 2, HEIGHT / 2, "foto_superficie")
+                        .setDisplaySize(WIDTH, HEIGHT)
+                        .setDepth(9999);
+
+        this.cameras.main.fadeIn(400, 0, 0, 0);
+
+        // Aguantamos la imagen en pantalla por 2.5 segundos
+        this.time.delayedCall(2500, () => {
+          this.cameras.main.fadeOut(400, 0, 0, 0);
+          this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
+            img.destroy();
+            this.physics.world.resume();
+            
+            // 🚩 Guardamos que ya vio esta cinemática para que no se repita
+            if (this.worldState?.objectives) {
+              this.worldState.objectives.surfaceVisited = true;
+            }
+            
+            // Cargamos el Sector E1 real de juego
+            this.loadRoom(roomId, spawnId);
+            this.cameras.main.fadeIn(400, 0, 0, 0);
+          });
+        });
+      });
+      return;
+    }
+
+    // Si no entra en ninguna cinemática o ya se vieron, limpiamos el flag temporal
     this.playingTransition = false;
 
     this.worldState = normalizeWorldState(this.worldState);
     this.saveCurrentRoomEnemies();
     
-    // ... RESTO DE TU CÓDIGO NORMAL DE LOADROOM HACIA ABAJO ...
     // 🌊 Refuerzo preventivo blindado contra crashes inesperados
     if (this.worldState?.objectives?.pumpSolved && typeof ROOMS !== 'undefined') {
       if (ROOMS["underground_entry"]?.backgroundImage) {
