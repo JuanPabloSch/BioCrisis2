@@ -22,8 +22,8 @@ const PLAYER_SPRITES = {
   rocket: { key: "player_rocket", path: "src/assets/player_rocket.png", frameWidth: 110, frameHeight: 120 },
 };
 
-const PLAYER_SCALE = 0.7;
-const ZOMBIE_SPRITE = { key: "zombie", path: "src/assets/zombie.png", frameWidth: 100, frameHeight: 130, scale: 0.7 };
+const PLAYER_SCALE = 0.8;
+const ZOMBIE_SPRITE = { key: "zombie", path: "src/assets/zombie.png", frameWidth: 100, frameHeight: 130, scale: 0.8 };
 
 const MAP_NODES = {
   // --- HILERA SUPERIOR ---
