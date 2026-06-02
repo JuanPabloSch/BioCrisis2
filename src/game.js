@@ -24,7 +24,13 @@ const PLAYER_SPRITES = {
 
 const PLAYER_SCALE = 0.8;
 const ZOMBIE_SPRITE = { key: "zombie", path: "src/assets/zombie.png", frameWidth: 100, frameHeight: 130, scale: 0.8 };
-
+const RUNNER_SPRITE = { 
+  key: "runner", 
+  path: "src/assets/runner.png", 
+  frameWidth: 100, 
+  frameHeight: 130, 
+  scale: 0.7 
+};
 const MAP_NODES = {
   // --- HILERA SUPERIOR ---
   laboratory_storage: { label: "Deposito", x: 612, y: 80 },
@@ -141,6 +147,10 @@ class PrototypeScene extends Phaser.Scene {
     this.load.spritesheet(ZOMBIE_SPRITE.key, ZOMBIE_SPRITE.path, {
       frameWidth: ZOMBIE_SPRITE.frameWidth,
       frameHeight: ZOMBIE_SPRITE.frameHeight,
+    });
+    this.load.spritesheet(RUNNER_SPRITE.key, RUNNER_SPRITE.path, {
+      frameWidth: RUNNER_SPRITE.frameWidth,
+      frameHeight: RUNNER_SPRITE.frameHeight
     });
   }
 
@@ -515,14 +525,10 @@ loadRoom(roomId, spawnId) {
 
       // 🚨 INYECTOR ANTIBUGS SEGURO PARA TODOS LOS BOSSES:
       if (enemy.id === "lab7_boss_server" || enemy.id === "pumps_tank_01" || enemy.id === "mr_x_final_boss") {
-        
-        // Si la vida se rompió en la partida guardada (NaN o undefined), la reseteamos con la del mapa
         if (enemyState.health === undefined || isNaN(enemyState.health)) {
           enemyState.dead = false;
           enemyState.health = enemy.health; 
         }
-        
-        // Forzamos SIEMPRE la posición del archivo ROOMS.js (adiós paredes)
         enemyState.x = enemy.x;
         enemyState.y = enemy.y;
       }
@@ -530,21 +536,42 @@ loadRoom(roomId, spawnId) {
       if (enemyState.dead || enemyState.health <= 0) continue;
 
       const enemyType = getEnemyType(enemy);
-      const marker = enemy.type === "zombie"
-        ? this.add.sprite(enemyState.x, enemyState.y, ZOMBIE_SPRITE.key, 0).setScale(ZOMBIE_SPRITE.scale)
-        : this.add.circle(enemyState.x, enemyState.y, enemyType.radius, enemyType.color);
+      let marker;
+
+      // 🎭 NUEVO SITEMA DE ASIGNACIÓN DE SPRITES (Zombie y Runner)
+      if (enemy.type === "zombie") {
+        marker = this.add.sprite(enemyState.x, enemyState.y, ZOMBIE_SPRITE.key, 0).setScale(ZOMBIE_SPRITE.scale);
+      } else if (enemy.type === "runner") {
+        // 🏃‍♂️ Instanciamos al runner con su propio sprite y la escala de 0.8
+        marker = this.add.sprite(enemyState.x, enemyState.y, RUNNER_SPRITE.key, 0).setScale(RUNNER_SPRITE.scale);
+      } else {
+        // Bosses, sleepers o torretas que sigan usando figuras nativas
+        marker = this.add.circle(enemyState.x, enemyState.y, enemyType.radius, enemyType.color);
+      }
+
       if (enemy.type === "sleeper" && !enemyState.awake) marker.setAlpha(0.58);
+      
       marker.setData("enemy", enemy);
       marker.setData("enemyState", enemyState);
       marker.setData("enemyType", enemyType);
+      
       if (marker.setStrokeStyle) marker.setStrokeStyle(2, enemyType.strokeColor);
+      
       this.roomLayer.add(marker);
       this.physics.add.existing(marker);
-      if (enemy.type === "zombie") {
-        marker.body.setCircle(enemyType.radius, marker.frame.width / 2 - enemyType.radius, marker.frame.height / 2 - enemyType.radius);
+      
+      // 📐 AJUSTE DE HITBOX SEGÚN EL TIPO (Para sprites vs círculos)
+      if (enemy.type === "zombie" || enemy.type === "runner") {
+        // Centramos el círculo físico de colisión justo en el medio del cuerpo del sprite (100x130)
+        marker.body.setCircle(
+          enemyType.radius, 
+          marker.frame.width / 2 - enemyType.radius, 
+          marker.frame.height / 2 - enemyType.radius
+        );
       } else {
         marker.body.setCircle(enemyType.radius);
       }
+      
       marker.body.setCollideWorldBounds(true);
       this.enemyGroup.add(marker);
     }
@@ -728,9 +755,11 @@ loadRoom(roomId, spawnId) {
     }
   }
 
-  updateEnemyFacing(enemyMarker) {
+updateEnemyFacing(enemyMarker) {
     const enemy = enemyMarker.getData("enemy");
-    if (enemy.type !== "zombie") return;
+    
+    // 🏃‍♂️ Habilitamos la función tanto para "zombie" como para el nuevo "runner"
+    if (enemy.type !== "zombie" && enemy.type !== "runner") return;
 
     const velocity = enemyMarker.body.velocity;
     if (Math.abs(velocity.x) < 1 && Math.abs(velocity.y) < 1) return;
