@@ -31,6 +31,13 @@ const RUNNER_SPRITE = {
   frameHeight: 130, 
   scale: 0.7 
 };
+const TANK_SPRITE = { 
+  key: "tank", 
+  path: "src/assets/tank.png", 
+  frameWidth: 100, 
+  frameHeight: 140, 
+  scale: 1.1 // Un poquito más grande para que meta miedo
+};
 const MAP_NODES = {
   // --- HILERA SUPERIOR ---
   laboratory_storage: { label: "Deposito", x: 612, y: 80 },
@@ -151,6 +158,11 @@ class PrototypeScene extends Phaser.Scene {
     this.load.spritesheet(RUNNER_SPRITE.key, RUNNER_SPRITE.path, {
       frameWidth: RUNNER_SPRITE.frameWidth,
       frameHeight: RUNNER_SPRITE.frameHeight
+    });
+    // 🛡️ Carga del Tank Boss
+    this.load.spritesheet(TANK_SPRITE.key, TANK_SPRITE.path, {
+      frameWidth: TANK_SPRITE.frameWidth,
+      frameHeight: TANK_SPRITE.frameHeight
     });
   }
 
@@ -544,8 +556,10 @@ loadRoom(roomId, spawnId) {
       } else if (enemy.type === "runner") {
         // 🏃‍♂️ Instanciamos al runner con su propio sprite y la escala de 0.8
         marker = this.add.sprite(enemyState.x, enemyState.y, RUNNER_SPRITE.key, 0).setScale(RUNNER_SPRITE.scale);
+      } else if (enemy.type === "tank") {
+        // 🛡️ Agarra tanto al Tank común como al Boss si su tipo es "tank"
+        marker = this.add.sprite(enemyState.x, enemyState.y, TANK_SPRITE.key, 0).setScale(TANK_SPRITE.scale);
       } else {
-        // Bosses, sleepers o torretas que sigan usando figuras nativas
         marker = this.add.circle(enemyState.x, enemyState.y, enemyType.radius, enemyType.color);
       }
 
@@ -560,18 +574,24 @@ loadRoom(roomId, spawnId) {
       this.roomLayer.add(marker);
       this.physics.add.existing(marker);
       
-      // 📐 AJUSTE DE HITBOX SEGÚN EL TIPO (Para sprites vs círculos)
+      // 📐 AJUSTE DE HITBOX (Revisá que las llaves apunten bien)
       if (enemy.type === "zombie" || enemy.type === "runner") {
-        // Centramos el círculo físico de colisión justo en el medio del cuerpo del sprite (100x130)
         marker.body.setCircle(
           enemyType.radius, 
           marker.frame.width / 2 - enemyType.radius, 
           marker.frame.height / 2 - enemyType.radius
         );
+      } else if (enemy.type === "tank") {
+        // Ponemos números fijos (100 y 140) por si el frame no cargó a tiempo en memoria
+        marker.body.setCircle(
+          enemyType.radius, 
+          100 / 2 - enemyType.radius, 
+          140 / 2 - enemyType.radius
+        );
       } else {
         marker.body.setCircle(enemyType.radius);
       }
-      
+
       marker.body.setCollideWorldBounds(true);
       this.enemyGroup.add(marker);
     }
@@ -758,8 +778,8 @@ loadRoom(roomId, spawnId) {
 updateEnemyFacing(enemyMarker) {
     const enemy = enemyMarker.getData("enemy");
     
-    // 🏃‍♂️ Habilitamos la función tanto para "zombie" como para el nuevo "runner"
-    if (enemy.type !== "zombie" && enemy.type !== "runner") return;
+    // 🚨 El chequeo limpio. Si no es ninguno, sale pacíficamente sin romper nada
+    if (enemy.type !== "zombie" && enemy.type !== "runner" && enemy.type !== "tank") return;
 
     const velocity = enemyMarker.body.velocity;
     if (Math.abs(velocity.x) < 1 && Math.abs(velocity.y) < 1) return;
