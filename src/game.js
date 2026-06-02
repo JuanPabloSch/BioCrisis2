@@ -4,6 +4,26 @@ import * as inventoryOverlay from "./inventory.js";
 import { ROOMS } from "./rooms.js";
 import { createInitialWorldState, loadGameData, normalizeWorldState, saveGameData } from "./saveSystem.js";
 
+const WEAPONS = {
+  pistol: { name: "Pistola", magazineSize: 6, delay: 260, reloadTime: 700, damage: 25, speed: 520, bulletRadius: 5, color: 0xf4e9b8, pellets: 1, spread: 0 },
+  shotgun: { name: "Escopeta", magazineSize: 4, delay: 620, reloadTime: 950, damage: 22, speed: 470, bulletRadius: 5, color: 0xffd28a, pellets: 5, spread: 0.34 },
+  rocket: { name: "Rocket", magazineSize: 1, delay: 1100, reloadTime: 1300, damage: 140, speed: 360, bulletRadius: 10, color: 0xff8166, pellets: 1, spread: 0 },
+};
+
+const WEAPON_KEYS = {
+  ONE: "pistol",
+  TWO: "shotgun",
+  THREE: "rocket",
+};
+
+const PLAYER_SPRITES = {
+  pistol: { key: "player_pistol", path: "src/assets/player_pistol.png", frameWidth: 100, frameHeight: 130 },
+  shotgun: { key: "player_shotgun", path: "src/assets/player_shotgun.png", frameWidth: 110, frameHeight: 130 },
+  rocket: { key: "player_rocket", path: "src/assets/player_rocket.png", frameWidth: 110, frameHeight: 120 },
+};
+
+const PLAYER_SCALE = 0.38;
+
 const MAP_NODES = {
   // --- HILERA SUPERIOR ---
   laboratory_storage: { label: "Deposito", x: 612, y: 80 },
@@ -111,6 +131,12 @@ class PrototypeScene extends Phaser.Scene {
     this.load.image("foto_labo", "src/background/labo.png");
     this.load.image("foto_superficie", "src/background/superficie.png");
     this.load.image("victory_screen", "src/background/victory.png");
+    for (const sprite of Object.values(PLAYER_SPRITES)) {
+      this.load.spritesheet(sprite.key, sprite.path, {
+        frameWidth: sprite.frameWidth,
+        frameHeight: sprite.frameHeight,
+      });
+    }
   }
 
   create() {
@@ -138,10 +164,10 @@ class PrototypeScene extends Phaser.Scene {
     this.enemyGroup = this.physics.add.group();
     this.bulletGroup = this.physics.add.group();
 
-    this.player = this.add.triangle(120, 300, 0, -18, 16, 16, -16, 16, 0xded8bf);
-    this.player.setStrokeStyle(2, 0x111111);
+    this.player = this.add.sprite(120, 300, PLAYER_SPRITES.pistol.key, 0);
+    this.player.setScale(PLAYER_SCALE);
     this.physics.add.existing(this.player);
-    this.player.body.setCircle(13, -13, -13);
+    this.configurePlayerBody();
     this.player.body.setCollideWorldBounds(true);
 
     this.physics.add.collider(this.player, this.wallGroup);
@@ -164,6 +190,11 @@ class PrototypeScene extends Phaser.Scene {
     this.loadKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.C);
     this.mapKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.M);
     this.inventoryKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.I);
+    this.weaponKeys = {
+      pistol: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ONE),
+      shotgun: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.TWO),
+      rocket: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.THREE),
+    };
     this.input.on("pointerdown", this.onPointerDown, this);
 
     this.titleText = this.add.text(20, 18, "", {
@@ -218,7 +249,7 @@ class PrototypeScene extends Phaser.Scene {
 
     body.setVelocity(vx, vy);
 
-    this.player.rotation = Phaser.Math.Angle.Between(this.player.x, this.player.y, this.input.activePointer.x, this.input.activePointer.y) + Math.PI / 2;
+    this.updatePlayerAimSprite();
 
     if (Phaser.Input.Keyboard.JustDown(this.mapKey)) {
       this.toggleMap();
@@ -239,6 +270,13 @@ class PrototypeScene extends Phaser.Scene {
     if (this.mapLayer?.visible) {
       body.setVelocity(0, 0);
       return;
+    }
+
+    for (const [weaponId, key] of Object.entries(this.weaponKeys)) {
+      if (Phaser.Input.Keyboard.JustDown(key)) {
+        this.switchWeapon(weaponId);
+        return;
+      }
     }
 
     this.cleanupBullets();
@@ -373,7 +411,11 @@ loadRoom(roomId, spawnId) {
     this.playingTransition = false;
 
     this.worldState = normalizeWorldState(this.worldState);
-    this.saveCurrentRoomEnemies();
+    if (this.skipSavingCurrentRoomOnce) {
+      this.skipSavingCurrentRoomOnce = false;
+    } else {
+      this.saveCurrentRoomEnemies();
+    }
     
     // 🌊 Refuerzo preventivo blindado contra crashes inesperados
     if (this.worldState?.objectives?.pumpSolved && typeof ROOMS !== 'undefined') {
@@ -520,7 +562,8 @@ loadRoom(roomId, spawnId) {
 
     const spawn = room.spawns?.[spawnId] ?? room.playerStart ?? { x: 400, y: 300, angle: 0 };
     this.player.setPosition(spawn.x, spawn.y);
-    this.player.rotation = Phaser.Math.DegToRad(spawn.angle) + Math.PI / 2;
+    this.player.rotation = 0;
+    this.setPlayerFrameFromAngle(Phaser.Math.DegToRad(spawn.angle));
     this.player.body.setVelocity(0, 0);
     this.updateFlashlightDarkness();
   }
@@ -778,7 +821,7 @@ loadRoom(roomId, spawnId) {
   collectItem(item) {
     this.worldState.collectedItems[item.id] = true;
     if (item.type === "ammo") {
-      this.worldState.reserveAmmo += item.amount;
+      this.addAmmo(item.weapon ?? "pistol", item.amount);
       this.updateAmmoText();
     } else {
       this.worldState.inventory.push(item);
@@ -792,12 +835,12 @@ loadRoom(roomId, spawnId) {
     const position = {
       x: this.player.x,
       y: this.player.y,
-      rotation: this.player.rotation,
+      frame: this.player.frame.name,
     };
 
     this.loadRoom(this.currentRoomId);
     this.player.setPosition(position.x, position.y);
-    this.player.rotation = position.rotation;
+    this.player.setFrame(position.frame);
     this.player.body.setVelocity(0, 0);
   }
 
@@ -807,11 +850,6 @@ loadRoom(roomId, spawnId) {
 
 isDoorLocked(door) {
 
-  
-    // 🧪 TRUCO TEMPORAL PARA PASAR LA PUERTA CON PARTIDA GRABADA:
-    if (this.currentRoomId === "elec_escape" && door.bossLocked) {
-      return false; // 👈 Fuerza a la puerta a estar SIEMPRE abierta
-    }
     // 🔒 NUEVO - Control de Boss 2: Sala de Servidores (Lab 7)
     if (this.currentRoomId === "underground_lab7" && door.id === "lab7_to_lab6") {
       const bossState = this.getEnemyState ? this.getEnemyState({ id: "lab7_boss_server" }) : this.worldState?.enemies?.["lab7_boss_server"];
@@ -871,25 +909,6 @@ isDoorLocked(door) {
   
 
 useInteractable(interactable) {
-  if (interactable.type === "pump") {
-    // 🧠 Si el Boss sigue respirando, la consola no responde
-    const bossState = this.getEnemyState ? this.getEnemyState({ id: "pumps_tank_01" }) : this.worldState?.enemiesStates?.["pumps_tank_01"];
-    if (bossState && !bossState.dead) {
-      this.cameras.main.shake(100, 0.004);
-      this.flashPrompt("❌ Consola inactiva: Interferencia bio-orgánica en el área.");
-      return; // Bloquea la interacción
-    }
-
-    // Si ya murió, tu código original de activar la bomba sigue acá abajo...
-    if (this.worldState.objectives.pumpSolved) {
-      this.flashPrompt("Las bombas ya están trabajando.");
-      return;
-    }
-    this.worldState.objectives.pumpSolved = true;
-    this.flashPrompt("🔊 Bombas principales ACTIVADAS. Desaguando niveles inferiores...");
-    this.reloadCurrentRoomAtPlayerPosition(); 
-    return;
-  }
 
   // 🏍️ CONTROL DE ESCAPE FINAL (Subirse a la moto)
   if (interactable.id === "escape_motorcycle" || interactable.type === "vehicle_escape") {
@@ -959,6 +978,13 @@ useInteractable(interactable) {
 
   // 3. CASO: BOMBA DE AGUA (Drenaje)
   if (interactable.type === "pump") {
+    const bossState = this.worldState?.enemies?.["pumps_tank_01"];
+    if (!bossState?.dead) {
+      this.cameras.main.shake(100, 0.004);
+      this.flashPrompt("Consola inactiva: interferencia biologica en el area.");
+      return;
+    }
+
     if (this.worldState.objectives.pumpSolved) {
       this.flashPrompt("Las bombas ya estan funcionando");
       return;
@@ -1203,9 +1229,70 @@ useInteractable(interactable) {
     this.healthText.setText(`Vida: ${this.worldState.health}`);
   }
 
+  configurePlayerBody() {
+    const frameWidth = this.player.frame.width;
+    const frameHeight = this.player.frame.height;
+    this.player.body.setCircle(13, frameWidth / 2 - 13, frameHeight / 2 - 13);
+  }
+
+  updatePlayerWeaponSprite() {
+    const sprite = PLAYER_SPRITES[this.worldState.weaponId] ?? PLAYER_SPRITES.pistol;
+    const frame = this.player.frame?.name ?? 0;
+    this.player.setTexture(sprite.key);
+    this.player.setScale(PLAYER_SCALE);
+    this.player.setFrame(Math.min(Number(frame) || 0, 3));
+    this.configurePlayerBody();
+  }
+
+  updatePlayerAimSprite() {
+    const angle = Phaser.Math.Angle.Between(this.player.x, this.player.y, this.input.activePointer.x, this.input.activePointer.y);
+    this.setPlayerFrameFromAngle(angle);
+  }
+
+  setPlayerFrameFromAngle(angle) {
+    const degrees = Phaser.Math.RadToDeg(angle);
+    let frame = 3;
+    if (degrees > 45 && degrees <= 135) frame = 0;
+    else if (degrees < -45 && degrees >= -135) frame = 1;
+    else if (Math.abs(degrees) > 135) frame = 2;
+    this.player.setFrame(frame);
+  }
+
+  getCurrentWeapon() {
+    return WEAPONS[this.worldState.weaponId] ?? WEAPONS.pistol;
+  }
+
+  getMagazineAmmo(weaponId) {
+    return this.worldState.weaponAmmo?.[weaponId]?.magazine ?? 0;
+  }
+
+  getReserveAmmo(weaponId) {
+    return this.worldState.weaponAmmo?.[weaponId]?.reserve ?? 0;
+  }
+
+  addAmmo(weaponId, amount) {
+    const targetWeapon = WEAPONS[weaponId] ? weaponId : "pistol";
+    this.worldState.weaponAmmo[targetWeapon].reserve += amount;
+  }
+
+  switchWeapon(weaponId) {
+    if (!WEAPONS[weaponId] || this.worldState.weaponId === weaponId) return;
+    if (this.isReloading) {
+      this.flashPrompt("Recargando");
+      return;
+    }
+    this.worldState.weaponId = weaponId;
+    this.updatePlayerWeaponSprite();
+    this.updatePlayerAimSprite();
+    this.updateAmmoText();
+    this.flashPrompt(`Arma: ${WEAPONS[weaponId].name}`);
+  }
+
   updateAmmoText() {
     const status = this.isReloading ? " recargando" : "";
-    this.ammoText.setText(`Cargador: ${this.worldState.magazineAmmo}/6 | Reserva: ${this.worldState.reserveAmmo}${status}`);
+    const weapon = this.getCurrentWeapon();
+    const weaponId = this.worldState.weaponId;
+    this.ammoText.setText(`${weapon.name}: ${this.getMagazineAmmo(weaponId)}/${weapon.magazineSize} | Reserva: ${this.getReserveAmmo(weaponId)}${status}`);
   }
 
   onPointerDown(pointer) {
@@ -1223,53 +1310,65 @@ useInteractable(interactable) {
 
   shoot(pointer) {
     const now = this.time.now;
-    if (now - this.lastShotAt < 260) return;
+    const weapon = this.getCurrentWeapon();
+    if (now - this.lastShotAt < weapon.delay) return;
 
     if (this.isReloading) {
       this.flashPrompt("Recargando");
       return;
     }
 
-    if (this.worldState.magazineAmmo <= 0) {
+    if (this.getMagazineAmmo(this.worldState.weaponId) <= 0) {
       this.flashPrompt("Cargador vacio");
       return;
     }
 
     this.lastShotAt = now;
-    this.worldState.magazineAmmo -= 1;
+    this.worldState.weaponAmmo[this.worldState.weaponId].magazine -= 1;
     this.updateAmmoText();
 
     const angle = Phaser.Math.Angle.Between(this.player.x, this.player.y, pointer.x, pointer.y);
-    const bullet = this.add.circle(this.player.x, this.player.y, 5, 0xf4e9b8);
+    const pelletStart = -(weapon.pellets - 1) / 2;
+    for (let index = 0; index < weapon.pellets; index++) {
+      const pelletAngle = angle + (pelletStart + index) * weapon.spread;
+      this.createBullet(pelletAngle, weapon);
+    }
+  }
+
+  createBullet(angle, weapon) {
+    const bullet = this.add.circle(this.player.x, this.player.y, weapon.bulletRadius, weapon.color);
     this.physics.add.existing(bullet);
-    bullet.body.setCircle(5);
+    bullet.body.setCircle(weapon.bulletRadius);
     bullet.body.setAllowGravity(false);
-    bullet.setData("damage", 25);
-    bullet.setData("bornAt", now);
+    bullet.setData("damage", weapon.damage);
+    bullet.setData("bornAt", this.time.now);
     this.bulletGroup.add(bullet);
-    this.physics.velocityFromRotation(angle, 520, bullet.body.velocity);
+    this.physics.velocityFromRotation(angle, weapon.speed, bullet.body.velocity);
   }
 
   reloadWeapon() {
     if (this.isReloading) return;
+    const weaponId = this.worldState.weaponId;
+    const weapon = this.getCurrentWeapon();
 
-    if (this.worldState.magazineAmmo >= 6) {
+    if (this.getMagazineAmmo(weaponId) >= weapon.magazineSize) {
       this.flashPrompt("Cargador lleno");
       return;
     }
 
-    if (this.worldState.reserveAmmo <= 0) {
+    if (this.getReserveAmmo(weaponId) <= 0) {
       this.flashPrompt("Sin reserva");
       return;
     }
 
     this.isReloading = true;
     this.flashPrompt("Recargando...");
-    this.time.delayedCall(700, () => {
-      const needed = 6 - this.worldState.magazineAmmo;
-      const loaded = Math.min(needed, this.worldState.reserveAmmo);
-      this.worldState.magazineAmmo += loaded;
-      this.worldState.reserveAmmo -= loaded;
+    this.time.delayedCall(weapon.reloadTime, () => {
+      const ammo = this.worldState.weaponAmmo[weaponId];
+      const needed = weapon.magazineSize - ammo.magazine;
+      const loaded = Math.min(needed, ammo.reserve);
+      ammo.magazine += loaded;
+      ammo.reserve -= loaded;
       this.isReloading = false;
       this.updateAmmoText();
       this.flashPrompt("Lista");
@@ -1303,9 +1402,12 @@ useInteractable(interactable) {
 
     this.worldState = saveData.worldState;
     this.isReloading = false;
+    this.skipSavingCurrentRoomOnce = true;
     this.loadRoom(saveData.currentRoomId);
+    this.updatePlayerWeaponSprite();
     this.player.setPosition(saveData.player.x, saveData.player.y);
-    this.player.rotation = saveData.player.rotation;
+    this.player.rotation = 0;
+    this.updatePlayerAimSprite();
     this.player.body.setVelocity(0, 0);
     this.updateInventoryText();
     this.updateHealthText();
@@ -1347,6 +1449,10 @@ onBulletHitEnemy(bullet, enemyMarker) {
         this.flashPrompt("💥 ¡Amenaza erradicada! El protocolo de bioseguridad se ha desactivado.");
       } else if (enemyData?.id === "lab7_boss_server") {
         this.flashPrompt("💥 Servidores liberados. Las puertas de salida se han desbloqueado.");
+      } else if (enemyData?.id === "mr_x_final_boss") {
+        this.worldState.objectives.bossDefeated = true;
+        this.flashPrompt("💥 Amenaza final eliminada. La compuerta de evacuación se abrió.");
+        this.reloadCurrentRoomAtPlayerPosition();
       } else {
         this.flashPrompt("Enemigo abatido");
       }
@@ -1362,17 +1468,17 @@ onBulletHitEnemy(bullet, enemyMarker) {
   }
 
   flashHeal() {
-    this.player.setFillStyle(0x8ce69b);
+    this.player.setTint(0x8ce69b);
     this.time.delayedCall(180, () => {
-      this.player.setFillStyle(0xded8bf);
+      this.player.clearTint();
     });
   }
 
   flashDamage() {
-    this.player.setFillStyle(0xe07162);
+    this.player.setTint(0xe07162);
     this.cameras.main.shake(90, 0.006);
     this.time.delayedCall(140, () => {
-      this.player.setFillStyle(0xded8bf);
+      this.player.clearTint();
     });
   }
 

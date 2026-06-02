@@ -772,8 +772,8 @@ switch_room: {
     items: [],
     enemies: [
       { id: "tunnel3_rat_1", type: "rat", x: 200, y: 400, speed: 155, aggroRange: 300, damage: 3, health: 5 },
-      { id: "tunnel3_rat_1", type: "rat", x: 200, y: 400, speed: 135, aggroRange: 300, damage: 3, health: 5 },
-      { id: "tunnel3_rat_1", type: "rat", x: 200, y: 400, speed: 125, aggroRange: 300, damage: 3, health: 5 },
+      { id: "tunnel3_rat_2", type: "rat", x: 200, y: 400, speed: 135, aggroRange: 300, damage: 3, health: 5 },
+      { id: "tunnel3_rat_3", type: "rat", x: 200, y: 400, speed: 125, aggroRange: 300, damage: 3, health: 5 },
     ]
   },
   // ==========================================

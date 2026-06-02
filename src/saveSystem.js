@@ -3,8 +3,12 @@ const SAVE_KEY = "secuela-save";
 export function createInitialWorldState() {
   return normalizeWorldState({
     health: 100,
-    magazineAmmo: 6,
-    reserveAmmo: 0,
+    weaponId: "pistol",
+    weaponAmmo: {
+      pistol: { magazine: 6, reserve: 0 },
+      shotgun: { magazine: 2, reserve: 0 },
+      rocket: { magazine: 1, reserve: 0 },
+    },
     collectedItems: {},
     enemies: {},
     inventory: [],
@@ -19,8 +23,19 @@ export function normalizeWorldState(worldState = {}) {
   worldState.inventory ??= [];
   worldState.unlockedDoors ??= {};
   worldState.health ??= 100;
-  worldState.magazineAmmo ??= 6;
-  worldState.reserveAmmo ??= 0;
+  worldState.weaponId ??= "pistol";
+  worldState.weaponAmmo ??= {};
+  worldState.weaponAmmo.pistol ??= { magazine: worldState.magazineAmmo ?? 6, reserve: worldState.reserveAmmo ?? 0 };
+  worldState.weaponAmmo.shotgun ??= { magazine: 2, reserve: 0 };
+  worldState.weaponAmmo.rocket ??= { magazine: 1, reserve: 0 };
+  worldState.weaponAmmo.pistol.magazine ??= 6;
+  worldState.weaponAmmo.pistol.reserve ??= 0;
+  worldState.weaponAmmo.shotgun.magazine ??= 2;
+  worldState.weaponAmmo.shotgun.reserve ??= 0;
+  worldState.weaponAmmo.rocket.magazine ??= 1;
+  worldState.weaponAmmo.rocket.reserve ??= 0;
+  worldState.magazineAmmo = worldState.weaponAmmo.pistol.magazine;
+  worldState.reserveAmmo = worldState.weaponAmmo.pistol.reserve;
   
   // --- 🔴 REFUERZO DE OBJETIVOS POR DEFECTO ---
   worldState.objectives ??= {};

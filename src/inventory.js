@@ -92,11 +92,23 @@ export function drawInventoryOverlay() {
 }
 
 export function getInventoryEntries() {
-  const ammo = {
-    id: "ammo_status",
-    name: "Municion de pistola",
-    description: `Para la pistola. Cargador: ${this.worldState.magazineAmmo}/6. Reserva: ${this.worldState.reserveAmmo}.`,
-  };
+  const ammoEntries = [
+    {
+      id: "ammo_pistol",
+      name: "Municion de pistola",
+      description: `Cargador: ${this.worldState.weaponAmmo.pistol.magazine}/6. Reserva: ${this.worldState.weaponAmmo.pistol.reserve}.`,
+    },
+    {
+      id: "ammo_shotgun",
+      name: "Cartuchos de escopeta",
+      description: `Cargador: ${this.worldState.weaponAmmo.shotgun.magazine}/4. Reserva: ${this.worldState.weaponAmmo.shotgun.reserve}. Dispara varios perdigones.`,
+    },
+    {
+      id: "ammo_rocket",
+      name: "Cohetes",
+      description: `Cargador: ${this.worldState.weaponAmmo.rocket.magazine}/1. Reserva: ${this.worldState.weaponAmmo.rocket.reserve}. Muy lento, muy fuerte.`,
+    },
+  ];
 
   const items = this.worldState.inventory.map((item) => ({
     id: item.id,
@@ -104,7 +116,7 @@ export function getInventoryEntries() {
     description: this.getItemDescription(item),
   }));
 
-  return [ammo, ...items];
+  return [...ammoEntries, ...items];
 }
 
 export function getItemDescription(item) {

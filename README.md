@@ -21,6 +21,7 @@ Tambien se puede abrir desde un servidor local en `http://127.0.0.1:5173`.
 - Barra espaciadora: agarrar item cercano
 - Q: usar medikit
 - Click izquierdo: disparar
+- 1 / 2 / 3: pistola / escopeta / rocket launcher
 - R / click derecho: recargar
 - G: guardar partida
 - C: cargar partida
