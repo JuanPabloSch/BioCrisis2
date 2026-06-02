@@ -27,8 +27,8 @@ const ZOMBIE_SPRITE = { key: "zombie", path: "src/assets/zombie.png", frameWidth
 const RUNNER_SPRITE = { 
   key: "runner", 
   path: "src/assets/runner.png", 
-  frameWidth: 100, 
-  frameHeight: 130, 
+  frameWidth: 110, 
+  frameHeight: 140, 
   scale: 0.7 
 };
 const TANK_SPRITE = { 
