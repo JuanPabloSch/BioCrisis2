@@ -110,6 +110,7 @@ class PrototypeScene extends Phaser.Scene {
     this.load.image("foto_linterna", "src/background/linterna.png"); 
     this.load.image("foto_labo", "src/background/labo.png");
     this.load.image("foto_superficie", "src/background/superficie.png");
+    this.load.image("victory_screen", "src/background/victory.png");
   }
 
   create() {
@@ -890,6 +891,45 @@ useInteractable(interactable) {
     return;
   }
 
+  // 🏍️ CONTROL DE ESCAPE FINAL (Subirse a la moto)
+  if (interactable.id === "escape_motorcycle" || interactable.type === "vehicle_escape") {
+    
+    // 1. Congelamos al jugador para que no se mueva ni dispare mientras corre la animación
+    if (this.player && this.player.body) {
+      this.player.body.setVelocity(0, 0);
+    }
+    this.physics.pause(); 
+
+    // 2. Tiramos el cartel dinámico con tu label original
+    this.flashPrompt("🏍️ ¡Arrancando motor... Escapando de las instalaciones!");
+
+    // 3. Efecto cinematográfico: Fundido a negro (fade out) de 1.5 segundos (1500 ms)
+    this.cameras.main.fadeOut(1500, 0, 0, 0);
+
+    // 4. Cuando la pantalla se apague por completo, mostramos la pantalla de victoria
+    this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
+      
+      // Hacemos un fade in invisible (en negro) para poder dibujar encima sin parpadeos
+      this.cameras.main.fadeIn(0, 0, 0, 0); 
+      
+      // Creamos la imagen justo en el centro de la pantalla (400x300 en resolución 800x600)
+      const victoryImg = this.add.image(400, 300, "victory_screen");
+      
+      // Le damos un efecto pop-up animado espectacular para que aparezca desde el centro
+      victoryImg.setScale(0);
+      this.tweens.add({
+        targets: victoryImg,
+        scale: 1,           // Escala original
+        duration: 1000,     // Tarda 1 segundo en agrandarse
+        ease: 'Back.easeOut' // Efecto rebote suave al final
+      });
+
+      // Cartel final en pantalla
+      this.flashPrompt("🏆 ¡FELICITACIONES! COMPLETADO DESDE EL TÚNEL DE ESCAPE.");
+    });
+    
+    return; // Cortamos la función acá para que no intente hacer otra cosa
+  }
 
   // 1. CASO: INTERRUPTORES DE PUZZLES
   if (interactable.type === "puzzle_switch") {

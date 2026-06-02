@@ -1085,7 +1085,7 @@ underground_lab7: {
 
   elec_escape: {
     name: "Hangar Técnico (Arena de Emergencia)",
-    zone: "electrical", requiresPower: false, showWallVisuals: true,
+    zone: "electrical", requiresPower: false, showWallVisuals: false,
     backgroundImage: { key: "bg_hangar", path: "src/background/hangar.png" },
     // Espacio 100% limpio en el centro para poder correr, rodar y balear al Boss
     walls: [
@@ -1098,7 +1098,7 @@ underground_lab7: {
     ],
     spawns: { 
       from_core: { x: 400, y: 100, angle: 90 },
-      from_final: { x: 700, y: 300, angle: 180 }
+      from_final: { x: 350, y: 500, angle: 180 }
     },
     props: [], 
     items: [], 
@@ -1120,23 +1120,24 @@ underground_lab7: {
 
   elec_final_escape: {
     name: "Túnel de Salida Exterior",
-    zone: "electrical", requiresPower: false, showWallVisuals: true,
+    zone: "electrical", requiresPower: false, showWallVisuals: false,
     backgroundImage: { key: "bg_escape", path: "src/background/escape.png"},
     // Un pasillo ancho que va hacia la derecha con la moto esperándote
     walls: [
-      { x: 0, y: 0, w: 800, h: 120 }, // Techo bajo para dar sensación de túnel de escape
-      { x: 0, y: 480, w: 800, h: 120 },
-      { x: 0, y: 120, w: 40, h: 360 }  // Fondo izquierdo tapado excepto la puerta
+      { x: 0, y: 0, w: 500, h: 220 }, // Techo bajo para dar sensación de túnel de escape
+      { x: 0, y: 540, w: 800, h: 60 },
+      { x: 0, y: 120, w: 40, h: 500 },
+      { x: 650, y: 0, w: 100, h: 800 }  // Fondo izquierdo tapado excepto la puerta
     ],
     doors: [
-      { id: "final_to_escape", x: 40, y: 240, w: 20, h: 120, label: "Volver al Hangar", to: "elec_escape", spawn: "from_final" }
+      { id: "final_to_escape", x: 140, y: 210, w: 50, h: 50, label: "Volver al Hangar", to: "elec_escape", spawn: "from_final" }
     ],
     interactables: [
       {
         id: "escape_motorcycle",
         type: "vehicle_escape",
         label: "Subir a la Moto y Escapar a la Chota",
-        x: 500, y: 260, w: 100, h: 80
+        x: 110, y: 340, w: 50, h: 50
       }
     ],
     spawns: { 
