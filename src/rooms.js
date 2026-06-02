@@ -1094,13 +1094,28 @@ underground_lab7: {
     doors: [
       { id: "escape_to_core", x: 340, y: 40, w: 120, h: 20, label: "Volver al Núcleo", to: "elec_core", spawn: "from_escape" },
       // 🟢 PUERTA DE SALIDA: Mañana hacés que se desbloquee cuando la vida de Mr. X llegue a 0
-      { id: "escape_to_final", x: 340, y: 500, w: 120, h: 20, label: "Puerta de Evacuación", to: "elec_final_escape", spawn: "from_hangar", bossLocked: true, lockedMessage: "La compuerta está sellada por el protocolo de combate." }
+      { id: "escape_to_final", x: 340, y: 560, w: 120, h: 20, label: "Puerta de Evacuación", to: "elec_final_escape", spawn: "from_hangar", bossLocked: true, lockedMessage: "La compuerta está sellada por el protocolo de combate." }
     ],
     spawns: { 
       from_core: { x: 400, y: 100, angle: 90 },
       from_final: { x: 700, y: 300, angle: 180 }
     },
-    props: [], items: [], enemies: []
+    props: [], 
+    items: [], 
+    enemies: [
+      // 👑 MR. X - COMBATE FINAL DE EMERGENCIA
+      // Vos aparecés arriba (y: 100). Lo ponemos a él abajo (y: 450) custodiando la salida.
+      { 
+        id: "mr_x_final_boss", 
+        type: "tank", 
+        x: 400, 
+        y: 450, 
+        speed: 53,       // Un puntito más rápido para meter presión en el llano
+        aggroRange: 500,  // Te detecta apenas cruzás la puerta de arriba
+        damage: 35,       // Golpea durísimo
+        health: 150       // 5 tiros limpios si tus balas hacen 30 de daño
+      }
+    ]
   },
 
   elec_final_escape: {

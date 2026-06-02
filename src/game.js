@@ -459,25 +459,25 @@ loadRoom(roomId, spawnId) {
       this.interactableGroup.add(marker);
     }
 
-    // 🧟 4. GENERACIÓN DE ENEMIGOS
+// 🧟 4. GENERACIÓN DE ENEMIGOS
     for (const enemy of room.enemies ?? []) {
       const enemyState = this.getEnemyState(enemy);
 
-      // 🚨 INYECTOR ANTIBUGS INTELIGENTE:
-      if (enemy.id === "lab7_boss_server" || enemy.id === "pumps_tank_01") {
-        // 🔍 SOLO lo revivimos si el estado dinámico NO existe o está corrupto,
-        // pero si ya lo mataste EN ESTA SESIÓN (health <= 0), respetamos su muerte.
+      // 🚨 INYECTOR ANTIBUGS SEGURO PARA TODOS LOS BOSSES:
+      if (enemy.id === "lab7_boss_server" || enemy.id === "pumps_tank_01" || enemy.id === "mr_x_final_boss") {
+        
+        // Si la vida se rompió en la partida guardada (NaN o undefined), la reseteamos con la del mapa
         if (enemyState.health === undefined || isNaN(enemyState.health)) {
           enemyState.dead = false;
-          enemyState.health = enemy.health; // Le damos sus HP limpios
+          enemyState.health = enemy.health; 
         }
         
-        // La posición la aseguramos siempre para que no se meta en la pared
+        // Forzamos SIEMPRE la posición del archivo ROOMS.js (adiós paredes)
         enemyState.x = enemy.x;
         enemyState.y = enemy.y;
       }
 
-      if (enemyState.dead || enemyState.health <= 0) continue; // 👈 Agregamos control por HP por las dudas
+      if (enemyState.dead || enemyState.health <= 0) continue;
 
       const enemyType = getEnemyType(enemy);
       const marker = this.add.circle(enemyState.x, enemyState.y, enemyType.radius, enemyType.color);
@@ -805,15 +805,12 @@ loadRoom(roomId, spawnId) {
   }
 
 isDoorLocked(door) {
-    // 🔒 Control de Boss: Si el jefe de bombas está vivo, la salida se sella
-    if (this.currentRoomId === "underground_pumps" && door.id === "pumps_to_underground") {
-      const bossState = this.getEnemyState ? this.getEnemyState({ id: "pumps_tank_01" }) : this.worldState?.enemiesStates?.["pumps_tank_01"];
-      if (bossState && !bossState.dead) {
-        door.lockedMessage = "🚨 PROTOCOLO DE ANOMALÍA: Salidas bloqueadas hasta eliminar la amenaza biológica.";
-        return true;
-      }
-    }
 
+  
+    // 🧪 TRUCO TEMPORAL PARA PASAR LA PUERTA CON PARTIDA GRABADA:
+    if (this.currentRoomId === "elec_escape" && door.bossLocked) {
+      return false; // 👈 Fuerza a la puerta a estar SIEMPRE abierta
+    }
     // 🔒 NUEVO - Control de Boss 2: Sala de Servidores (Lab 7)
     if (this.currentRoomId === "underground_lab7" && door.id === "lab7_to_lab6") {
       const bossState = this.getEnemyState ? this.getEnemyState({ id: "lab7_boss_server" }) : this.worldState?.enemies?.["lab7_boss_server"];
