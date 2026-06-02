@@ -22,7 +22,8 @@ const PLAYER_SPRITES = {
   rocket: { key: "player_rocket", path: "src/assets/player_rocket.png", frameWidth: 110, frameHeight: 120 },
 };
 
-const PLAYER_SCALE = 0.38;
+const PLAYER_SCALE = 0.7;
+const ZOMBIE_SPRITE = { key: "zombie", path: "src/assets/zombie.png", frameWidth: 100, frameHeight: 130, scale: 0.7 };
 
 const MAP_NODES = {
   // --- HILERA SUPERIOR ---
@@ -137,6 +138,10 @@ class PrototypeScene extends Phaser.Scene {
         frameHeight: sprite.frameHeight,
       });
     }
+    this.load.spritesheet(ZOMBIE_SPRITE.key, ZOMBIE_SPRITE.path, {
+      frameWidth: ZOMBIE_SPRITE.frameWidth,
+      frameHeight: ZOMBIE_SPRITE.frameHeight,
+    });
   }
 
   create() {
@@ -149,6 +154,7 @@ class PrototypeScene extends Phaser.Scene {
     this.lastDamageAt = 0;
     this.isReloading = false;
     this.inventorySelectedIndex = 0;
+    this.playerWalkTime = 0;
 
     this.cameras.main.setBackgroundColor("#101010");
 
@@ -250,6 +256,7 @@ class PrototypeScene extends Phaser.Scene {
     body.setVelocity(vx, vy);
 
     this.updatePlayerAimSprite();
+    this.updatePlayerWalkMotion(time, vx !== 0 || vy !== 0);
 
     if (Phaser.Input.Keyboard.JustDown(this.mapKey)) {
       this.toggleMap();
@@ -523,15 +530,21 @@ loadRoom(roomId, spawnId) {
       if (enemyState.dead || enemyState.health <= 0) continue;
 
       const enemyType = getEnemyType(enemy);
-      const marker = this.add.circle(enemyState.x, enemyState.y, enemyType.radius, enemyType.color);
+      const marker = enemy.type === "zombie"
+        ? this.add.sprite(enemyState.x, enemyState.y, ZOMBIE_SPRITE.key, 0).setScale(ZOMBIE_SPRITE.scale)
+        : this.add.circle(enemyState.x, enemyState.y, enemyType.radius, enemyType.color);
       if (enemy.type === "sleeper" && !enemyState.awake) marker.setAlpha(0.58);
       marker.setData("enemy", enemy);
       marker.setData("enemyState", enemyState);
       marker.setData("enemyType", enemyType);
-      marker.setStrokeStyle(2, enemyType.strokeColor);
+      if (marker.setStrokeStyle) marker.setStrokeStyle(2, enemyType.strokeColor);
       this.roomLayer.add(marker);
       this.physics.add.existing(marker);
-      marker.body.setCircle(enemyType.radius);
+      if (enemy.type === "zombie") {
+        marker.body.setCircle(enemyType.radius, marker.frame.width / 2 - enemyType.radius, marker.frame.height / 2 - enemyType.radius);
+      } else {
+        marker.body.setCircle(enemyType.radius);
+      }
       marker.body.setCollideWorldBounds(true);
       this.enemyGroup.add(marker);
     }
@@ -711,7 +724,19 @@ loadRoom(roomId, spawnId) {
       }
 
       this.physics.moveToObject(enemyMarker, this.player, enemy.speed);
+      this.updateEnemyFacing(enemyMarker);
     }
+  }
+
+  updateEnemyFacing(enemyMarker) {
+    const enemy = enemyMarker.getData("enemy");
+    if (enemy.type !== "zombie") return;
+
+    const velocity = enemyMarker.body.velocity;
+    if (Math.abs(velocity.x) < 1 && Math.abs(velocity.y) < 1) return;
+
+    const angle = Math.atan2(velocity.y, velocity.x);
+    this.setDirectionalFrame(enemyMarker, angle);
   }
 
   onPlayerTouchEnemy(player, enemyMarker) {
@@ -1249,13 +1274,30 @@ useInteractable(interactable) {
     this.setPlayerFrameFromAngle(angle);
   }
 
+  updatePlayerWalkMotion(time, isMoving) {
+    if (!isMoving || this.worldState.health <= 0) {
+      this.player.setScale(PLAYER_SCALE);
+      this.player.setAngle(0);
+      return;
+    }
+
+    const step = Math.sin(time * 0.018);
+    const bob = Math.abs(step);
+    this.player.setScale(PLAYER_SCALE * (1 + bob * 0.035), PLAYER_SCALE * (1 - bob * 0.025));
+    this.player.setAngle(step * 2.2);
+  }
+
   setPlayerFrameFromAngle(angle) {
+    this.setDirectionalFrame(this.player, angle);
+  }
+
+  setDirectionalFrame(sprite, angle) {
     const degrees = Phaser.Math.RadToDeg(angle);
     let frame = 3;
     if (degrees > 45 && degrees <= 135) frame = 0;
     else if (degrees < -45 && degrees >= -135) frame = 1;
     else if (Math.abs(degrees) > 135) frame = 2;
-    this.player.setFrame(frame);
+    sprite.setFrame(frame);
   }
 
   getCurrentWeapon() {
@@ -1461,9 +1503,18 @@ onBulletHitEnemy(bullet, enemyMarker) {
 
     // --- Tu parpadeo visual original intacto ---
     const enemyType = enemyMarker.getData("enemyType");
-    enemyMarker.setFillStyle(enemyType.hitColor);
+    if (enemyMarker.setTint) {
+      enemyMarker.setTint(enemyType.hitColor);
+    } else {
+      enemyMarker.setFillStyle(enemyType.hitColor);
+    }
     this.time.delayedCall(120, () => {
-      if (enemyMarker.active) enemyMarker.setFillStyle(enemyType.color);
+      if (!enemyMarker.active) return;
+      if (enemyMarker.clearTint) {
+        enemyMarker.clearTint();
+      } else {
+        enemyMarker.setFillStyle(enemyType.color);
+      }
     });
   }
 
