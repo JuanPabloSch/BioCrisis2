@@ -36,7 +36,7 @@ const TANK_SPRITE = {
   path: "src/assets/tank.png", 
   frameWidth: 100, 
   frameHeight: 140, 
-  scale: 1.1 // Un poquito más grande para que meta miedo
+  scale: 0.9 // Un poquito más grande para que meta miedo
 };
 const SLEEPER_SPRITE = { 
   key: "sleeper", 
@@ -613,6 +613,11 @@ loadRoom(roomId, spawnId) {
       }
 
       marker.body.setCollideWorldBounds(true);
+      // 🎲 NUEVO: Inicializamos variables de movimiento errático para zombies comunes
+      if (enemy.type === "zombie") {
+        marker.setData("nextWanderTime", 0);
+        marker.setData("isWandering", false);
+      }
       this.enemyGroup.add(marker);
     }
 
@@ -768,45 +773,115 @@ loadRoom(roomId, spawnId) {
     this.promptText.setVisible(true);
   }
 
-  updateEnemies() {
+updateEnemies() {
+    const now = this.time.now;
+
     for (const enemyMarker of this.enemyGroup.getChildren()) {
       const enemy = enemyMarker.getData("enemy");
       const enemyState = enemyMarker.getData("enemyState");
       const distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, enemyMarker.x, enemyMarker.y);
 
+      // 1. MANEJO DEL SLEEPER (Si está durmiendo, no hace nada)
       if (enemy.type === "sleeper" && !enemyState.awake) {
         if (distance > enemy.wakeRange) {
           enemyMarker.body.setVelocity(0, 0);
           continue;
         }
-
         enemyState.awake = true;
         enemyMarker.setAlpha(1);
         this.flashPrompt("Algo se levanto");
       }
 
-      if (distance > enemy.aggroRange || this.worldState.health <= 0) {
-        enemyMarker.body.setVelocity(0, 0);
+      // 2. ¿EL JUGADOR ESTÁ CERCA Y EN RANGO DE PERSECUCIÓN?
+      if (distance <= enemy.aggroRange && this.worldState.health > 0) {
+        // PERSECUCIÓN ACTIVA: Te corren con todo
+        this.physics.moveToObject(enemyMarker, this.player, enemy.speed);
+        this.updateEnemyFacing(enemyMarker);
+        
+        // Reseteamos el wander para que cuando pierdan el agro elijan una dirección nueva
+        if (enemy.type === "zombie") {
+          enemyMarker.setData("isWandering", false);
+        }
         continue;
       }
 
-      this.physics.moveToObject(enemyMarker, this.player, enemy.speed);
-      this.updateEnemyFacing(enemyMarker);
+      // 3. SI ESTÁN FUERA DEL AGRO (O el jugador murió)
+      // Si es un zombie común, forzamos que deambule en vez de quedarse duro
+      if (enemy.type === "zombie" && this.worldState.health > 0) {
+        let nextWander = enemyMarker.getData("nextWanderTime") || 0;
+
+        if (now > nextWander) {
+          // 50% de probabilidad: o camina a un lado o se frena a mirar el horizonte
+          const mover = Phaser.Math.Between(0, 1) === 1;
+
+          if (mover) {
+            const randomAngle = Phaser.Math.FloatBetween(0, Math.PI * 2);
+            const wanderSpeed = enemy.speed * 0.4; // Caminan lento y pesado
+            
+            // Forzamos la velocidad física en el cuerpo del zombie
+            this.physics.velocityFromRotation(randomAngle, wanderSpeed, enemyMarker.body.velocity);
+          } else {
+            // Se queda estancado un ratito
+            enemyMarker.body.setVelocity(0, 0);
+          }
+
+          // Le seteamos el próximo cambio de dirección entre 2 y 4 segundos
+          enemyMarker.setData("nextWanderTime", now + Phaser.Math.Between(2000, 4000));
+        }
+
+        // Forzamos que se actualice el frame de caminata según su nueva velocidad física
+        this.updateEnemyFacing(enemyMarker);
+        
+      } else {
+        // Si es un runner, un tank o un sleeper fuera de rango, se quedan quietos en su lugar
+        enemyMarker.body.setVelocity(0, 0);
+      }
     }
   }
 
 updateEnemyFacing(enemyMarker) {
     const enemy = enemyMarker.getData("enemy");
     
-    // 🛌 Habilitamos también al sleeper en la lista permitida
     if (enemy.type !== "zombie" && enemy.type !== "runner" && enemy.type !== "tank" && enemy.type !== "sleeper") return;
 
     const velocity = enemyMarker.body.velocity;
-    if (Math.abs(velocity.x) < 1 && Math.abs(velocity.y) < 1) return;
 
+    // 🛑 SI ESTÁ QUIETO: No vibra y nos aseguramos de que vuelva a las escalas originales fijas
+    if (Math.abs(velocity.x) < 1 && Math.abs(velocity.y) < 1) {
+      if (enemy.type === "zombie") enemyMarker.setScale(ZOMBIE_SPRITE.scale);
+      if (enemy.type === "runner") enemyMarker.setScale(RUNNER_SPRITE.scale);
+      if (enemy.type === "tank") enemyMarker.setScale(TANK_SPRITE.scale);
+      if (enemy.type === "sleeper") enemyMarker.setScale(SLEEPER_SPRITE.scale);
+      return;
+    }
+
+   // 📐 DIRECCIÓN DE LOS FRAMES
     const angle = Math.atan2(velocity.y, velocity.x);
     this.setDirectionalFrame(enemyMarker, angle);
+
+    // 🧟 REBOTE DE CAMINATA REAL (Sin deformar y compatible con la física)
+    // Usamos el tiempo para balancear el sprite de izquierda a derecha levemente mientras camina
+    const wave = Math.sin(this.time.now * 0.012); // Ritmo del paso
+    
+    if (enemy.type === "zombie") {
+      // Desplazamos el dibujo apenas 2 píxeles hacia los costados al compás de la onda
+      // Usamos setDisplayOrigin para mover el render sin tocar la posición X/Y real
+      enemyMarker.setDisplayOrigin(
+        (enemyMarker.frame.width / 2) + (wave * 2), 
+        enemyMarker.frame.height / 2
+      );
+    }
+    
+    if (enemy.type === "runner") {
+      // El runner va más rápido, así que hacemos que el vaivén sea más acelerado (0.025)
+      const waveRunner = Math.sin(this.time.now * 0.025);
+      enemyMarker.setDisplayOrigin(
+        (enemyMarker.frame.width / 2) + (waveRunner * 1.5), 
+        enemyMarker.frame.height / 2
+      );
+    }
   }
+
 
   onPlayerTouchEnemy(player, enemyMarker) {
     const now = this.time.now;
