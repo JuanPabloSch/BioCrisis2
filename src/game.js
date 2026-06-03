@@ -38,6 +38,13 @@ const TANK_SPRITE = {
   frameHeight: 140, 
   scale: 1.1 // Un poquito más grande para que meta miedo
 };
+const SLEEPER_SPRITE = { 
+  key: "sleeper", 
+  path: "src/assets/sleeper.png", 
+  frameWidth: 80, 
+  frameHeight: 160, 
+  scale: 0.8 
+};
 const MAP_NODES = {
   // --- HILERA SUPERIOR ---
   laboratory_storage: { label: "Deposito", x: 612, y: 80 },
@@ -163,6 +170,11 @@ class PrototypeScene extends Phaser.Scene {
     this.load.spritesheet(TANK_SPRITE.key, TANK_SPRITE.path, {
       frameWidth: TANK_SPRITE.frameWidth,
       frameHeight: TANK_SPRITE.frameHeight
+    });
+    // 🛌 Carga del Sleeper
+    this.load.spritesheet(SLEEPER_SPRITE.key, SLEEPER_SPRITE.path, {
+      frameWidth: SLEEPER_SPRITE.frameWidth,
+      frameHeight: SLEEPER_SPRITE.frameHeight
     });
   }
 
@@ -550,19 +562,21 @@ loadRoom(roomId, spawnId) {
       const enemyType = getEnemyType(enemy);
       let marker;
 
-      // 🎭 NUEVO SITEMA DE ASIGNACIÓN DE SPRITES (Zombie y Runner)
+// 🎭 NUEVO SITEMA DE ASIGNACIÓN DE SPRITES (Zombie, Runner, Tank y Sleeper)
       if (enemy.type === "zombie") {
         marker = this.add.sprite(enemyState.x, enemyState.y, ZOMBIE_SPRITE.key, 0).setScale(ZOMBIE_SPRITE.scale);
       } else if (enemy.type === "runner") {
-        // 🏃‍♂️ Instanciamos al runner con su propio sprite y la escala de 0.8
         marker = this.add.sprite(enemyState.x, enemyState.y, RUNNER_SPRITE.key, 0).setScale(RUNNER_SPRITE.scale);
       } else if (enemy.type === "tank") {
-        // 🛡️ Agarra tanto al Tank común como al Boss si su tipo es "tank"
         marker = this.add.sprite(enemyState.x, enemyState.y, TANK_SPRITE.key, 0).setScale(TANK_SPRITE.scale);
+      } else if (enemy.type === "sleeper") {
+        // 🛌 ASIGNACIÓN CORRECTA: Ahora el sleeper es un sprite y no un círculo
+        marker = this.add.sprite(enemyState.x, enemyState.y, SLEEPER_SPRITE.key, 0).setScale(SLEEPER_SPRITE.scale);
       } else {
         marker = this.add.circle(enemyState.x, enemyState.y, enemyType.radius, enemyType.color);
       }
 
+      // Aplica la opacidad si el sleeper está durmiendo
       if (enemy.type === "sleeper" && !enemyState.awake) marker.setAlpha(0.58);
       
       marker.setData("enemy", enemy);
@@ -574,7 +588,7 @@ loadRoom(roomId, spawnId) {
       this.roomLayer.add(marker);
       this.physics.add.existing(marker);
       
-      // 📐 AJUSTE DE HITBOX (Revisá que las llaves apunten bien)
+      // 📐 AJUSTE DE HITBOX
       if (enemy.type === "zombie" || enemy.type === "runner") {
         marker.body.setCircle(
           enemyType.radius, 
@@ -582,11 +596,17 @@ loadRoom(roomId, spawnId) {
           marker.frame.height / 2 - enemyType.radius
         );
       } else if (enemy.type === "tank") {
-        // Ponemos números fijos (100 y 140) por si el frame no cargó a tiempo en memoria
         marker.body.setCircle(
           enemyType.radius, 
           100 / 2 - enemyType.radius, 
           140 / 2 - enemyType.radius
+        );
+      } else if (enemy.type === "sleeper") {
+        // 📐 Hitbox fija y centrada para las dimensiones del sleeper (80x160)
+        marker.body.setCircle(
+          enemyType.radius, 
+          80 / 2 - enemyType.radius, 
+          160 / 2 - enemyType.radius
         );
       } else {
         marker.body.setCircle(enemyType.radius);
@@ -778,8 +798,8 @@ loadRoom(roomId, spawnId) {
 updateEnemyFacing(enemyMarker) {
     const enemy = enemyMarker.getData("enemy");
     
-    // 🚨 El chequeo limpio. Si no es ninguno, sale pacíficamente sin romper nada
-    if (enemy.type !== "zombie" && enemy.type !== "runner" && enemy.type !== "tank") return;
+    // 🛌 Habilitamos también al sleeper en la lista permitida
+    if (enemy.type !== "zombie" && enemy.type !== "runner" && enemy.type !== "tank" && enemy.type !== "sleeper") return;
 
     const velocity = enemyMarker.body.velocity;
     if (Math.abs(velocity.x) < 1 && Math.abs(velocity.y) < 1) return;
